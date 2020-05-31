@@ -1,4 +1,5 @@
 <?php
+
 namespace Yiisoft\Rbac\Tests;
 
 use Psr\Log\LogLevel;
@@ -67,7 +68,7 @@ abstract class DbManagerTestCase extends ManagerTestCase
         self::assertSame(static::$driverName, Yii::getApp()->db->getDriverName(), 'Connection represents the same DB driver, as is tested');
         ob_start();
         $result = Yii::getApp()->runAction($route, $params);
-        echo 'Result is '.$result;
+        echo 'Result is ' . $result;
         if ($result !== ExitCode::OK) {
             ob_end_flush();
         } else {
@@ -80,10 +81,10 @@ abstract class DbManagerTestCase extends ManagerTestCase
         parent::setUpBeforeClass();
         $databases = static::getParam('databases');
         static::$database = $databases[static::$driverName];
-        $pdo_database = 'pdo_'.static::$driverName;
+        $pdo_database = 'pdo_' . static::$driverName;
 
         if (!extension_loaded('pdo') || !extension_loaded($pdo_database)) {
-            static::markTestSkipped('pdo and '.$pdo_database.' extension are required.');
+            static::markTestSkipped('pdo and ' . $pdo_database . ' extension are required.');
         }
 
         static::runConsoleAction('migrate/up', ['migrationPath' => '@yii/rbac/migrations/', 'interactive' => false]);
@@ -385,7 +386,7 @@ abstract class DbManagerTestCase extends ManagerTestCase
 
     private function assertSingleQueryToAssignmentsTable($logTarget)
     {
-        $this->assertCount(1, $logTarget->messages, 'Only one query should have been performed, but there are the following logs: '.print_r($logTarget->messages, true));
+        $this->assertCount(1, $logTarget->messages, 'Only one query should have been performed, but there are the following logs: ' . print_r($logTarget->messages, true));
         $this->assertContains('auth_assignment', $logTarget->messages[0][1], 'Log message should be a query to auth_assignment table');
         $logTarget->messages = [];
     }

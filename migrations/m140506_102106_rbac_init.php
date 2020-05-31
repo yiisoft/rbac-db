@@ -63,7 +63,7 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
             'created_at'  => $this->integer(),
             'updated_at'  => $this->integer(),
             'PRIMARY KEY ([[name]])',
-            'FOREIGN KEY ([[rule_name]]) REFERENCES '.$authManager->ruleTable.' ([[name]])'.
+            'FOREIGN KEY ([[rule_name]]) REFERENCES ' . $authManager->ruleTable . ' ([[name]])' .
                 $this->buildFkClause('ON DELETE SET NULL', 'ON UPDATE CASCADE'),
         ], $tableOptions);
         $this->createIndex('idx-auth_item-type', $authManager->itemTable, 'type');
@@ -72,9 +72,9 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
             'parent' => $this->string(64)->notNull(),
             'child'  => $this->string(64)->notNull(),
             'PRIMARY KEY ([[parent]], [[child]])',
-            'FOREIGN KEY ([[parent]]) REFERENCES '.$authManager->itemTable.' ([[name]])'.
+            'FOREIGN KEY ([[parent]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
                 $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
-            'FOREIGN KEY ([[child]]) REFERENCES '.$authManager->itemTable.' ([[name]])'.
+            'FOREIGN KEY ([[child]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
                 $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
         ], $tableOptions);
 
@@ -83,7 +83,7 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
             'user_id'    => $this->string(64)->notNull(),
             'created_at' => $this->integer(),
             'PRIMARY KEY ([[item_name]], [[user_id]])',
-            'FOREIGN KEY ([[item_name]]) REFERENCES '.$authManager->itemTable.' ([[name]])'.
+            'FOREIGN KEY ([[item_name]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
                 $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
         ], $tableOptions);
 
@@ -150,7 +150,7 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
         }
 
         if ($this->isOracle()) {
-            return ' '.$delete;
+            return ' ' . $delete;
         }
 
         return implode(' ', ['', $delete, $update]);
