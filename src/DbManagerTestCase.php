@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Rbac\Tests;
 
 use Psr\Log\LogLevel;
@@ -60,8 +62,8 @@ abstract class DbManagerTestCase extends ManagerTestCase
         // because migrations will never be done on postgres but on mysql, because in up() and down() method is used $db connection from $authManager
         // that is the first connection established (mysql).
         Yii::getContainer()->setAll([
-            'db'                   => $db,
-            'authManager'          => $manager,
+            'db' => $db,
+            'authManager' => $manager,
             'Yiisoft\Rbac\BaseManager' => $manager,
         ]);
 
@@ -114,11 +116,11 @@ abstract class DbManagerTestCase extends ManagerTestCase
     }
 
     /**
-     * @return \Yiisoft\Db\Connection
      * @throws \Yiisoft\Db\Exception
      * @throws \Yiisoft\Rbac\Exceptions\InvalidConfigException
-     *
      * @throws \Yiisoft\Rbac\Exceptions\InvalidArgumentException
+     *
+     * @return \Yiisoft\Db\Connection
      */
     public function getConnection()
     {
