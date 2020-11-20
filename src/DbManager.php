@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\Rbac;
 
 use Psr\Log\LoggerInterface;
@@ -30,7 +32,7 @@ use Yiisoft\Rbac\Manager\BaseManager;
 class DbManager extends BaseManager
 {
     /**
-     * @var ConnectionInterface|array|string the DB connection object or the application component ID of the DB connection.
+     * @var array|ConnectionInterface|string the DB connection object or the application component ID of the DB connection.
      *                                       After the DbManager object is created, if you want to change this property, you should only assign it
      *                                       with a DB connection object.
      *                                       Starting from version 2.0.2, this can also be a configuration array for creating the object.
@@ -53,7 +55,7 @@ class DbManager extends BaseManager
      */
     public $ruleTable = '{{%auth_rule}}';
     /**
-     * @var CacheInterface|array|string the cache used to improve RBAC performance. This can be one of the following:
+     * @var array|CacheInterface|string the cache used to improve RBAC performance. This can be one of the following:
      *
      * - an application component ID (e.g. `cache`)
      * - a configuration array
@@ -136,7 +138,7 @@ class DbManager extends BaseManager
      * Performs access check for the specified user based on the data loaded from cache.
      * This method is internally called by [[userHasPermission()]] when [[cache]] is enabled.
      *
-     * @param string|int   $user        the user ID. This should can be either an integer or a string representing
+     * @param int|string   $user        the user ID. This should can be either an integer or a string representing
      *                                  the unique identifier of a user. See [[\yii\web\User::id]].
      * @param string       $itemName    the name of the operation that need access check
      * @param array        $params      name-value pairs that would be passed to rules associated
@@ -181,7 +183,7 @@ class DbManager extends BaseManager
      * Performs access check for the specified user.
      * This method is internally called by [[userHasPermission()]].
      *
-     * @param string|int   $user        the user ID. This should can be either an integer or a string representing
+     * @param int|string   $user        the user ID. This should can be either an integer or a string representing
      *                                  the unique identifier of a user. See [[\yii\web\User::id]].
      * @param string       $itemName    the name of the operation that need access check
      * @param array        $params      name-value pairs that would be passed to rules associated
@@ -274,13 +276,13 @@ class DbManager extends BaseManager
         }
         $this->db->createCommand()
             ->insert($this->itemTable, [
-                'name'        => $item->name,
-                'type'        => $item->type,
+                'name' => $item->name,
+                'type' => $item->type,
                 'description' => $item->description,
-                'rule_name'   => $item->ruleName,
-                'data'        => $item->data === null ? null : serialize($item->data),
-                'created_at'  => $item->createdAt,
-                'updated_at'  => $item->updatedAt,
+                'rule_name' => $item->ruleName,
+                'data' => $item->data === null ? null : serialize($item->data),
+                'created_at' => $item->createdAt,
+                'updated_at' => $item->updatedAt,
             ])->execute();
 
         $this->invalidateCache();
@@ -332,11 +334,11 @@ class DbManager extends BaseManager
 
         $this->db->createCommand()
             ->update($this->itemTable, [
-                'name'        => $item->name,
+                'name' => $item->name,
                 'description' => $item->description,
-                'rule_name'   => $item->ruleName,
-                'data'        => $item->data === null ? null : serialize($item->data),
-                'updated_at'  => $item->updatedAt,
+                'rule_name' => $item->ruleName,
+                'data' => $item->data === null ? null : serialize($item->data),
+                'updated_at' => $item->updatedAt,
             ], [
                 'name' => $name,
             ])->execute();
@@ -360,8 +362,8 @@ class DbManager extends BaseManager
         }
         $this->db->createCommand()
             ->insert($this->ruleTable, [
-                'name'       => $rule->name,
-                'data'       => serialize($rule),
+                'name' => $rule->name,
+                'data' => serialize($rule),
                 'created_at' => $rule->createdAt,
                 'updated_at' => $rule->updatedAt,
             ])->execute();
@@ -386,8 +388,8 @@ class DbManager extends BaseManager
 
         $this->db->createCommand()
             ->update($this->ruleTable, [
-                'name'       => $rule->name,
-                'data'       => serialize($rule),
+                'name' => $rule->name,
+                'data' => serialize($rule),
                 'updated_at' => $rule->updatedAt,
             ], [
                 'name' => $name,
@@ -451,13 +453,13 @@ class DbManager extends BaseManager
         }
 
         return new $class([
-            'name'        => $row['name'],
-            'type'        => $row['type'],
+            'name' => $row['name'],
+            'type' => $row['type'],
             'description' => $row['description'],
-            'ruleName'    => $row['rule_name'],
-            'data'        => $data,
-            'createdAt'   => $row['created_at'],
-            'updatedAt'   => $row['updated_at'],
+            'ruleName' => $row['rule_name'],
+            'data' => $data,
+            'createdAt' => $row['created_at'],
+            'updatedAt' => $row['updated_at'],
         ]);
     }
 
@@ -549,7 +551,7 @@ class DbManager extends BaseManager
     /**
      * Returns all permissions that are directly assigned to user.
      *
-     * @param string|int $userId the user ID (see [[\yii\web\User::id]])
+     * @param int|string $userId the user ID (see [[\yii\web\User::id]])
      *
      * @return Permission[] all direct permissions that the user has. The array is indexed by the permission names.
      *
@@ -574,7 +576,7 @@ class DbManager extends BaseManager
     /**
      * Returns all permissions that the user inherits from the roles assigned to him.
      *
-     * @param string|int $userId the user ID (see [[\yii\web\User::id]])
+     * @param int|string $userId the user ID (see [[\yii\web\User::id]])
      *
      * @return Permission[] all inherited permissions that the user has. The array is indexed by the permission names.
      *
@@ -648,7 +650,7 @@ class DbManager extends BaseManager
     public function getRule($name)
     {
         if ($this->rules !== null) {
-            return isset($this->rules[$name]) ? $this->rules[$name] : null;
+            return $this->rules[$name] ?? null;
         }
 
         $row = (new Query())->select(['data'])
@@ -707,8 +709,8 @@ class DbManager extends BaseManager
         }
 
         return new Assignment([
-            'userId'    => $row['user_id'],
-            'roleName'  => $row['item_name'],
+            'userId' => $row['user_id'],
+            'roleName' => $row['item_name'],
             'createdAt' => $row['created_at'],
         ]);
     }
@@ -729,8 +731,8 @@ class DbManager extends BaseManager
         $assignments = [];
         foreach ($query->all($this->db) as $row) {
             $assignments[$row['item_name']] = new Assignment([
-                'userId'    => $row['user_id'],
-                'roleName'  => $row['item_name'],
+                'userId' => $row['user_id'],
+                'roleName' => $row['item_name'],
                 'createdAt' => $row['created_at'],
             ]);
         }
@@ -859,15 +861,15 @@ class DbManager extends BaseManager
     public function assign($role, $userId)
     {
         $assignment = new Assignment([
-            'userId'    => $userId,
-            'roleName'  => $role->name,
+            'userId' => $userId,
+            'roleName' => $role->name,
             'createdAt' => time(),
         ]);
 
         $this->db->createCommand()
             ->insert($this->assignmentTable, [
-                'user_id'    => $assignment->userId,
-                'item_name'  => $assignment->roleName,
+                'user_id' => $assignment->userId,
+                'item_name' => $assignment->roleName,
                 'created_at' => $assignment->createdAt,
             ])->execute();
 

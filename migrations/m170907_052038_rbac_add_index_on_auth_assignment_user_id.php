@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Yiisoft\Db\Migration;
 use Yiisoft\Rbac\BaseManager;
 use Yiisoft\Rbac\DbManager;
