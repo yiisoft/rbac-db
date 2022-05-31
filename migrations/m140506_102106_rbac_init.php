@@ -49,7 +49,9 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
         }
 
         $this->createTable($authManager->ruleTable, [
-            'name' => $this->string(64)->notNull(),
+            'name' => $this
+                ->string(64)
+                ->notNull(),
             'data' => $this->binary(),
             'created_at' => $this->integer(),
             'updated_at' => $this->integer(),
@@ -57,8 +59,12 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
         ], $tableOptions);
 
         $this->createTable($authManager->itemTable, [
-            'name' => $this->string(64)->notNull(),
-            'type' => $this->smallInteger()->notNull(),
+            'name' => $this
+                ->string(64)
+                ->notNull(),
+            'type' => $this
+                ->smallInteger()
+                ->notNull(),
             'description' => $this->text(),
             'rule_name' => $this->string(64),
             'data' => $this->binary(),
@@ -66,27 +72,35 @@ class m140506_102106_rbac_init extends \Yiisoft\Db\Migration
             'updated_at' => $this->integer(),
             'PRIMARY KEY ([[name]])',
             'FOREIGN KEY ([[rule_name]]) REFERENCES ' . $authManager->ruleTable . ' ([[name]])' .
-                $this->buildFkClause('ON DELETE SET NULL', 'ON UPDATE CASCADE'),
+            $this->buildFkClause('ON DELETE SET NULL', 'ON UPDATE CASCADE'),
         ], $tableOptions);
         $this->createIndex('idx-auth_item-type', $authManager->itemTable, 'type');
 
         $this->createTable($authManager->itemChildTable, [
-            'parent' => $this->string(64)->notNull(),
-            'child' => $this->string(64)->notNull(),
+            'parent' => $this
+                ->string(64)
+                ->notNull(),
+            'child' => $this
+                ->string(64)
+                ->notNull(),
             'PRIMARY KEY ([[parent]], [[child]])',
             'FOREIGN KEY ([[parent]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
-                $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
+            $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
             'FOREIGN KEY ([[child]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
-                $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
+            $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
         ], $tableOptions);
 
         $this->createTable($authManager->assignmentTable, [
-            'item_name' => $this->string(64)->notNull(),
-            'user_id' => $this->string(64)->notNull(),
+            'item_name' => $this
+                ->string(64)
+                ->notNull(),
+            'user_id' => $this
+                ->string(64)
+                ->notNull(),
             'created_at' => $this->integer(),
             'PRIMARY KEY ([[item_name]], [[user_id]])',
             'FOREIGN KEY ([[item_name]]) REFERENCES ' . $authManager->itemTable . ' ([[name]])' .
-                $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
+            $this->buildFkClause('ON DELETE CASCADE', 'ON UPDATE CASCADE'),
         ], $tableOptions);
 
         if ($this->isMSSQL()) {

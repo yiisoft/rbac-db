@@ -210,7 +210,8 @@ class DbManager extends BaseManager
         }
 
         $query = new Query();
-        $parents = $query->select(['parent'])
+        $parents = $query
+            ->select(['parent'])
             ->from($this->itemChildTable)
             ->where(['child' => $itemName])
             ->column($this->db);
@@ -240,7 +241,8 @@ class DbManager extends BaseManager
             return $this->items[$name];
         }
 
-        $row = (new Query())->from($this->itemTable)
+        $row = (new Query())
+            ->from($this->itemTable)
             ->where(['name' => $name])
             ->one($this->db);
 
@@ -274,7 +276,8 @@ class DbManager extends BaseManager
         if ($item->updatedAt === null) {
             $item->updatedAt = $time;
         }
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->insert($this->itemTable, [
                 'name' => $item->name,
                 'type' => $item->type,
@@ -283,7 +286,8 @@ class DbManager extends BaseManager
                 'data' => $item->data === null ? null : serialize($item->data),
                 'created_at' => $item->createdAt,
                 'updated_at' => $item->updatedAt,
-            ])->execute();
+            ])
+            ->execute();
 
         $this->invalidateCache();
 
@@ -296,15 +300,18 @@ class DbManager extends BaseManager
     protected function removeItem($item)
     {
         if (!$this->supportsCascadeUpdate()) {
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->delete($this->itemChildTable, ['or', '[[parent]]=:name', '[[child]]=:name'], [':name' => $item->name])
                 ->execute();
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->delete($this->assignmentTable, ['item_name' => $item->name])
                 ->execute();
         }
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->delete($this->itemTable, ['name' => $item->name])
             ->execute();
 
@@ -319,20 +326,24 @@ class DbManager extends BaseManager
     protected function updateItem($name, $item)
     {
         if ($item->name !== $name && !$this->supportsCascadeUpdate()) {
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->itemChildTable, ['parent' => $item->name], ['parent' => $name])
                 ->execute();
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->itemChildTable, ['child' => $item->name], ['child' => $name])
                 ->execute();
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->assignmentTable, ['item_name' => $item->name], ['item_name' => $name])
                 ->execute();
         }
 
         $item->updatedAt = time();
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->update($this->itemTable, [
                 'name' => $item->name,
                 'description' => $item->description,
@@ -341,7 +352,8 @@ class DbManager extends BaseManager
                 'updated_at' => $item->updatedAt,
             ], [
                 'name' => $name,
-            ])->execute();
+            ])
+            ->execute();
 
         $this->invalidateCache();
 
@@ -360,13 +372,15 @@ class DbManager extends BaseManager
         if ($rule->updatedAt === null) {
             $rule->updatedAt = $time;
         }
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->insert($this->ruleTable, [
                 'name' => $rule->name,
                 'data' => serialize($rule),
                 'created_at' => $rule->createdAt,
                 'updated_at' => $rule->updatedAt,
-            ])->execute();
+            ])
+            ->execute();
 
         $this->invalidateCache();
 
@@ -379,21 +393,24 @@ class DbManager extends BaseManager
     protected function updateRule($name, $rule)
     {
         if ($rule->name !== $name && !$this->supportsCascadeUpdate()) {
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->itemTable, ['rule_name' => $rule->name], ['rule_name' => $name])
                 ->execute();
         }
 
         $rule->updatedAt = time();
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->update($this->ruleTable, [
                 'name' => $rule->name,
                 'data' => serialize($rule),
                 'updated_at' => $rule->updatedAt,
             ], [
                 'name' => $name,
-            ])->execute();
+            ])
+            ->execute();
 
         $this->invalidateCache();
 
@@ -406,12 +423,14 @@ class DbManager extends BaseManager
     protected function removeRule($rule)
     {
         if (!$this->supportsCascadeUpdate()) {
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->itemTable, ['rule_name' => null], ['rule_name' => $rule->name])
                 ->execute();
         }
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->delete($this->ruleTable, ['name' => $rule->name])
             ->execute();
 
@@ -473,7 +492,8 @@ class DbManager extends BaseManager
             return [];
         }
 
-        $query = (new Query())->select('b.*')
+        $query = (new Query())
+            ->select('b.*')
             ->from(['a' => $this->assignmentTable, 'b' => $this->itemTable])
             ->where('{{a}}.[[item_name]]={{b}}.[[name]]')
             ->andWhere(['a.user_id' => (string) $userId])
@@ -521,10 +541,12 @@ class DbManager extends BaseManager
         if (empty($result)) {
             return [];
         }
-        $query = (new Query())->from($this->itemTable)->where([
-            'type' => Item::TYPE_PERMISSION,
-            'name' => array_keys($result),
-        ]);
+        $query = (new Query())
+            ->from($this->itemTable)
+            ->where([
+                'type' => Item::TYPE_PERMISSION,
+                'name' => array_keys($result),
+            ]);
         $permissions = [];
         foreach ($query->all($this->db) as $row) {
             $permissions[$row['name']] = $this->populateItem($row);
@@ -559,7 +581,8 @@ class DbManager extends BaseManager
      */
     protected function getDirectPermissionsByUser($userId)
     {
-        $query = (new Query())->select('b.*')
+        $query = (new Query())
+            ->select('b.*')
             ->from(['a' => $this->assignmentTable, 'b' => $this->itemTable])
             ->where('{{a}}.[[item_name]]={{b}}.[[name]]')
             ->andWhere(['a.user_id' => (string) $userId])
@@ -584,7 +607,8 @@ class DbManager extends BaseManager
      */
     protected function getInheritedPermissionsByUser($userId)
     {
-        $query = (new Query())->select('item_name')
+        $query = (new Query())
+            ->select('item_name')
             ->from($this->assignmentTable)
             ->where(['user_id' => (string) $userId]);
 
@@ -598,10 +622,12 @@ class DbManager extends BaseManager
             return [];
         }
 
-        $query = (new Query())->from($this->itemTable)->where([
-            'type' => Item::TYPE_PERMISSION,
-            'name' => array_keys($result),
-        ]);
+        $query = (new Query())
+            ->from($this->itemTable)
+            ->where([
+                'type' => Item::TYPE_PERMISSION,
+                'name' => array_keys($result),
+            ]);
         $permissions = [];
         foreach ($query->all($this->db) as $row) {
             $permissions[$row['name']] = $this->populateItem($row);
@@ -653,7 +679,8 @@ class DbManager extends BaseManager
             return $this->rules[$name] ?? null;
         }
 
-        $row = (new Query())->select(['data'])
+        $row = (new Query())
+            ->select(['data'])
             ->from($this->ruleTable)
             ->where(['name' => $name])
             ->one($this->db);
@@ -700,7 +727,8 @@ class DbManager extends BaseManager
             return;
         }
 
-        $row = (new Query())->from($this->assignmentTable)
+        $row = (new Query())
+            ->from($this->assignmentTable)
             ->where(['user_id' => (string) $userId, 'item_name' => $roleName])
             ->one($this->db);
 
@@ -767,7 +795,8 @@ class DbManager extends BaseManager
             throw new InvalidCallException("Cannot add '{$child->name}' as a child of '{$parent->name}'. A loop has been detected.");
         }
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->insert($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name])
             ->execute();
 
@@ -781,9 +810,10 @@ class DbManager extends BaseManager
      */
     public function removeChild($parent, $child)
     {
-        $result = $this->db->createCommand()
-            ->delete($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name])
-            ->execute() > 0;
+        $result = $this->db
+                ->createCommand()
+                ->delete($this->itemChildTable, ['parent' => $parent->name, 'child' => $child->name])
+                ->execute() > 0;
 
         $this->invalidateCache();
 
@@ -795,9 +825,10 @@ class DbManager extends BaseManager
      */
     public function removeChildren($parent)
     {
-        $result = $this->db->createCommand()
-            ->delete($this->itemChildTable, ['parent' => $parent->name])
-            ->execute() > 0;
+        $result = $this->db
+                ->createCommand()
+                ->delete($this->itemChildTable, ['parent' => $parent->name])
+                ->execute() > 0;
 
         $this->invalidateCache();
 
@@ -810,9 +841,9 @@ class DbManager extends BaseManager
     public function hasChild($parent, $child)
     {
         return (new Query())
-            ->from($this->itemChildTable)
-            ->where(['parent' => $parent->name, 'child' => $child->name])
-            ->one($this->db) !== false;
+                ->from($this->itemChildTable)
+                ->where(['parent' => $parent->name, 'child' => $child->name])
+                ->one($this->db) !== false;
     }
 
     /**
@@ -866,12 +897,14 @@ class DbManager extends BaseManager
             'createdAt' => time(),
         ]);
 
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->insert($this->assignmentTable, [
                 'user_id' => $assignment->userId,
                 'item_name' => $assignment->roleName,
                 'created_at' => $assignment->createdAt,
-            ])->execute();
+            ])
+            ->execute();
 
         unset($this->_checkAccessAssignments[(string) $userId]);
 
@@ -889,9 +922,10 @@ class DbManager extends BaseManager
 
         unset($this->_checkAccessAssignments[(string) $userId]);
 
-        return $this->db->createCommand()
-            ->delete($this->assignmentTable, ['user_id' => (string) $userId, 'item_name' => $role->name])
-            ->execute() > 0;
+        return $this->db
+                ->createCommand()
+                ->delete($this->assignmentTable, ['user_id' => (string) $userId, 'item_name' => $role->name])
+                ->execute() > 0;
     }
 
     /**
@@ -905,9 +939,10 @@ class DbManager extends BaseManager
 
         unset($this->_checkAccessAssignments[(string) $userId]);
 
-        return $this->db->createCommand()
-            ->delete($this->assignmentTable, ['user_id' => (string) $userId])
-            ->execute() > 0;
+        return $this->db
+                ->createCommand()
+                ->delete($this->assignmentTable, ['user_id' => (string) $userId])
+                ->execute() > 0;
     }
 
     /**
@@ -916,9 +951,18 @@ class DbManager extends BaseManager
     public function removeAll()
     {
         $this->removeAllAssignments();
-        $this->db->createCommand()->delete($this->itemChildTable)->execute();
-        $this->db->createCommand()->delete($this->itemTable)->execute();
-        $this->db->createCommand()->delete($this->ruleTable)->execute();
+        $this->db
+            ->createCommand()
+            ->delete($this->itemChildTable)
+            ->execute();
+        $this->db
+            ->createCommand()
+            ->delete($this->itemTable)
+            ->execute();
+        $this->db
+            ->createCommand()
+            ->delete($this->ruleTable)
+            ->execute();
         $this->invalidateCache();
     }
 
@@ -955,14 +999,17 @@ class DbManager extends BaseManager
                 return;
             }
             $key = $type == Item::TYPE_PERMISSION ? 'child' : 'parent';
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->delete($this->itemChildTable, [$key => $names])
                 ->execute();
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->delete($this->assignmentTable, ['item_name' => $names])
                 ->execute();
         }
-        $this->db->createCommand()
+        $this->db
+            ->createCommand()
             ->delete($this->itemTable, ['type' => $type])
             ->execute();
 
@@ -975,12 +1022,16 @@ class DbManager extends BaseManager
     public function removeAllRules()
     {
         if (!$this->supportsCascadeUpdate()) {
-            $this->db->createCommand()
+            $this->db
+                ->createCommand()
                 ->update($this->itemTable, ['rule_name' => null])
                 ->execute();
         }
 
-        $this->db->createCommand()->delete($this->ruleTable)->execute();
+        $this->db
+            ->createCommand()
+            ->delete($this->ruleTable)
+            ->execute();
 
         $this->invalidateCache();
     }
@@ -991,7 +1042,10 @@ class DbManager extends BaseManager
     public function removeAllAssignments()
     {
         $this->_checkAccessAssignments = [];
-        $this->db->createCommand()->delete($this->assignmentTable)->execute();
+        $this->db
+            ->createCommand()
+            ->delete($this->assignmentTable)
+            ->execute();
     }
 
     public function invalidateCache()
@@ -1061,9 +1115,11 @@ class DbManager extends BaseManager
             return [];
         }
 
-        return (new Query())->select('[[user_id]]')
+        return (new Query())
+            ->select('[[user_id]]')
             ->from($this->assignmentTable)
-            ->where(['item_name' => $roleName])->column($this->db);
+            ->where(['item_name' => $roleName])
+            ->column($this->db);
     }
 
     /**
