@@ -56,5 +56,11 @@
     "scripts": {
         "test": "phpunit --testdox --no-interaction",
         "test-watch": "phpunit-watcher watch"
-    }
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/yiisoft/rbac.git"
+        }
+    ]
 }
