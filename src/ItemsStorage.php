@@ -395,9 +395,9 @@ final class ItemsStorage implements ItemsStorageInterface
                     'parents' => (new Query($database))
                         ->select('parent')
                         ->distinct()
-                        ->from($itemsStorage->childrenTableName)
+                        ->from($itemsStorage->childrenTableName),
                 ])
-                ->leftJoin(['parent_items' => $itemsStorage->tableName] , ['parent_items.name' => 'parents.parent'])
+                ->leftJoin(['parent_items' => $itemsStorage->tableName], ['parent_items.name' => 'parents.parent'])
                 ->where(['parent_items.type' => $type]);
             $childrenSubQuery = (new Query($database))
                 ->select('children.child')
@@ -405,7 +405,7 @@ final class ItemsStorage implements ItemsStorageInterface
                     'children' => (new Query($database))
                         ->select('child')
                         ->distinct()
-                        ->from($itemsStorage->childrenTableName)
+                        ->from($itemsStorage->childrenTableName),
                 ])
                 ->leftJoin(['child_items' => $itemsStorage->tableName], ['child_items.name' => 'children.child'])
                 ->where(['child_items.type' => $type]);
