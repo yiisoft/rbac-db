@@ -22,7 +22,7 @@
         "php": "^8.0",
         "symfony/console": "^5.3|^6.0",
         "yiisoft/db": "dev-master",
-        "yiisoft/rbac": "^1.0"
+        "yiisoft/rbac": "dev-extract-common-db-tests"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
@@ -42,7 +42,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\Rbac\\Db\\Tests\\": "tests"
+            "Yiisoft\\Rbac\\Db\\Tests\\": "tests",
+            "Yiisoft\\Rbac\\Tests\\": "vendor/yiisoft/rbac/tests"
         }
     },
     "config": {
