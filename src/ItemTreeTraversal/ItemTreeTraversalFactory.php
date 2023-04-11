@@ -37,33 +37,31 @@ class ItemTreeTraversalFactory
         $arguments = [$database, $tableName, $childrenTableName];
         $driver = $database->getDriverName();
 
-        return new SqliteCteItemTreeTraversal(...$arguments);
+        if ($driver === 'sqlite') {
+            return new SqliteCteItemTreeTraversal(...$arguments);
+        }
 
-//        if ($driver instanceof SQLiteDriver) {
-//            return new SqliteCteItemTreeTraversal(...$arguments);
-//        }
-//
-//        if ($driver instanceof MySQLDriver) {
-//            /** @psalm-var array{version: string} $row */
-//            $row = $database->query('SELECT VERSION() AS version')->fetch();
-//            $version = $row['version'];
-//
-//            return str_starts_with($version, '5')
-//                ? new MysqlItemTreeTraversal(...$arguments)
-//                : new MysqlCteItemTreeTraversal(...$arguments);
-//        }
-//
-//        if ($driver instanceof PostgresDriver) {
-//            return new PostgresCteItemTreeTraversal(...$arguments);
-//        }
-//
-//        if ($driver instanceof SQLServerDriver) {
-//            return new SqlserverCteItemTreeTraversal(...$arguments);
-//        }
+        if ($driver === 'mysql') {
+            /** @psalm-var array{version: string} $row */
+            $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
+            $version = $row['version'];
+
+            return str_starts_with($version, '5')
+                ? new MysqlItemTreeTraversal(...$arguments)
+                : new MysqlCteItemTreeTraversal(...$arguments);
+        }
+
+        if ($driver === 'pgsql') {
+            return new PostgresCteItemTreeTraversal(...$arguments);
+        }
+
+        if ($driver === 'mssql') {
+            return new SqlserverCteItemTreeTraversal(...$arguments);
+        }
 
         // Ignored due to a complexity of testing and preventing splitting of database argument.
         // @codeCoverageIgnoreStart
-        throw new RuntimeException("{$driver->getType()} database driver is not supported.");
+        throw new RuntimeException("$driver database driver is not supported.");
         // @codeCoverageIgnoreEnd
     }
 }
