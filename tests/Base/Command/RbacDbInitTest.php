@@ -255,7 +255,7 @@ abstract class RbacDbInitTest extends TestCase
         $this->assertFalse($createdAt->isAllowNull());
 
         $this->assertSame(['itemName', 'userId'], $table->getPrimaryKey());
-        $this->assertSame([['auth_item', 'itemName' => 'name']], $table->getForeignKeys());
+        $this->assertSame([['auth_item', 'itemName' => 'name']], array_values($table->getForeignKeys()));
     }
 
     private function checkItemsChildrenTable(): void
