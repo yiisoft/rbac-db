@@ -37,7 +37,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
     {
         $sql = "SELECT DISTINCT item.* FROM (
             SELECT @r AS child_name,
-            (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name) AS parent,
+            (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent,
             @l := @l + 1 AS level
             FROM (SELECT @r := :name, @l := 0) val, $this->childrenTableName
         ) s
