@@ -24,5 +24,8 @@
         <testsuite name="Sqlite">
             <directory>./tests/Sqlite</directory>
         </testsuite>
+        <testsuite name="Mysql">
+            <directory>./tests/Mysql</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
