@@ -6,7 +6,7 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Db\AssignmentsStorage;
-use Yiisoft\Rbac\Tests\Db\AssignmentsStorageTestTrait;
+use Yiisoft\Rbac\Tests\Common\AssignmentsStorageTestTrait;
 
 abstract class AssignmentsStorageTest extends TestCase
 {

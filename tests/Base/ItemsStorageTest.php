@@ -7,7 +7,7 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Rbac\Db\ItemsStorage;
 use Yiisoft\Rbac\ItemsStorageInterface;
-use Yiisoft\Rbac\Tests\Db\ItemsStorageTestTrait;
+use Yiisoft\Rbac\Tests\Common\ItemsStorageTestTrait;
 
 abstract class ItemsStorageTest extends TestCase
 {

@@ -21,7 +21,7 @@
     "require": {
         "php": "^8.0",
         "symfony/console": "^5.3|^6.0",
-        "yiisoft/db": "dev-master",
+        "yiisoft/db": "^1.0",
         "yiisoft/rbac": "dev-extract-common-db-tests"
     },
     "require-dev": {
@@ -33,7 +33,7 @@
         "spatie/phpunit-watcher": "^1.23",
         "vimeo/psalm": "^4.30|^5.2",
         "yiisoft/cache": "^3.0",
-        "yiisoft/db-sqlite": "dev-master"
+        "yiisoft/db-sqlite": "^1.0"
     },
     "autoload": {
         "psr-4": {
