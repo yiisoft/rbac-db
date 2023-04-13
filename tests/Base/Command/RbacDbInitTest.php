@@ -282,7 +282,7 @@ abstract class RbacDbInitTest extends TestCase
         $this->assertSame(['parent', 'child'], $table->getPrimaryKey());
         $this->assertEquals(
             [['auth_item', 'child' => 'name'], ['auth_item', 'parent' => 'name']],
-            $table->getForeignKeys(),
+            array_values($table->getForeignKeys()),
         );
     }
 }
