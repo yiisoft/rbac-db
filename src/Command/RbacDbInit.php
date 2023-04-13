@@ -136,11 +136,9 @@ final class RbacDbInit extends Command
             ->createTable(
                 $this->itemsChildrenTable,
                 [
-                    'parent' => 'string(128) NOT NULL',
-                    'child' => 'string(128) NOT NULL',
+                    'parent' => "string(128) NOT NULL REFERENCES $this->itemsTable (name)",
+                    'child' => "string(128) NOT NULL REFERENCES $this->itemsTable (name)",
                     'PRIMARY KEY (parent, child)',
-                    "FOREIGN KEY (parent) REFERENCES $this->itemsTable (name)",
-                    "FOREIGN KEY (child) REFERENCES $this->itemsTable (name)",
                 ],
             )
             ->execute();
@@ -159,11 +157,10 @@ final class RbacDbInit extends Command
             ->createTable(
                 $this->assignmentsTable,
                 [
-                    'itemName' => 'string(128) NOT NULL',
+                    'itemName' => "string(128) NOT NULL REFERENCES $this->itemsTable (name)",
                     'userId' => 'string(128) NOT NULL',
                     'createdAt' => 'integer NOT NULL',
                     'PRIMARY KEY (itemName, userId)',
-                    "FOREIGN KEY (itemName) REFERENCES $this->itemsTable (name)",
                 ],
             )
             ->execute();
