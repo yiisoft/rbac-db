@@ -55,7 +55,7 @@ class ItemTreeTraversalFactory
             return new PostgresCteItemTreeTraversal(...$arguments);
         }
 
-        if ($driver === 'mssql') {
+        if ($driver === 'sqlsrv') {
             return new SqlserverCteItemTreeTraversal(...$arguments);
         }
 
