@@ -160,7 +160,7 @@ final class RbacDbInit extends Command
                     'itemName' => "string(128) NOT NULL REFERENCES $this->itemsTable (name)",
                     'userId' => 'string(128) NOT NULL',
                     'createdAt' => 'integer NOT NULL',
-                    'PRIMARY KEY (itemName, userId)',
+                    'PRIMARY KEY ("itemName", "userId")',
                 ],
             )
             ->execute();
