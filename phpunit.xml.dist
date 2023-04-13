@@ -27,5 +27,8 @@
         <testsuite name="Mysql">
             <directory>./tests/Mysql</directory>
         </testsuite>
+        <testsuite name="Pgsql">
+            <directory>./tests/Pgsql</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
