@@ -140,7 +140,7 @@ final class RbacDbInit extends Command
                     'child' => 'string(128) NOT NULL',
                     'PRIMARY KEY ([[parent]], [[child]])',
                     'FOREIGN KEY ([[parent]]) REFERENCES {{%' . $this->itemsTable . '}} ([[name]])',
-                    'FOREIGN KEY ([[child]]) REFERENCES {{{%' . $this->itemsTable . '}} ([[name]])',
+                    'FOREIGN KEY ([[child]]) REFERENCES {{%' . $this->itemsTable . '}} ([[name]])',
                 ],
             )
             ->execute();
