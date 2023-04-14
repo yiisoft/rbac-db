@@ -64,7 +64,7 @@ class ItemTreeTraversalFactory
      *
      * @return MysqlCteItemTreeTraversal|MysqlItemTreeTraversal Item tree traversal strategy.
      */
-    private static function getMysqlItemTreeTraversal(ConnectionInterface $database, array $arguments)
+    private static function getMysqlItemTreeTraversal(ConnectionInterface $database, array $arguments): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal
     {
         /** @psalm-var array{version: string} $row */
         $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
