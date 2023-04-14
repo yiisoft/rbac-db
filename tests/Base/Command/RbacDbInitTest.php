@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
+use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Rbac\Db\Command\RbacDbInit;
 use Yiisoft\Rbac\Db\Tests\Base\TestCase;
 
@@ -181,7 +182,8 @@ abstract class RbacDbInitTest extends TestCase
     private function checkItemsTable(): void
     {
         $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ITEMS_TABLE);
+        $databaseSchema = $database->getSchema();
+        $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE);
 
         $this->assertTrue($table !== null);
 
@@ -196,7 +198,6 @@ abstract class RbacDbInitTest extends TestCase
         $this->assertArrayHasKey('type', $columns);
         $type = $columns['type'];
         $this->assertSame('string', $type->getType());
-//        $this->assertEqualsCanonicalizing([Item::TYPE_ROLE, Item::TYPE_PERMISSION], $type->getEnumValues());
         $this->assertFalse($type->isAllowNull());
 
         $this->assertArrayHasKey('description', $columns);
@@ -221,9 +222,11 @@ abstract class RbacDbInitTest extends TestCase
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
-//        $this->assertCount(1, $table->getIndexes());
-//        $index = array_values($table->getIndexes())[0];
-//        $this->assertSame(['type'], $index->getColumns());
+        $indexes = $databaseSchema->getTableIndexes(self::ITEMS_TABLE);
+        $this->assertCount(1, $indexes);
+        /** @var IndexConstraint $index */
+        $index = $indexes[0];
+        $this->assertSame(['type'], $index->getColumnNames());
 
         $this->assertSame(['name'], $table->getPrimaryKey());
     }
