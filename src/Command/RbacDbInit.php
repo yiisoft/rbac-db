@@ -120,7 +120,11 @@ final class RbacDbInit extends Command
                 ],
             )
             ->execute();
-        $this->database->createCommand()->createIndex($this->itemsTable, "idx-$this->itemsTable-type", 'type');
+        $this
+            ->database
+            ->createCommand()
+            ->createIndex($this->itemsTable, "idx-$this->itemsTable-type", 'type')
+            ->execute();
     }
 
     /**

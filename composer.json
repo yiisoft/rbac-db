@@ -35,6 +35,13 @@
         "yiisoft/cache": "^3.0",
         "yiisoft/db-sqlite": "^1.0"
     },
+    "suggest": {
+        "yiisoft/db-sqlite": "For using with SQLite",
+        "yiisoft/db-mysql": "For using with MySQL",
+        "yiisoft/db-pgsql": "For using with PosgtgreSQL",
+        "yiisoft/db-mssql": "For using with Microsoft SQL Server",
+        "yiisoft/db-oracle": "For using with Oracle"
+    },
     "autoload": {
         "psr-4": {
             "Yiisoft\\Rbac\\Db\\": "src"

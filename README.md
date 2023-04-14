@@ -20,7 +20,12 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 ## Requirements
 
 - PHP 8.0 or higher.
-- In case of using with SQLite, minimal required version is 3.8.3.
+- One of the following drivers:
+  - [SQLite](https://github.com/yiisoft/sqlite) (minimal required version is 3.8.3)
+  - [MySQL](https://github.com/yiisoft/mysql)
+  - [PostgreSQL](https://github.com/yiisoft/pgsql)
+  - [Microsoft SQL Server](https://github.com/yiisoft/mssql)
+  - [Oracle](https://github.com/yiisoft/oracle)
 
 ## Installation
 

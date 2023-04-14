@@ -222,11 +222,15 @@ abstract class RbacDbInitTest extends TestCase
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
+        /** @var IndexConstraint[] $indexes */
         $indexes = $databaseSchema->getTableIndexes(self::ITEMS_TABLE);
-        $this->assertCount(1, $indexes);
-        /** @var IndexConstraint $index */
-        $index = $indexes[0];
-        $this->assertSame(['type'], $index->getColumnNames());
+        $this->assertCount(2, $indexes);
+        $expectedIndexColumnNames = ['type', 'name'];
+        foreach ($indexes as $index) {
+            $columnNames = $index->getColumnNames();
+            $this->assertCount(1, $columnNames);
+            $this->assertContains($columnNames[0], $expectedIndexColumnNames);
+        }
 
         $this->assertSame(['name'], $table->getPrimaryKey());
     }
