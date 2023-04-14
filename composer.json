@@ -19,6 +19,7 @@
         "source": "https://github.com/yiisoft/rbac-db"
     },
     "require": {
+        "ext-pdo": "*",
         "php": "^8.0",
         "symfony/console": "^5.3|^6.0",
         "yiisoft/db": "^1.0",
