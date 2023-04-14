@@ -37,6 +37,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getParentRows(string $name): array
     {
+        /** @psalm-suppress PossiblyNullReference */
         $itemNameColumn = $this->database->getSchema()->getTableSchema($this->tableName)->getColumns()['name'];
         $itemNameColumnType = $this->getCastedNameType($itemNameColumn);
         $sql = "{$this->getWithExpression()} parent_of(child_name) AS (
@@ -58,6 +59,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getChildrenRows(string $name): array
     {
+        /** @psalm-suppress PossiblyNullReference */
         $itemNameColumn = $this->database->getSchema()->getTableSchema($this->tableName)->getColumns()['name'];
         $itemNameColumnType = $this->getCastedNameType($itemNameColumn);
         $sql = "{$this->getWithExpression()} child_of(parent_name) AS (
@@ -102,6 +104,6 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
      */
     protected function getCastedNameType(ColumnSchemaInterface $column): string
     {
-        return $column->getDbType();
+        return (string) $column->getDbType();
     }
 }

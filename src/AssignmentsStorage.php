@@ -72,7 +72,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function get(string $itemName, string $userId): ?Assignment
     {
-        /** @psalm-var RawAssignment|false $row */
+        /** @psalm-var RawAssignment|null $row */
         $row = (new Query($this->database))
             ->from($this->tableName)
             ->where(['itemName' => $itemName, 'userId' => $userId])
