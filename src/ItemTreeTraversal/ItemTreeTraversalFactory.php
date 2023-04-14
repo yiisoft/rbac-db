@@ -42,7 +42,7 @@ class ItemTreeTraversalFactory
             'mysql' => self::getMysqlItemTreeTraversal($database, $arguments),
             'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
             'sqlsrv' => new SqlserverCteItemTreeTraversal(...$arguments),
-            'oracle' => new OracleCteItemTreeTraversal(...$arguments),
+            'oci' => new OracleCteItemTreeTraversal(...$arguments),
             // Ignored due to a complexity of testing and preventing splitting of database argument.
             // @codeCoverageIgnoreStart
             default => throw new RuntimeException("$driver database driver is not supported."),
