@@ -37,31 +37,41 @@ class ItemTreeTraversalFactory
         $arguments = [$database, $tableName, $childrenTableName];
         $driver = $database->getDriverName();
 
-        if ($driver === 'sqlite') {
-            return new SqliteCteItemTreeTraversal(...$arguments);
-        }
+        return match ($driver) {
+            'sqlite' => new SqliteCteItemTreeTraversal(...$arguments),
+            'mysql' => self::getMysqlItemTreeTraversal($database, $arguments),
+            'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
+            'sqlsrv' => new SqlserverCteItemTreeTraversal(...$arguments),
+            'oracle' => new OracleCteItemTreeTraversal(...$arguments),
+            // Ignored due to a complexity of testing and preventing splitting of database argument.
+            // @codeCoverageIgnoreStart
+            default => throw new RuntimeException("$driver database driver is not supported."),
+            // @codeCoverageIgnoreEnd
+        };
+    }
 
-        if ($driver === 'mysql') {
-            /** @psalm-var array{version: string} $row */
-            $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
-            $version = $row['version'];
+    /**
+     * Creates item tree traversal strategy for MySQL depending on its version.
+     *
+     * @param ConnectionInterface $database Yii Database connection instance.
+     *
+     * @param array $arguments Arguments for instantiating item tree traversal object.
+     * @psalm-param list{
+     *     0: ConnectionInterface,
+     *     1: non-empty-string,
+     *     2: non-empty-string
+     * } $arguments
+     *
+     * @return MysqlCteItemTreeTraversal|MysqlItemTreeTraversal Item tree traversal strategy.
+     */
+    private static function getMysqlItemTreeTraversal(ConnectionInterface $database, array $arguments)
+    {
+        /** @psalm-var array{version: string} $row */
+        $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
+        $version = $row['version'];
 
-            return str_starts_with($version, '5')
-                ? new MysqlItemTreeTraversal(...$arguments)
-                : new MysqlCteItemTreeTraversal(...$arguments);
-        }
-
-        if ($driver === 'pgsql') {
-            return new PostgresCteItemTreeTraversal(...$arguments);
-        }
-
-        if ($driver === 'sqlsrv') {
-            return new SqlserverCteItemTreeTraversal(...$arguments);
-        }
-
-        // Ignored due to a complexity of testing and preventing splitting of database argument.
-        // @codeCoverageIgnoreStart
-        throw new RuntimeException("$driver database driver is not supported.");
-        // @codeCoverageIgnoreEnd
+        return str_starts_with($version, '5')
+            ? new MysqlItemTreeTraversal(...$arguments)
+            : new MysqlCteItemTreeTraversal(...$arguments);
     }
 }
