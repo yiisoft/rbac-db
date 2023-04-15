@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
 
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Schema\ColumnSchemaInterface;
 use Yiisoft\Rbac\Db\ItemsStorage;
 
 /**
