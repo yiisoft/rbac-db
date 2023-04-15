@@ -9,7 +9,7 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  *
  * @internal
  */
-final class SqlserverCteItemTreeTraversal extends CteItemTreeTraversal
+final class MssqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
     public function getWithExpression(): string
     {

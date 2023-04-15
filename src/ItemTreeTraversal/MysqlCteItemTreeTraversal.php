@@ -14,8 +14,4 @@ use Yiisoft\Db\Schema\ColumnSchemaInterface;
  */
 final class MysqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
-    protected function getCastedNameType(ColumnSchemaInterface $column): string
-    {
-        return "char({$column->getSize()})";
-    }
 }

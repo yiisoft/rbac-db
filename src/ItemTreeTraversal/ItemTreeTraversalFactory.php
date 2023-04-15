@@ -41,7 +41,7 @@ class ItemTreeTraversalFactory
             'sqlite' => new SqliteCteItemTreeTraversal(...$arguments),
             'mysql' => self::getMysqlItemTreeTraversal($database, $arguments),
             'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
-            'sqlsrv' => new SqlserverCteItemTreeTraversal(...$arguments),
+            'sqlsrv' => new MssqlCteItemTreeTraversal(...$arguments),
             'oci' => new OracleCteItemTreeTraversal(...$arguments),
             // Ignored due to a complexity of testing and preventing splitting of database argument.
             // @codeCoverageIgnoreStart

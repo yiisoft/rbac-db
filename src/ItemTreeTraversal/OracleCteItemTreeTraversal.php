@@ -11,4 +11,8 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
 {
+    public function getWithExpression(): string
+    {
+        return 'WITH';
+    }
 }
