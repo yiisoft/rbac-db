@@ -397,7 +397,10 @@ final class ItemsStorage implements ItemsStorageInterface
                         ->distinct()
                         ->from($itemsStorage->childrenTableName),
                 ])
-                ->leftJoin(['parent_items' => $itemsStorage->tableName], 'parent_items.name = parents.parent')
+                ->leftJoin(
+                    ['parent_items' => $itemsStorage->tableName],
+                    '{{%parent_items}}.[[name]] = {{%parents}}.[[parent]]',
+                )
                 ->where(['parent_items.type' => $type]);
             $childrenSubQuery = (new Query($database))
                 ->select('children.child')
@@ -407,7 +410,10 @@ final class ItemsStorage implements ItemsStorageInterface
                         ->distinct()
                         ->from($itemsStorage->childrenTableName),
                 ])
-                ->leftJoin(['child_items' => $itemsStorage->tableName], 'child_items.name = children.child')
+                ->leftJoin(
+                    ['child_items' => $itemsStorage->tableName],
+                    '{{%child_items}}.[[name]] = {{%children}}.[[child]]',
+                )
                 ->where(['child_items.type' => $type]);
             $database
                 ->createCommand()
