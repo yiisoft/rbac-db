@@ -39,7 +39,7 @@ class ItemTreeTraversalFactory
 
         return match ($driver) {
             'sqlite' => new SqliteCteItemTreeTraversal(...$arguments),
-            'mysql' => self::getMysqlItemTreeTraversal($database, $arguments),
+            'mysql' => self::getMysqlItemTreeTraversal($database, $tableName, $childrenTableName),
             'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
             'sqlsrv' => new MssqlCteItemTreeTraversal(...$arguments),
             'oci' => new OracleCteItemTreeTraversal(...$arguments),
@@ -55,20 +55,20 @@ class ItemTreeTraversalFactory
      *
      * @param ConnectionInterface $database Yii Database connection instance.
      *
-     * @param array $arguments Arguments for instantiating item tree traversal object.
-     * @psalm-param list{
-     *     0: ConnectionInterface,
-     *     1: non-empty-string,
-     *     2: non-empty-string
-     * } $arguments
+     * @param string $tableName A name of the table for storing RBAC items.
+     * @psalm-param non-empty-string $tableName
+     *
+     * @param string $childrenTableName A name of the table for storing relations between RBAC items.
+     * @psalm-param non-empty-string $childrenTableName
      *
      * @return MysqlCteItemTreeTraversal|MysqlItemTreeTraversal Item tree traversal strategy.
      */
-    private static function getMysqlItemTreeTraversal(ConnectionInterface $database, array $arguments): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal
+    private static function getMysqlItemTreeTraversal($database, $tableName, $childrenTableName): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal
     {
         /** @psalm-var array{version: string} $row */
         $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
         $version = $row['version'];
+        $arguments = [$database, $tableName, $childrenTableName];
 
         return str_starts_with($version, '5')
             ? new MysqlItemTreeTraversal(...$arguments)
