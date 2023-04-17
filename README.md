@@ -50,7 +50,7 @@ can be added to force dropping of existing tables and recreate them:
 rbac/db/init --force
 ```
 
-> **Note:** All existing data will be erased as well.
+> Note: All existing data will be erased.
 
 ## Testing
 
