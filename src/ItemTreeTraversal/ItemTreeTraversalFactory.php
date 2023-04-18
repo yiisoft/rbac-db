@@ -25,8 +25,8 @@ class ItemTreeTraversalFactory
      * @param string $childrenTableName A name of the table for storing relations between RBAC items.
      * @psalm-param non-empty-string $childrenTableName
      *
-     * @throws RuntimeException When a database was configured with unknown driver, either not supported by Yii Database
-     * out of the box or newly added by Yii Database and not supported / tested yet in this package.
+     * @throws RuntimeException When a database was configured with unknown driver, either because it is not supported
+     * by Yii Database out of the box or newly added by Yii Database and not supported / tested yet in this package.
      * @return ItemTreeTraversalInterface Item tree traversal strategy.
      */
     public static function getItemTreeTraversal(
