@@ -204,7 +204,7 @@ final class RbacDbInit extends Command
     }
 
     /**
-     * Basic method for dropping RBAC related table. When a table already exists, dropping is skipped. Operations are
+     * Basic method for dropping RBAC related table. When a table doesn't exist, dropping is skipped. Operations are
      * accompanied by explanations printed to console.
      *
      * @param string $tableName A name of created table.
