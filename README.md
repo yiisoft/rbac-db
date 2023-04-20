@@ -11,11 +11,20 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/rbac-db/v/stable.png)](https://packagist.org/packages/yiisoft/rbac-db)
 [![Total Downloads](https://poser.pugx.org/yiisoft/rbac-db/downloads.png)](https://packagist.org/packages/yiisoft/rbac-db)
-[![Build status](https://github.com/yiisoft/rbac-db/workflows/build/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Abuild)
+[![Build status (SQLite)](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite)
+[![Build status](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/rbac-db/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-db/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/rbac-db/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-db/?branch=master)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frbac-db%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/rbac-db/master)
 [![static analysis](https://github.com/yiisoft/rbac-db/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3A%22static+analysis%22)
+
+[![Latest Stable Version](https://poser.pugx.org/yiisoft/rbac-cycle-db/v/stable.png)](https://packagist.org/packages/yiisoft/rbac-cycle-db)
+[![Total Downloads](https://poser.pugx.org/yiisoft/rbac-cycle-db/downloads.png)](https://packagist.org/packages/yiisoft/rbac-cycle-db)
+[![Build status](https://github.com/yiisoft/rbac-cycle-db/workflows/build/badge.svg)](https://github.com/yiisoft/rbac-cycle-db/actions?query=workflow%3Abuild)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/rbac-cycle-db/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-cycle-db/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/rbac-cycle-db/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-cycle-db/?branch=master)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frbac-cycle-db%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/rbac-cycle-db/master)
+[![static analysis](https://github.com/yiisoft/rbac-cycle-db/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/rbac-cycle-db/actions?query=workflow%3A%22static+analysis%22)
 
 ## Requirements
 
