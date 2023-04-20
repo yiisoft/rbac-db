@@ -37,17 +37,17 @@ class ItemTreeTraversalFactory
         $arguments = [$database, $tableName, $childrenTableName];
         $driver = $database->getDriverName();
 
+        // default - ignored due to a complexity of testing and preventing splitting of database argument.
+        // @codeCoverageIgnoreStart
         return match ($driver) {
             'sqlite' => new SqliteCteItemTreeTraversal(...$arguments),
             'mysql' => self::getMysqlItemTreeTraversal($database, $tableName, $childrenTableName),
             'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
             'sqlsrv' => new MssqlCteItemTreeTraversal(...$arguments),
             'oci' => new OracleCteItemTreeTraversal(...$arguments),
-            // Ignored due to a complexity of testing and preventing splitting of database argument.
-            // @codeCoverageIgnoreStart
             default => throw new RuntimeException("$driver database driver is not supported."),
-            // @codeCoverageIgnoreEnd
         };
+        // @codeCoverageIgnoreEnd
     }
 
     /**
