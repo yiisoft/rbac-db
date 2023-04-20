@@ -44,7 +44,7 @@ rbac/db/init
 ```
 
 By default, when called repeatedly, the creation of tables will be skipped if they are already exist. The `--force` flag
-can be added to force dropping of existing tables and recreate them:
+can be added to force drop existing tables and recreate them:
 
 ```shell
 rbac/db/init --force
