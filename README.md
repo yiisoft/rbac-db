@@ -22,11 +22,11 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 - PHP 8.0 or higher.
 - `PDO` PHP extension.
 - One of the following drivers:
-  - [SQLite](https://github.com/yiisoft/sqlite) (minimal required version is 3.8.3)
-  - [MySQL](https://github.com/yiisoft/mysql)
-  - [PostgreSQL](https://github.com/yiisoft/pgsql)
-  - [Microsoft SQL Server](https://github.com/yiisoft/mssql)
-  - [Oracle](https://github.com/yiisoft/oracle)
+  - [SQLite](https://github.com/yiisoft/db-sqlite) (minimal required version is 3.8.3)
+  - [MySQL](https://github.com/yiisoft/db-mysql)
+  - [PostgreSQL](https://github.com/yiisoft/db-pgsql)
+  - [Microsoft SQL Server](https://github.com/yiisoft/db-mssql)
+  - [Oracle](https://github.com/yiisoft/db-oracle)
 - `PDO` PHP extension for the selected driver.
 
 ## Installation
