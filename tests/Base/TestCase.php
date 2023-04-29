@@ -8,7 +8,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Rbac\Command\RbacDbInit;
+use Yiisoft\Rbac\Db\Command\RbacDbInit;
 use Yiisoft\Rbac\Db\SchemaManager;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
