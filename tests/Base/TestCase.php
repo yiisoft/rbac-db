@@ -8,7 +8,8 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Rbac\Db\Command\RbacDbInit;
+use Yiisoft\Rbac\Command\RbacDbInit;
+use Yiisoft\Rbac\Db\SchemaManager;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -54,12 +55,13 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function createApplication(string|null $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE): Application
     {
         $app = new Application();
-        $command = new RbacDbInit(
+        $schemaManager = new SchemaManager(
             itemsTable: self::ITEMS_TABLE,
             assignmentsTable: self::ASSIGNMENTS_TABLE,
             database: $this->getDatabase(),
             itemsChildrenTable: $itemsChildrenTable,
         );
+        $command = new RbacDbInit($schemaManager);
         $app->add($command);
 
         return $app;

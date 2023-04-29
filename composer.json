@@ -23,7 +23,7 @@
         "php": "^8.0",
         "symfony/console": "^5.3|^6.0",
         "yiisoft/db": "^1.0",
-        "yiisoft/rbac": "^1.0.2"
+        "yiisoft/rbac": "dev-schema-manager"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",

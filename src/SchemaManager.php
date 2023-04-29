@@ -2,23 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Rbac\Db\Command;
+namespace Yiisoft\Rbac\Db;
 
 use InvalidArgumentException;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Schema\SchemaInterface;
 use Yiisoft\Db\Sqlite\Column;
+use Yiisoft\Rbac\SchemaManagerInterface;
 
-/**
- * Command for creating RBAC related database tables using Yii Database.
- */
-final class RbacDbInit extends Command
+final class SchemaManager implements SchemaManagerInterface
 {
-    protected static $defaultName = 'rbac/db/init';
-
     /**
      * @var string A name of the table for storing RBAC items (roles and permissions).
      * @psalm-var non-empty-string
@@ -67,35 +60,6 @@ final class RbacDbInit extends Command
         }
 
         $this->itemsChildrenTable = $itemsChildrenTable ?? $this->itemsTable . '_child';
-
-        parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Create RBAC schemas')
-            ->setHelp('This command creates schemas for RBAC using Yii Database')
-            ->addOption(name: 'force', shortcut: 'f', description: 'Force recreation of schemas if they exist');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        /** @var bool $force */
-        $force = $input->getOption('force');
-        if ($force === true) {
-            $this->dropTable($this->itemsChildrenTable, $output);
-            $this->dropTable($this->assignmentsTable, $output);
-            $this->dropTable($this->itemsTable, $output);
-        }
-
-        $this->createTable($this->itemsTable, $output);
-        $this->createTable($this->itemsChildrenTable, $output);
-        $this->createTable($this->assignmentsTable, $output);
-
-        $output->writeln('<fg=green>DONE</>');
-
-        return Command::SUCCESS;
     }
 
     /**
@@ -103,7 +67,7 @@ final class RbacDbInit extends Command
      *
      * @see $itemsTable
      */
-    private function createItemsTable(): void
+    public function createItemsTable(): void
     {
         $this
             ->database
@@ -132,7 +96,7 @@ final class RbacDbInit extends Command
      *
      * @see $itemsChildrenTable
      */
-    private function createItemsChildrenTable(): void
+    public function createItemsChildrenTable(): void
     {
         $this
             ->database
@@ -155,7 +119,7 @@ final class RbacDbInit extends Command
      *
      * @see $assignmentsTable
      */
-    private function createAssignmentsTable(): void
+    public function createAssignmentsTable(): void
     {
         $this
             ->database
@@ -173,59 +137,46 @@ final class RbacDbInit extends Command
             ->execute();
     }
 
-    /**
-     * Basic method for creating RBAC related table. When a table already exists, creation is skipped. Operations are
-     * accompanied by explanations printed to console.
-     *
-     * @param string $tableName A name of created table.
-     * @psalm-param non-empty-string $tableName
-     *
-     * @param OutputInterface $output Output for writing messages.
-     */
-    private function createTable(string $tableName, OutputInterface $output): void
+    public function tableExists(string $tableName): bool
     {
-        $output->writeln("<fg=blue>Checking existence of `$tableName` table...</>");
-
-        if ($this->database->getSchema()->getTableSchema($tableName) !== null) {
-            $output->writeln("<bg=yellow>`$tableName` table already exists. Skipped creating.</>");
-
-            return;
-        }
-
-        $output->writeln("<fg=blue>`$tableName` table doesn't exist. Creating...</>");
-
-        match ($tableName) {
-            $this->itemsTable => $this->createItemsTable(),
-            $this->assignmentsTable => $this->createAssignmentsTable(),
-            $this->itemsChildrenTable => $this->createItemsChildrenTable(),
-        };
-
-        $output->writeln("<bg=green>`$tableName` table has been successfully created.</>");
+        return $this->database->getSchema()->getTableSchema($tableName) !== null;
     }
 
-    /**
-     * Basic method for dropping RBAC related table. When a table doesn't exist, dropping is skipped. Operations are
-     * accompanied by explanations printed to console.
-     *
-     * @param string $tableName A name of created table.
-     * @psalm-param non-empty-string $tableName
-     *
-     * @param OutputInterface $output Output for writing messages.
-     */
-    private function dropTable(string $tableName, OutputInterface $output): void
+    public function dropTable(string $tableName): void
     {
-        $output->writeln("<fg=blue>Checking existence of `$tableName` table...</>");
+        $this->database->createCommand()->dropTable($tableName)->execute();
+    }
 
-        if ($this->database->getSchema()->getTableSchema($tableName) === null) {
-            $output->writeln("<bg=yellow>`$tableName` table doesn't exist. Skipped dropping.</>");
-
-            return;
+    public function createAll(bool $force = true): void
+    {
+        if ($force === true) {
+            $this->dropAll();
         }
 
-        $output->writeln("<fg=blue>`$tableName` table exists. Dropping...</>");
+        $this->createItemsTable();
+        $this->createItemsChildrenTable();
+        $this->createAssignmentsTable();
+    }
 
-        $this->database->createCommand()->dropTable($tableName)->execute();
+    public function dropAll(): void
+    {
+        $this->dropTable($this->itemsChildrenTable);
+        $this->dropTable($this->assignmentsTable);
+        $this->dropTable($this->itemsTable);
+    }
 
-        $output->writeln("<bg=green>`$tableName` table has been successfully dropped.</>");
+    public function getItemsTable(): string
+    {
+        return $this->itemsTable;
+    }
+
+    public function getAssignmentsTable(): string
+    {
+        return $this->assignmentsTable;
+    }
+
+    public function getItemsChildrenTable(): string
+    {
+        return $this->itemsChildrenTable;
     }
 }

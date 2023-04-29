@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Rbac\Db\Command\RbacDbInit;
+use Yiisoft\Rbac\Db\SchemaManager;
 use Yiisoft\Rbac\Db\Tests\Base\TestCase;
 
 abstract class RbacDbInitTest extends TestCase
@@ -54,7 +54,7 @@ abstract class RbacDbInitTest extends TestCase
         $arguments = array_merge($tableNameArguments, $arguments);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("$expectedWrongTableName table name can't be empty.");
-        new RbacDbInit(...$arguments);
+        new SchemaManager(...$arguments);
     }
 
     public function dataExecute(): array
