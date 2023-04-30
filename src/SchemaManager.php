@@ -6,8 +6,6 @@ namespace Yiisoft\Rbac\Db;
 
 use InvalidArgumentException;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Schema\SchemaInterface;
-use Yiisoft\Db\Sqlite\Column;
 use Yiisoft\Rbac\SchemaManagerInterface;
 use Yiisoft\Rbac\SchemaManagerTrait;
 
@@ -46,7 +44,7 @@ final class SchemaManager implements SchemaManagerInterface
             ->createTable(
                 $this->itemsTable,
                 [
-                    'name' => (new Column(SchemaInterface::TYPE_STRING, 128))->notNull()->append('PRIMARY KEY'),
+                    'name' => 'string(128) NOT NULL PRIMARY KEY',
                     'type' => 'string(10) NOT NULL',
                     'description' => 'string(191)',
                     'ruleName' => 'string(64)',
