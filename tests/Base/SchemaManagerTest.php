@@ -2,17 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Rbac\Db\Tests\Base\Command;
+namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use InvalidArgumentException;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\NullOutput;
 use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Rbac\Db\SchemaManager;
-use Yiisoft\Rbac\Db\Tests\Base\TestCase;
 
-abstract class RbacDbInitTest extends TestCase
+abstract class SchemaManagerTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -57,7 +53,7 @@ abstract class RbacDbInitTest extends TestCase
         new SchemaManager(...$arguments);
     }
 
-    public function dataExecute(): array
+    public function dataCreateAll(): array
     {
         return [
             [self::ITEMS_CHILDREN_TABLE],
@@ -66,110 +62,40 @@ abstract class RbacDbInitTest extends TestCase
     }
 
     /**
-     * @dataProvider dataExecute
+     * @dataProvider dataCreateAll
      */
-    public function testExecute(string|null $itemsChildrenTable): void
+    public function testCreateAll(string|null $itemsChildrenTable): void
     {
-        $app = $this->createApplication($itemsChildrenTable);
-        $output = new BufferedOutput(decorated: true);
-        $app->find('rbac/db/init')->run(new ArrayInput([]), $output);
+        $schemaManager = $this->createSchemaManager($itemsChildrenTable);
+        $schemaManager->createAll();
 
         $this->checkTables();
-
-        $newLine = PHP_EOL;
-        $expectedOutput = "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[34m`auth_item` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[34m`auth_item_child` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item_child` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[34m`auth_assignment` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_assignment` table has been successfully created.\033[49m$newLine" .
-            "\033[32mDONE\033[39m$newLine";
-        $this->assertSame($expectedOutput, $output->fetch());
     }
 
-    public function testExecuteMultiple(): void
+    public function testCreateAllMultiple(): void
     {
-        $app = $this->createApplication();
-        $app->find('rbac/db/init')->run(new ArrayInput([]), new NullOutput());
-
-        $output = new BufferedOutput(decorated: true);
-        $app->find('rbac/db/init')->run(new ArrayInput([]), $output);
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->createAll();
+        $schemaManager->createAll();
 
         $this->checkTables();
-
-        $newLine = PHP_EOL;
-        $expectedOutput = "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[43m`auth_item` table already exists. Skipped creating.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[43m`auth_item_child` table already exists. Skipped creating.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[43m`auth_assignment` table already exists. Skipped creating.\033[49m$newLine" .
-            "\033[32mDONE\033[39m$newLine";
-        $this->assertSame($expectedOutput, $output->fetch());
     }
 
-    public function testExecuteWithForceAndExistingTables(): void
+    public function testCreateAllWithForceAndExistingTables(): void
     {
-        $app = $this->createApplication();
-        $app->find('rbac/db/init')->run(new ArrayInput([]), new NullOutput());
-
-        $output = new BufferedOutput(decorated: true);
-        $app->find('rbac/db/init')->run(new ArrayInput(['--force' => true]), $output);
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->createAll();
+        $schemaManager->createAll(force: true);
 
         $this->checkTables();
-
-        $newLine = PHP_EOL;
-        $expectedOutput = "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[34m`auth_item_child` table exists. Dropping...\033[39m$newLine" .
-            "\033[42m`auth_item_child` table has been successfully dropped.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[34m`auth_assignment` table exists. Dropping...\033[39m$newLine" .
-            "\033[42m`auth_assignment` table has been successfully dropped.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[34m`auth_item` table exists. Dropping...\033[39m$newLine" .
-            "\033[42m`auth_item` table has been successfully dropped.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[34m`auth_item` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[34m`auth_item_child` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item_child` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[34m`auth_assignment` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_assignment` table has been successfully created.\033[49m$newLine" .
-            "\033[32mDONE\033[39m$newLine";
-        $this->assertSame($expectedOutput, $output->fetch());
     }
 
-    public function testExecuteWithForceAndNonExistingTables(): void
+    public function testCreateAllWithForceAndNonExistingTables(): void
     {
-        $app = $this->createApplication();
-        $output = new BufferedOutput(decorated: true);
-        $app->find('rbac/db/init')->run(new ArrayInput(['--force' => true]), $output);
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->createAll(force: true);
 
         $this->checkTables();
-
-        $newLine = PHP_EOL;
-        $expectedOutput = "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[43m`auth_item_child` table doesn't exist. Skipped dropping.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[43m`auth_assignment` table doesn't exist. Skipped dropping.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[43m`auth_item` table doesn't exist. Skipped dropping.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item` table...\033[39m$newLine" .
-            "\033[34m`auth_item` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_item_child` table...\033[39m$newLine" .
-            "\033[34m`auth_item_child` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_item_child` table has been successfully created.\033[49m$newLine" .
-            "\033[34mChecking existence of `auth_assignment` table...\033[39m$newLine" .
-            "\033[34m`auth_assignment` table doesn't exist. Creating...\033[39m$newLine" .
-            "\033[42m`auth_assignment` table has been successfully created.\033[49m$newLine" .
-            "\033[32mDONE\033[39m$newLine";
-        $this->assertSame($expectedOutput, $output->fetch());
     }
 
     private function checkTables(): void

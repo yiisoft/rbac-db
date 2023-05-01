@@ -128,7 +128,7 @@ final class SchemaManager
         $this->database->createCommand()->dropTable($tableName)->execute();
     }
 
-    public function createAll(bool $force = true): void
+    public function createAll(bool $force = false): void
     {
         if ($force === true) {
             $this->dropAll();
