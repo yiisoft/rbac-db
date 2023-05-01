@@ -6,6 +6,7 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use InvalidArgumentException;
 use Yiisoft\Db\Constraint\IndexConstraint;
+use Yiisoft\Db\Exception\Exception as DbException;
 use Yiisoft\Rbac\Db\SchemaManager;
 
 abstract class SchemaManagerTest extends TestCase
@@ -76,26 +77,9 @@ abstract class SchemaManagerTest extends TestCase
     {
         $schemaManager = $this->createSchemaManager();
         $schemaManager->createAll();
+
+        $this->expectException(DbException::class);
         $schemaManager->createAll();
-
-        $this->checkTables();
-    }
-
-    public function testCreateAllWithForceAndExistingTables(): void
-    {
-        $schemaManager = $this->createSchemaManager();
-        $schemaManager->createAll();
-        $schemaManager->createAll(force: true);
-
-        $this->checkTables();
-    }
-
-    public function testCreateAllWithForceAndNonExistingTables(): void
-    {
-        $schemaManager = $this->createSchemaManager();
-        $schemaManager->createAll(force: true);
-
-        $this->checkTables();
     }
 
     private function checkTables(): void

@@ -50,10 +50,6 @@ final class SchemaManager
      */
     public function createItemsTable(): void
     {
-        if ($this->hasTable($this->itemsTable)) {
-            return;
-        }
-
         $this
             ->database
             ->createCommand()
@@ -69,35 +65,11 @@ final class SchemaManager
                 ],
             )
             ->execute();
-        var_dump(
-            $this
-                ->database
-                ->createCommand()
-                ->createTable(
-                    $this->itemsTable,
-                    [
-                        'name' => 'string(128) NOT NULL PRIMARY KEY',
-                        'type' => 'string(10) NOT NULL',
-                        'description' => 'string(191)',
-                        'ruleName' => 'string(64)',
-                        'createdAt' => 'integer NOT NULL',
-                        'updatedAt' => 'integer NOT NULL',
-                    ],
-                )
-            ->getSql(),
-        );;
         $this
             ->database
             ->createCommand()
             ->createIndex($this->itemsTable, "idx-$this->itemsTable-type", 'type')
             ->execute();
-        var_dump(
-            $this
-                ->database
-                ->createCommand()
-                ->createIndex($this->itemsTable, "idx-$this->itemsTable-type", 'type')
-                ->getSql(),
-        );
     }
 
     /**
@@ -107,10 +79,6 @@ final class SchemaManager
      */
     public function createItemsChildrenTable(): void
     {
-        if ($this->hasTable($this->itemsChildrenTable)) {
-            return;
-        }
-
         $this
             ->database
             ->createCommand()
@@ -125,22 +93,6 @@ final class SchemaManager
                 ],
             )
             ->execute();
-        var_dump(
-            $this
-                ->database
-                ->createCommand()
-                ->createTable(
-                    $this->itemsChildrenTable,
-                    [
-                        'parent' => 'string(128) NOT NULL',
-                        'child' => 'string(128) NOT NULL',
-                        'PRIMARY KEY ([[parent]], [[child]])',
-                        "FOREIGN KEY ([[parent]]) REFERENCES {{%$this->itemsTable}} ([[name]])",
-                        "FOREIGN KEY ([[child]]) REFERENCES {{%$this->itemsTable}} ([[name]])",
-                    ],
-                )
-                ->getSql(),
-        );
     }
 
     /**
@@ -150,10 +102,6 @@ final class SchemaManager
      */
     public function createAssignmentsTable(): void
     {
-        if ($this->hasTable($this->assignmentsTable)) {
-            return;
-        }
-
         $this
             ->database
             ->createCommand()
@@ -168,22 +116,6 @@ final class SchemaManager
                 ],
             )
             ->execute();
-        var_dump(
-            $this
-                ->database
-                ->createCommand()
-                ->createTable(
-                    $this->assignmentsTable,
-                    [
-                        'itemName' => 'string(128) NOT NULL',
-                        'userId' => 'string(128) NOT NULL',
-                        'createdAt' => 'integer NOT NULL',
-                        'PRIMARY KEY ([[itemName]], [[userId]])',
-                        "FOREIGN KEY ([[itemName]]) REFERENCES {{%$this->itemsTable}} ([[name]])",
-                    ],
-                )
-                ->getSql(),
-        );
     }
 
     public function hasTable(string $tableName): bool
@@ -193,20 +125,11 @@ final class SchemaManager
 
     public function dropTable(string $tableName): void
     {
-        if ($this->hasTable($tableName)) {
-            $this->database->createCommand()->dropTable($tableName)->execute();
-            var_dump(
-                $this->database->createCommand()->dropTable($tableName)->getSql(),
-            );
-        }
+        $this->database->createCommand()->dropTable($tableName)->execute();
     }
 
-    public function createAll(bool $force = false): void
+    public function createAll(): void
     {
-        if ($force === true) {
-            $this->dropAll();
-        }
-
         $this->createItemsTable();
         $this->createItemsChildrenTable();
         $this->createAssignmentsTable();
