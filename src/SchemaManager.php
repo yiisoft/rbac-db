@@ -85,7 +85,7 @@ final class SchemaManager
                     ],
                 )
             ->getSql(),
-        );;
+        );
         $this
             ->database
             ->createCommand()
