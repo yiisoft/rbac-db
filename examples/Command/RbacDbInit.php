@@ -11,10 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\Rbac\SchemaManagerInterface;
 
 /**
- * Command for creating RBAC related database tables.
+ * Command for creating RBAC related database tables using Yii Database.
  */
 class RbacDbInit extends Command
 {
+    protected static $defaultName = 'rbac/db/init';
+
     /**
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
@@ -28,6 +30,7 @@ class RbacDbInit extends Command
     {
         $this
             ->setDescription('Create RBAC schemas')
+            ->setHelp('This command creates schemas for RBAC using Yii Database')
             ->addOption(name: 'force', shortcut: 'f', description: 'Force recreation of schemas if they exist');
     }
 
