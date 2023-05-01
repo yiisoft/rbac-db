@@ -2,6 +2,6 @@
 
 ## 1.0.1 under development
 
-- no changes in this release.
+- Bug #46: Remove usage of `SQLite` column in DB agnostic code (@arogachev)
 
 ## 1.0.0 April 20, 2023
