@@ -50,6 +50,10 @@ final class SchemaManager
      */
     public function createItemsTable(): void
     {
+        if ($this->hasTable($this->itemsTable)) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -79,6 +83,10 @@ final class SchemaManager
      */
     public function createItemsChildrenTable(): void
     {
+        if ($this->hasTable($this->itemsChildrenTable)) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -102,6 +110,10 @@ final class SchemaManager
      */
     public function createAssignmentsTable(): void
     {
+        if ($this->hasTable($this->assignmentsTable)) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -125,7 +137,9 @@ final class SchemaManager
 
     public function dropTable(string $tableName): void
     {
-        $this->database->createCommand()->dropTable($tableName)->execute();
+        if ($this->hasTable($tableName)) {
+            $this->database->createCommand()->dropTable($tableName)->execute();
+        }
     }
 
     public function createAll(bool $force = false): void
