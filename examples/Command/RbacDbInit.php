@@ -21,8 +21,6 @@ class RbacDbInit extends Command
     public function __construct(
         private SchemaManagerInterface $schemaManager,
     ) {
-        $this->schemaManager = $this->schemaManager;
-
         parent::__construct();
     }
 
