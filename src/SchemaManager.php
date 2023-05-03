@@ -7,6 +7,10 @@ namespace Yiisoft\Rbac\Db;
 use InvalidArgumentException;
 use Yiisoft\Db\Connection\ConnectionInterface;
 
+/**
+ * A class for working with RBAC tables' schema using configured Yii Database driver. Supports schema creation, deletion
+ * and checking its existence.
+ */
 final class SchemaManager
 {
     /**
@@ -118,16 +122,31 @@ final class SchemaManager
             ->execute();
     }
 
+    /**
+     * Checks existence of a table in {@see $database} by a given name
+     *
+     * @param string $tableName Table name for checking.
+     *
+     * @return bool Whether a table exists: `true` - exists, `false` - doesn't exist.
+     */
     public function hasTable(string $tableName): bool
     {
         return $this->database->getSchema()->getTableSchema($tableName) !== null;
     }
 
+    /**
+     * Drops a table in {@see $database} by a given name.
+     *
+     * @param string $tableName Table name for dropping.
+     */
     public function dropTable(string $tableName): void
     {
         $this->database->createCommand()->dropTable($tableName)->execute();
     }
 
+    /**
+     * Creates all tables at once.
+     */
     public function createAll(): void
     {
         $this->createItemsTable();
@@ -135,6 +154,9 @@ final class SchemaManager
         $this->createAssignmentsTable();
     }
 
+    /**
+     * Drops all tables at once.
+     */
     public function dropAll(): void
     {
         $this->dropTable($this->itemsChildrenTable);
@@ -142,21 +164,51 @@ final class SchemaManager
         $this->dropTable($this->itemsTable);
     }
 
+    /**
+     * Gets name of the table for storing RBAC items (roles and permissions).
+     *
+     * @return string Table name
+     *
+     * @see $itemsTable
+     */
     public function getItemsTable(): string
     {
         return $this->itemsTable;
     }
 
+    /**
+     * Gets name of the table for storing RBAC assignments.
+     *
+     * @return string Table name.
+     *
+     * @see $assignmentsTable
+     */
     public function getAssignmentsTable(): string
     {
         return $this->assignmentsTable;
     }
 
+    /**
+     * Gets name of the table for storing relations between RBAC items.
+     *
+     * @return string Table name
+     *
+     * @see $itemsChildrenTable
+     */
     public function getItemsChildrenTable(): string
     {
         return $this->itemsChildrenTable;
     }
 
+    /**
+     * Initializes table names.
+     *
+     * @param string $itemsTable
+     * @param string $assignmentsTable
+     * @param string|null $itemsChildrenTable
+     *
+     * @throws InvalidArgumentException When a table name is set to the empty string.
+     */
     private function initTables(string $itemsTable, string $assignmentsTable, string|null $itemsChildrenTable): void
     {
         if ($itemsTable === '') {
