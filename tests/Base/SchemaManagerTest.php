@@ -95,7 +95,8 @@ abstract class SchemaManagerTest extends TestCase
         $databaseSchema = $database->getSchema();
         $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE);
 
-        $this->assertTrue($table !== null);
+        $schemaManager = $this->createSchemaManager();
+        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsTable()));
 
         $columns = $table->getColumns();
 
@@ -150,7 +151,8 @@ abstract class SchemaManagerTest extends TestCase
         $database = $this->getDatabase();
         $table = $database->getSchema()->getTableSchema(self::ASSIGNMENTS_TABLE);
 
-        $this->assertTrue($table !== null);
+        $schemaManager = $this->createSchemaManager();
+        $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
 
         $columns = $table->getColumns();
 
@@ -180,7 +182,8 @@ abstract class SchemaManagerTest extends TestCase
         $database = $this->getDatabase();
         $table = $database->getSchema()->getTableSchema(self::ITEMS_CHILDREN_TABLE);
 
-        $this->assertTrue($table !== null);
+        $schemaManager = $this->createSchemaManager();
+        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
 
         $columns = $table->getColumns();
 
