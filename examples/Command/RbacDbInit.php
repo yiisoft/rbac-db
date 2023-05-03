@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Rbac\Command;
+namespace Yiisoft\Rbac\Db\Command;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
