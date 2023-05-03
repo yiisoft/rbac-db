@@ -54,7 +54,7 @@ abstract class SchemaManagerTest extends TestCase
         new SchemaManager(...$arguments);
     }
 
-    public function dataCreateAll(): array
+    public function dataCreateTablesSeparately(): array
     {
         return [
             [self::ITEMS_CHILDREN_TABLE],
@@ -63,12 +63,14 @@ abstract class SchemaManagerTest extends TestCase
     }
 
     /**
-     * @dataProvider dataCreateAll
+     * @dataProvider dataCreateTablesSeparately
      */
-    public function testCreateAll(string|null $itemsChildrenTable): void
+    public function testCreateTablesSeparately(string|null $itemsChildrenTable): void
     {
         $schemaManager = $this->createSchemaManager($itemsChildrenTable);
-        $schemaManager->createAll();
+        $schemaManager->createItemsTable();
+        $schemaManager->createItemsChildrenTable();
+        $schemaManager->createAssignmentsTable();
 
         $this->checkTables();
     }
