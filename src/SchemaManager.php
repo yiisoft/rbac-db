@@ -203,7 +203,6 @@ final class SchemaManager
     /**
      * Initializes table names.
      *
-     *
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
     private function initTables(string $itemsTable, string $assignmentsTable, string|null $itemsChildrenTable): void
