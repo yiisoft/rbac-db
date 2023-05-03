@@ -74,8 +74,10 @@ plain SQL in `sql/migrations` folder.
 changes manually.
 - Use plain SQL that is actual at the moment of installing `rbac-db` package (located at the root of `sql` folder).
 
-In case of updating `rbac-db` package - when using migrations, you only need to run migrate command; otherwise - you 
-need to find out and apply the changes manually.
+The structure of plain SQL files:
+
+- `pgsql-up` - apply the changes for PostgreSQL driver.
+- `pgsql-down` - revert the changes for PostgreSQL driver.
 
 Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
 
@@ -99,6 +101,9 @@ $schemaManager = new SchemaManager(
 $schemaManager->createAll();
 $schemaManager->dropAll(); // Note: All existing data will be erased.
 ```
+
+In case of updating `rbac-db` package - when using migrations, you only need to run migrate command; otherwise - you
+need to find out and apply the changes manually.
 
 ### Using storages
 
@@ -125,7 +130,8 @@ $assignmentsStorage = new AssignmentsStorage(
 $manager = new Manager(
     itemsStorage: $itemsStorage, 
     assignmentsStorage: $assignmentsStorage,
-    ruleFactory: $rulesContainer, // Requires https://github.com/yiisoft/rbac-rules-container
+    // Requires https://github.com/yiisoft/rbac-rules-container or other compatible factory.
+    ruleFactory: $rulesContainer,
 );
 $manager->addPermission(new Permission('posts.create'));
 ```
