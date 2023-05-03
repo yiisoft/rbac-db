@@ -68,12 +68,22 @@ In order to keep less dependencies, this package doesn't provide any CLI for wor
 options to choose from:
 
 - Use migration tool like [Yii DB Migration](https://github.com/yiisoft/yii-db-migration). Migrations are dumped as 
-plain SQL in `sql/migrations` folder. In case of updating `rbac-db` package, you only need to run migrate command.
+plain SQL in `sql/migrations` folder.
 - Without migrations, `SchemaManager` class can be used. An example of CLI command containing it can be found 
-[here](examples/Command/RbacDbInit.php). In case of updating `rbac-db` package, you need to find out and apply the
+[here](examples/Command/RbacDbInit.php).
 changes manually.
+- Use plain SQL that is actual at the moment of installing `rbac-db` package (located at the root of `sql` folder).
 
-`SchemaManager` can also be useful if you need to customize table names:
+In case of updating `rbac-db` package - when using migrations, you only need to run migrate command; otherwise - you 
+need to find out and apply the changes manually.
+
+Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
+
+- `auth_item`.
+- `auth_assignment`.
+- `auth_item_child`.
+
+`SchemaManager` allows to customize table names:
 
 ```php
 use Yiisoft\Db\Connection\ConnectionInterface;
