@@ -80,6 +80,8 @@ abstract class SchemaManagerTest extends TestCase
         $schemaManager = $this->createSchemaManager();
         $schemaManager->createAll();
 
+        $this->checkTables();
+
         $this->expectException(DbException::class);
         $schemaManager->createAll();
     }
