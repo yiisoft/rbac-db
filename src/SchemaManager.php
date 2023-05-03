@@ -203,9 +203,6 @@ final class SchemaManager
     /**
      * Initializes table names.
      *
-     * @param string $itemsTable
-     * @param string $assignmentsTable
-     * @param string|null $itemsChildrenTable
      *
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
