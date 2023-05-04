@@ -11,7 +11,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
  * A class for working with RBAC tables' schema using configured Yii Database driver. Supports schema creation, deletion
  * and checking its existence.
  */
-final class SchemaManager
+final class DbSchemaManager
 {
     /**
      * @var string A name of the table for storing RBAC items (roles and permissions).
@@ -145,23 +145,41 @@ final class SchemaManager
     }
 
     /**
-     * Creates all tables at once.
+     * Ensures all Yii RBAC related tables are present in the database. Creation is executed for each table only when it
+     * doesn't exist.
      */
-    public function createAll(): void
+    public function ensureTables(): void
     {
-        $this->createItemsTable();
-        $this->createItemsChildrenTable();
-        $this->createAssignmentsTable();
+        if (!$this->hasTable($this->itemsTable)) {
+            $this->createItemsTable();
+        }
+
+        if (!$this->hasTable($this->itemsChildrenTable)) {
+            $this->createItemsChildrenTable();
+        }
+
+        if (!$this->hasTable($this->assignmentsTable)) {
+            $this->createAssignmentsTable();
+        }
     }
 
     /**
-     * Drops all tables at once.
+     * Ensures no Yii RBAC related tables are present in the database. Drop is executed for each table only when it
+     * exists.
      */
-    public function dropAll(): void
+    public function ensureNoTables(): void
     {
-        $this->dropTable($this->itemsChildrenTable);
-        $this->dropTable($this->assignmentsTable);
-        $this->dropTable($this->itemsTable);
+        if ($this->hasTable($this->itemsChildrenTable)) {
+            $this->dropTable($this->itemsChildrenTable);
+        }
+
+        if ($this->hasTable($this->assignmentsTable)) {
+            $this->dropTable($this->assignmentsTable);
+        }
+
+        if ($this->hasTable($this->itemsTable)) {
+            $this->dropTable($this->itemsTable);
+        }
     }
 
     /**

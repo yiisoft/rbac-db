@@ -89,17 +89,17 @@ Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
 
 ```php
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Rbac\Db\SchemaManager;
+use Yiisoft\Rbac\Db\DbSchemaManager;
 
 /** @var ConnectionInterface $database */
-$schemaManager = new SchemaManager(
+$schemaManager = new DbSchemaManager(
     itemsTable: 'custom_items',
     assignmentsTable: 'custom_assignments',
     database: $database,
     itemsChildrenTable: 'custom_items_children',
 );
-$schemaManager->createAll();
-$schemaManager->dropAll(); // Note: All existing data will be erased.
+$schemaManager->ensureTables();
+$schemaManager->ensureNoTables(); // Note: All existing data will be erased.
 ```
 
 In case of updating `rbac-db` package - when using migrations, you only need to run migrate command; otherwise - you

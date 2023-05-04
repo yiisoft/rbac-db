@@ -6,8 +6,7 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use InvalidArgumentException;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Db\Exception\Exception as DbException;
-use Yiisoft\Rbac\Db\SchemaManager;
+use Yiisoft\Rbac\Db\DbSchemaManager;
 
 abstract class SchemaManagerTest extends TestCase
 {
@@ -51,7 +50,7 @@ abstract class SchemaManagerTest extends TestCase
         $arguments = array_merge($tableNameArguments, $arguments);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("$expectedWrongTableName table name can't be empty.");
-        new SchemaManager(...$arguments);
+        new DbSchemaManager(...$arguments);
     }
 
     public function dataCreateTablesSeparately(): array
@@ -75,15 +74,13 @@ abstract class SchemaManagerTest extends TestCase
         $this->checkTables();
     }
 
-    public function testCreateAllMultiple(): void
+    public function testEnsureTablesMultiple(): void
     {
         $schemaManager = $this->createSchemaManager();
-        $schemaManager->createAll();
+        $schemaManager->ensureTables();
+        $schemaManager->ensureTables();
 
         $this->checkTables();
-
-        $this->expectException(DbException::class);
-        $schemaManager->createAll();
     }
 
     private function checkTables(): void
