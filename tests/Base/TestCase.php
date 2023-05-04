@@ -49,8 +49,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function createSchemaManager(
         string|null $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
-    ): DbSchemaManager
-    {
+    ): DbSchemaManager {
         return new DbSchemaManager(
             itemsTable: self::ITEMS_TABLE,
             assignmentsTable: self::ASSIGNMENTS_TABLE,
