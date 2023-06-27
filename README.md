@@ -114,7 +114,9 @@ The storages are not intended to be used directly. Instead, use them with `Manag
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\Db\AssignmentsStorage;
 use Yiisoft\Rbac\Db\ItemsStorage;
-use Yiisoft\Rbac\Manager;use Yiisoft\Rbac\Permission;use Yiisoft\Rbac\RuleFactoryInterface;
+use Yiisoft\Rbac\Manager;
+use Yiisoft\Rbac\Permission;
+use Yiisoft\Rbac\RuleFactoryInterface;
 
 /** @var ConnectionInterface $database */
 $itemsStorage = new ItemsStorage(
