@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Rbac\Db\DbSchemaManager;
 
-abstract class SchemaManagerTest extends TestCase
+abstract class DbSchemaManagerTest extends TestCase
 {
     protected function setUp(): void
     {
