@@ -85,7 +85,7 @@ Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
 - `auth_assignment`.
 - `auth_item_child`.
 
-`SchemaManager` allows to customize table names:
+`DbSchemaManager` allows to customize table names:
 
 ```php
 use Yiisoft\Db\Connection\ConnectionInterface;
