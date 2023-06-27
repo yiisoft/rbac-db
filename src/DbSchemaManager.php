@@ -241,6 +241,6 @@ final class DbSchemaManager
             throw new InvalidArgumentException('Items children table name can\'t be empty.');
         }
 
-        $this->itemsChildrenTable = $itemsChildrenTable ?? $this->itemsTable . '_child';
+        $this->itemsChildrenTable = $itemsChildrenTable ?? ($this->itemsTable . '_child');
     }
 }
