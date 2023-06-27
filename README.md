@@ -69,7 +69,7 @@ options to choose from:
 
 - Use migration tool like [Yii DB Migration](https://github.com/yiisoft/yii-db-migration). Migrations are dumped as 
 plain SQL in `sql/migrations` folder.
-- Without migrations, `SchemaManager` class can be used. An example of CLI command containing it can be found 
+- Without migrations, `DbSchemaManager` class can be used. An example of CLI command containing it can be found 
 [here](examples/Command/RbacDbInit.php).
 changes manually.
 - Use plain SQL that is actual at the moment of installing `rbac-db` package (located at the root of `sql` folder).
