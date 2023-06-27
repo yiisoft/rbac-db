@@ -76,8 +76,8 @@ changes manually.
 
 The structure of plain SQL files:
 
-- `pgsql-up` - apply the changes for PostgreSQL driver.
-- `pgsql-down` - revert the changes for PostgreSQL driver.
+- `pgsql-up.sql` - apply the changes for PostgreSQL driver.
+- `pgsql-down.sql` - revert the changes for PostgreSQL driver.
 
 Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
 
