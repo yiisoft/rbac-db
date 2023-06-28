@@ -102,9 +102,6 @@ $schemaManager->ensureTables();
 $schemaManager->ensureNoTables(); // Note: All existing data will be erased.
 ```
 
-In case of updating `rbac-db` package - when using migrations, you only need to run migrate command; otherwise - you
-need to find out and apply the changes manually.
-
 ### Using storages
 
 The storages are not intended to be used directly. Instead, use them with `Manager` from
