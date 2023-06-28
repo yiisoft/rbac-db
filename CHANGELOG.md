@@ -2,6 +2,9 @@
 
 ## 1.0.1 under development
 
-- Bug #46: Remove usage of `SQLite` column in DB agnostic code (@arogachev)
+- New #23: Remove CLI dependencies, add `DbSchemaManager`, dump SQL for working with schema (@arogachev) 
+- Bug #24: Remove usage of `SQLite` column in DB agnostic code (@arogachev)
 
 ## 1.0.0 April 20, 2023
+
+- Initial release.

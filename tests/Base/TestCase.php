@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\Tests\Base;
 
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Rbac\Db\Command\RbacDbInit;
+use Yiisoft\Rbac\Db\DbSchemaManager;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +14,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected const ITEMS_TABLE = 'auth_item';
     protected const ASSIGNMENTS_TABLE = 'auth_assignment';
     protected const ITEMS_CHILDREN_TABLE = 'auth_item_child';
-    private const TABLES_FOR_DROPPING = [self::ITEMS_CHILDREN_TABLE, self::ASSIGNMENTS_TABLE, self::ITEMS_TABLE];
 
     protected function setUp(): void
     {
@@ -27,9 +23,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function tearDown(): void
     {
-        foreach (self::TABLES_FOR_DROPPING as $name) {
-            $this->getDatabase()->createCommand()->dropTable($name)->execute();
-        }
+        $this->createSchemaManager()->ensureNoTables();
     }
 
     abstract protected function makeDatabase(): ConnectionInterface;
@@ -47,21 +41,20 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function createDatabaseTables(): void
     {
-        $app = $this->createApplication();
-        $app->find('rbac/db/init')->run(new ArrayInput([]), new NullOutput());
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->createItemsTable();
+        $schemaManager->createItemsChildrenTable();
+        $schemaManager->createAssignmentsTable();
     }
 
-    protected function createApplication(string|null $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE): Application
-    {
-        $app = new Application();
-        $command = new RbacDbInit(
+    protected function createSchemaManager(
+        string|null $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
+    ): DbSchemaManager {
+        return new DbSchemaManager(
             itemsTable: self::ITEMS_TABLE,
             assignmentsTable: self::ASSIGNMENTS_TABLE,
             database: $this->getDatabase(),
             itemsChildrenTable: $itemsChildrenTable,
         );
-        $app->add($command);
-
-        return $app;
     }
 }
