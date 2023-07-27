@@ -94,7 +94,7 @@ abstract class DbSchemaManagerTest extends TestCase
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE, refresh: true);
+        $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsTable()));
@@ -150,7 +150,7 @@ abstract class DbSchemaManagerTest extends TestCase
     private function checkAssignmentsTable(): void
     {
         $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ASSIGNMENTS_TABLE, refresh: true);
+        $table = $database->getSchema()->getTableSchema(self::ASSIGNMENTS_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
@@ -181,7 +181,7 @@ abstract class DbSchemaManagerTest extends TestCase
     private function checkItemsChildrenTable(): void
     {
         $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ITEMS_CHILDREN_TABLE, refresh: true);
+        $table = $database->getSchema()->getTableSchema(self::ITEMS_CHILDREN_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
