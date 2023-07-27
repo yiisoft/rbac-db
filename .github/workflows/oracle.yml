@@ -37,7 +37,8 @@ jobs:
           - ubuntu-latest
 
         php:
-          - 8.0.28
+          - 8.0
+          - 8.1
 
     services:
       oci:
