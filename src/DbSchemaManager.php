@@ -150,9 +150,6 @@ final class DbSchemaManager
      */
     public function ensureTables(): void
     {
-        $result = $this->database->createCommand('SELECT * FROM ALL_TAB_COLUMNS A')->queryOne();
-        var_dump($result);
-
         if (!$this->hasTable($this->itemsTable)) {
             $this->createItemsTable();
         }
