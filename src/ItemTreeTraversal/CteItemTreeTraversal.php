@@ -37,7 +37,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
     public function getParentRows(string $name): array
     {
         $sql = "{$this->getWithExpression()} parent_of(child_name) AS (
-            SELECT [[name]] FROM {{%auth_item}} WHERE [[name]] = :name_for_recursion
+            SELECT [[name]] FROM {{%$this->tableName}} WHERE [[name]] = :name_for_recursion
             UNION ALL
             SELECT [[parent]] FROM {{%$this->childrenTableName}} item_child_recursive, parent_of
             WHERE item_child_recursive.[[child]] = parent_of.child_name
@@ -56,7 +56,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
     public function getChildrenRows(string $name): array
     {
         $sql = "{$this->getWithExpression()} child_of(parent_name) AS (
-            SELECT [[name]] FROM {{%auth_item}} WHERE [[name]] = :name_for_recursion
+            SELECT [[name]] FROM {{%$this->tableName}} WHERE [[name]] = :name_for_recursion
             UNION ALL
             SELECT [[child]] FROM {{%$this->childrenTableName}} item_child_recursive, child_of
             WHERE item_child_recursive.[[parent]] = child_of.parent_name
