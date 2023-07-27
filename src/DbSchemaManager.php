@@ -131,7 +131,7 @@ final class DbSchemaManager
      */
     public function hasTable(string $tableName): bool
     {
-        return $this->database->getSchema()->getTableSchema($tableName) !== null;
+        return $this->database->getSchema()->getTableSchema($tableName, refresh: true) !== null;
     }
 
     /**
