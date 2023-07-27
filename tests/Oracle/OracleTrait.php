@@ -15,7 +15,7 @@ trait OracleTrait
 {
     protected function makeDatabase(): ConnectionInterface
     {
-        $pdoDriver = new Driver('oci:dbname=localhost/XE;', 'system', 'oracle');
+        $pdoDriver = new Driver('oci:dbname=localhost/XE;', 'system', 'root');
         $pdoDriver->charset('AL32UTF8');
         $pdoDriver->attributes([PDO::ATTR_STRINGIFY_FETCHES => true]);
 
