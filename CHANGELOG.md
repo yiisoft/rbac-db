@@ -9,4 +9,3 @@
 ## 1.0.0 April 20, 2023
 
 - Initial release.
-
