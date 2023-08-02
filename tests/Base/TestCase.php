@@ -17,7 +17,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->createDatabaseTables();
+        $this->createSchemaManager()->ensureTables();
         $this->populateDatabase();
     }
 
@@ -37,14 +37,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         }
 
         return $this->database;
-    }
-
-    protected function createDatabaseTables(): void
-    {
-        $schemaManager = $this->createSchemaManager();
-        $schemaManager->createItemsTable();
-        $schemaManager->createItemsChildrenTable();
-        $schemaManager->createAssignmentsTable();
     }
 
     protected function createSchemaManager(
