@@ -18,6 +18,5 @@ CREATE TABLE [auth_assignment] (
   [itemName] nvarchar(128) NOT NULL,
   [userId] nvarchar(128) NOT NULL,
   [createdAt] int NOT NULL,
-  PRIMARY KEY ([itemName], [userId]),
-  FOREIGN KEY ([itemName]) REFERENCES [auth_item] ([name])
+  PRIMARY KEY ([itemName], [userId])
 );
