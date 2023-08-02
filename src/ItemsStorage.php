@@ -27,6 +27,7 @@ use Yiisoft\Rbac\Role;
  *     createdAt: int|string,
  *     updatedAt: int|string
  * }
+ * @psalm-type ItemsIndexedByName = array<string, Permission|Role>
  */
 final class ItemsStorage implements ItemsStorageInterface
 {
@@ -210,28 +211,24 @@ final class ItemsStorage implements ItemsStorageInterface
         $this->clearItemsByType(Item::TYPE_PERMISSION);
     }
 
+    /**
+     * @psalm-return ItemsIndexedByName
+     */
     public function getParents(string $name): array
     {
         $rawItems = $this->getTreeTraversal()->getParentRows($name);
-        $items = [];
 
-        foreach ($rawItems as $rawItem) {
-            $items[$rawItem['name']] = $this->createItem(...$rawItem);
-        }
-
-        return $items;
+        return $this->getItemsIndexedByName($rawItems);
     }
 
+    /**
+     * @psalm-return ItemsIndexedByName
+     */
     public function getChildren(string $name): array
     {
         $rawItems = $this->getTreeTraversal()->getChildrenRows($name);
-        $items = [];
 
-        foreach ($rawItems as $rawItem) {
-            $items[$rawItem['name']] = $this->createItem(...$rawItem);
-        }
-
-        return $items;
+        return $this->getItemsIndexedByName($rawItems);
     }
 
     public function hasChildren(string $name): bool
@@ -283,16 +280,13 @@ final class ItemsStorage implements ItemsStorageInterface
      */
     private function getItemsByType(string $type): array
     {
-        /** @psalm-var RawItem[] $rows */
-        $rows = (new Query($this->database))
+        /** @psalm-var RawItem[] $rawItems */
+        $rawItems = (new Query($this->database))
             ->from($this->tableName)
             ->where(['type' => $type])
             ->all();
 
-        return array_map(
-            fn(array $row): Item => $this->createItem(...$row),
-            $rows,
-        );
+        return $this->getItemsIndexedByName($rawItems);
     }
 
     /**
@@ -444,5 +438,20 @@ final class ItemsStorage implements ItemsStorageInterface
         }
 
         return $this->treeTraversal;
+    }
+
+    /**
+     * @psalm-param RawItem[] $rawItems
+     * @psalm-return ItemsIndexedByName
+     */
+    private function getItemsIndexedByName(array $rawItems): array
+    {
+        $items = [];
+
+        foreach ($rawItems as $rawItem) {
+            $items[$rawItem['name']] = $this->createItem(...$rawItem);
+        }
+
+        return $items;
     }
 }
