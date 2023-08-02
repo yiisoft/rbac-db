@@ -6,7 +6,6 @@ namespace Yiisoft\Rbac\Cycle;
 
 use Closure;
 use Stringable;
-use Throwable;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\ManagerInterface;
 use Yiisoft\Rbac\Permission;
@@ -116,18 +115,12 @@ final class TransactionalManagerDecorator implements ManagerInterface
 
     public function updateRole(string $name, Role $role): ManagerInterface
     {
-        $this->database->begin();
+        $manager = $this->manager;
+        $this->database->transaction(static function () use ($manager, $name, $role): void {
+            $manager->updateRole($name, $role);
+        });
 
-        try {
-            $this->manager->updateRole($name, $role);
-            $this->database->commit();
-
-            return $this;
-        } catch (Throwable $e) {
-            $this->database->rollback();
-
-            throw $e;
-        }
+        return $manager;
     }
 
     public function addPermission(Permission $permission): ManagerInterface
@@ -146,18 +139,12 @@ final class TransactionalManagerDecorator implements ManagerInterface
 
     public function updatePermission(string $name, Permission $permission): ManagerInterface
     {
-        $this->database->begin();
+        $manager = $this->manager;
+        $this->database->transaction(static function () use ($manager, $name, $permission): void {
+            $manager->updatePermission($name, $permission);
+        });
 
-        try {
-            $this->manager->updatePermission($name, $permission);
-            $this->database->commit();
-
-            return $this;
-        } catch (Throwable $e) {
-            $this->database->rollback();
-
-            throw $e;
-        }
+        return $manager;
     }
 
     public function setDefaultRoleNames(Closure|array $roleNames): ManagerInterface
