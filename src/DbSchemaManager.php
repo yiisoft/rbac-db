@@ -146,10 +146,15 @@ final class DbSchemaManager
      *
      * @param string $tableName Table name for checking.
      *
+     * @throws InvalidArgumentException When a table name is set to the empty string.
      * @return bool Whether a table exists: `true` - exists, `false` - doesn't exist.
      */
     public function hasTable(string $tableName): bool
     {
+        if ($tableName === '') {
+            throw new InvalidArgumentException('Table name must be non-empty.');
+        }
+
         return $this->database->getSchema()->getTableSchema($tableName) !== null;
     }
 
@@ -157,9 +162,15 @@ final class DbSchemaManager
      * Drops a table in {@see $database} by a given name.
      *
      * @param string $tableName Table name for dropping.
+     *
+     * @throws InvalidArgumentException When a table name is set to the empty string.
      */
     public function dropTable(string $tableName): void
     {
+        if ($tableName === '') {
+            throw new InvalidArgumentException('Table name must be non-empty.');
+        }
+
         $this->database->createCommand()->dropTable($tableName)->execute();
     }
 

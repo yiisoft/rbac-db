@@ -18,9 +18,19 @@ abstract class DbSchemaManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (!str_starts_with($this->getName(), 'testInitWithEmptyTableNames')) {
-            parent::tearDown();
+        if (str_starts_with($this->getName(), 'testInitWithEmptyTableNames')) {
+            return;
         }
+
+        if ($this->getName() === 'testHasTableWithEmptyString' || $this->getName() === 'testDropTableWithEmptyString') {
+            return;
+        }
+
+        if (str_starts_with($this->getName(), 'testGet')) {
+            return;
+        }
+
+        parent::tearDown();
     }
 
     protected function populateDatabase(): void
@@ -113,5 +123,46 @@ abstract class DbSchemaManagerTest extends TestCase
 
         $this->assertFalse($schemaManager->hasTable(self::ITEMS_TABLE));
         $this->assertFalse($schemaManager->hasTable(self::ITEMS_CHILDREN_TABLE));
+    }
+
+    public function testHasTableWithEmptyString(): void
+    {
+        $schemaManager = $this->createSchemaManager();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Table name must be non-empty.');
+        $schemaManager->hasTable('');
+    }
+
+    public function testDropTableWithEmptyString(): void
+    {
+        $schemaManager = $this->createSchemaManager();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Table name must be non-empty.');
+        $schemaManager->dropTable('');
+    }
+
+    public function testGetItemsTable(): void
+    {
+        $this->assertSame(self::ITEMS_TABLE, $this->createSchemaManager()->getItemsTable());
+    }
+
+    public function testGetItemsChildrenTable(): void
+    {
+        $this->assertSame(self::ITEMS_CHILDREN_TABLE, $this->createSchemaManager()->getItemsChildrenTable());
+    }
+
+    public function testGetAssignmentsTable(): void
+    {
+        $this->assertSame(self::ASSIGNMENTS_TABLE, $this->createSchemaManager()->getAssignmentsTable());
+    }
+
+    public function testEnsureNoTables(): void
+    {
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->ensureTables();
+        $schemaManager->ensureNoTables();
+        $this->checkNoTables();
     }
 }
