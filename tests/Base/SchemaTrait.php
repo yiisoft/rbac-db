@@ -208,8 +208,7 @@ trait SchemaTrait
         ?string $expectedName = null,
         bool $expectedIsUnique = false,
         bool $expectedIsPrimary = false,
-    ): void
-    {
+    ): void {
         /** @var IndexConstraint[] $indexes */
         $indexes = $this->getDatabase()->getSchema()->getTableIndexes($table);
         $found = false;
