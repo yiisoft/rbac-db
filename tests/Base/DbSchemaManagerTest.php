@@ -106,7 +106,7 @@ abstract class DbSchemaManagerTest extends TestCase
 
     public function testCreateAssignmentsTable(): void
     {
-        $schemaManager = $this->createSchemaManager(itemsTable: null);
+        $schemaManager = $this->createSchemaManager(itemsTable: null, itemsChildrenTable: null);
         $schemaManager->ensureTables();
 
         $this->checkAssignmentsTable();

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\Tests\Base;
 
+use PHPUnit\Framework\ExpectationFailedException;
+use Yiisoft\Db\Constraint\Constraint;
+use Yiisoft\Db\Constraint\ForeignKeyConstraint;
 use Yiisoft\Db\Constraint\IndexConstraint;
 
 trait SchemaTrait
@@ -60,23 +63,27 @@ trait SchemaTrait
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
-        /** @var IndexConstraint[] $indexes */
-        $indexes = $databaseSchema->getTableIndexes(self::ITEMS_TABLE);
-        $this->assertCount(2, $indexes);
-        $expectedIndexColumnNames = ['type', 'name'];
-        foreach ($indexes as $index) {
-            $columnNames = $index->getColumnNames();
-            $this->assertCount(1, $columnNames);
-            $this->assertContains($columnNames[0], $expectedIndexColumnNames);
-        }
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_TABLE);
+        $this->assertInstanceOf(Constraint::class, $primaryKey);
+        $this->assertSame(['name'], $primaryKey->getColumnNames());
 
-        $this->assertSame(['name'], $table->getPrimaryKey());
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::ITEMS_TABLE));
+
+        $this->assertCount(2, $databaseSchema->getTableIndexes(self::ITEMS_TABLE));
+        $this->assertIndex(
+            table: self::ITEMS_TABLE,
+            expectedColumnNames: ['name'],
+            expectedIsUnique: true,
+            expectedIsPrimary: true
+        );
+        $this->assertIndex(table: self::ITEMS_TABLE, expectedColumnNames: ['type'], expectedName: 'idx-auth_item-type');
     }
 
     private function checkAssignmentsTable(): void
     {
         $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ASSIGNMENTS_TABLE);
+        $databaseSchema = $database->getSchema();
+        $table = $databaseSchema->getTableSchema(self::ASSIGNMENTS_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
@@ -100,14 +107,26 @@ trait SchemaTrait
         $this->assertSame('integer', $createdAt->getType());
         $this->assertFalse($createdAt->isAllowNull());
 
-        $this->assertSame(['itemName', 'userId'], $table->getPrimaryKey());
-        $this->assertSame([['auth_item', 'itemName' => 'name']], array_values($table->getForeignKeys()));
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ASSIGNMENTS_TABLE);
+        $this->assertInstanceOf(Constraint::class, $primaryKey);
+        $this->assertEqualsCanonicalizing(['itemName', 'userId'], $primaryKey->getColumnNames());
+
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::ASSIGNMENTS_TABLE));
+
+        $this->assertCount(1, $databaseSchema->getTableIndexes(self::ASSIGNMENTS_TABLE));
+        $this->assertIndex(
+            table: self::ASSIGNMENTS_TABLE,
+            expectedColumnNames: ['itemName', 'userId'],
+            expectedIsUnique: true,
+            expectedIsPrimary: true,
+        );
     }
 
     private function checkItemsChildrenTable(): void
     {
         $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ITEMS_CHILDREN_TABLE);
+        $databaseSchema = $database->getSchema();
+        $table = $databaseSchema->getTableSchema(self::ITEMS_CHILDREN_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
@@ -126,10 +145,102 @@ trait SchemaTrait
         $this->assertSame(128, $child->getSize());
         $this->assertFalse($child->isAllowNull());
 
-        $this->assertEqualsCanonicalizing(['parent', 'child'], $table->getPrimaryKey());
-        $this->assertEqualsCanonicalizing(
-            [['auth_item', 'child' => 'name'], ['auth_item', 'parent' => 'name']],
-            array_values($table->getForeignKeys()),
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
+        $this->assertInstanceOf(Constraint::class, $primaryKey);
+        $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
+
+        $this->assertCount(1, $databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
+        $this->assertForeignKey(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['child', 'parent'],
+            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignColumnNames: ['name', 'name'],
         );
+
+        $this->assertCount(1, $databaseSchema->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
+        $this->assertIndex(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['parent', 'child'],
+            expectedIsUnique: true,
+            expectedIsPrimary: true,
+        );
+    }
+
+    private function assertForeignKey(
+        string $table,
+        array $expectedColumnNames,
+        string $expectedForeignTableName,
+        array $expectedForeignColumnNames,
+        ?string $expectedName = null,
+        string $expectedOnUpdate = 'NO ACTION',
+        string $expectedOnDelete = 'NO ACTION',
+    ): void {
+        /** @var ForeignKeyConstraint[] $foreignKeys */
+        $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
+        $found = false;
+        foreach ($foreignKeys as $foreignKey) {
+            try {
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $foreignKey->getColumnNames());
+                $this->assertSame($expectedForeignTableName, $foreignKey->getForeignTableName());
+                $this->assertEqualsCanonicalizing($expectedForeignColumnNames, $foreignKey->getForeignColumnNames());
+            } catch (ExpectationFailedException) {
+                continue;
+            }
+
+            $found = true;
+
+            $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
+            $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
+
+            if ($expectedName !== null) {
+                $this->assertSame($expectedName, $foreignKey->getName());
+            }
+        }
+
+        if (!$found) {
+            self::fail('Foreign key not found.');
+        }
+    }
+
+    private function assertIndex(
+        string $table,
+        array $expectedColumnNames,
+        ?string $expectedName = null,
+        bool $expectedIsUnique = false,
+        bool $expectedIsPrimary = false,
+    ): void
+    {
+        /** @var IndexConstraint[] $indexes */
+        $indexes = $this->getDatabase()->getSchema()->getTableIndexes($table);
+        $found = false;
+        foreach ($indexes as $index) {
+            try {
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $index->getColumnNames());
+            } catch (ExpectationFailedException) {
+                continue;
+            }
+
+            $found = true;
+
+            $this->assertSame($expectedIsUnique, $index->isUnique());
+            $this->assertSame($expectedIsPrimary, $index->isPrimary());
+
+            if ($expectedName !== null) {
+                $this->assertSame($expectedName, $index->getName());
+            }
+        }
+
+        if (!$found) {
+            self::fail('Index not found.');
+        }
+    }
+
+    private function checkNoTables(): void
+    {
+        $schemaManager = $this->createSchemaManager();
+
+        $this->assertFalse($schemaManager->hasTable($schemaManager->getItemsTable()));
+        $this->assertFalse($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
+        $this->assertFalse($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
     }
 }
