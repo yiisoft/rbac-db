@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\Tests\Base;
 
+use RuntimeException;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\Db\DbSchemaManager;
 
@@ -14,6 +15,21 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected const ITEMS_CHILDREN_TABLE = 'auth_item_child';
 
     private ?ConnectionInterface $database = null;
+    private ?Logger $logger = null;
+
+    public function getLogger(): Logger
+    {
+        if ($this->logger === null) {
+            throw new RuntimeException('Logger was not set.');
+        }
+
+        return $this->logger;
+    }
+
+    public function setLogger(Logger $logger): void
+    {
+        $this->logger = $logger;
+    }
 
     protected function getDatabase(): ConnectionInterface
     {

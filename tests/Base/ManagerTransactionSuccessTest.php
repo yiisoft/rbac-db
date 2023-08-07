@@ -32,7 +32,7 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
         $role = $this->itemsStorage->getRole('reader')->withName('new reader');
         $manager->updateRole('reader', $role);
 
-        // $this->assertContains('Commit transaction', $this->getLogger()->getMessages());
+        $this->assertTransaction();
     }
 
     public function testUpdatePermissionTransactionError(): void
@@ -41,6 +41,21 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
         $permission = $this->itemsStorage->getPermission('updatePost')->withName('newUpdatePost');
         $manager->updatePermission('updatePost', $permission);
 
-        // $this->assertContains('Commit transaction', $this->getLogger()->getMessages());
+        $this->assertTransaction();
+    }
+
+    private function assertTransaction(): void
+    {
+        $result = false;
+
+        foreach ($this->getLogger()->getMessages() as $message) {
+            if (str_starts_with($message, 'Commit transaction')) {
+                $result = true;
+
+                break;
+            }
+        }
+
+        $this->assertTrue($result);
     }
 }
