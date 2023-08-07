@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Mysql;
 
 class ItemsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\ItemsStorageTest
 {
-    use MysqlTrait;
+    use DatabaseTrait;
 }
