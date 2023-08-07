@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Rbac\Cycle;
+namespace Yiisoft\Rbac\Db;
 
 use Closure;
 use Stringable;
@@ -17,7 +17,11 @@ final class TransactionalManagerDecorator implements ManagerInterface
     {
     }
 
-    public function userHasPermission($userId, string $permissionName, array $parameters = []): bool
+    public function userHasPermission(
+        int|string|Stringable|null $userId,
+        string $permissionName,
+        array $parameters = [],
+    ): bool
     {
         return $this->manager->userHasPermission($userId, $permissionName, $parameters);
     }
@@ -120,7 +124,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
             $manager->updateRole($name, $role);
         });
 
-        return $manager;
+        return $this;
     }
 
     public function addPermission(Permission $permission): ManagerInterface
@@ -144,7 +148,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
             $manager->updatePermission($name, $permission);
         });
 
-        return $manager;
+        return $this;
     }
 
     public function setDefaultRoleNames(Closure|array $roleNames): ManagerInterface
