@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\Rbac\Db\Tests\Pgsql;
+namespace Yiisoft\Rbac\Db\Tests\Mysql;
 
 use Yiisoft\Rbac\Db\Tests\Base\SchemaTrait;
 

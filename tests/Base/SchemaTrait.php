@@ -149,8 +149,8 @@ trait SchemaTrait
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
 
-        $this->assertCount(1, $databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
         var_dump($databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
+        $this->assertCount(1, $databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
         $this->assertForeignKey(
             table: self::ITEMS_CHILDREN_TABLE,
             expectedColumnNames: ['child', 'parent'],
