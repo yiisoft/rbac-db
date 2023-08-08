@@ -6,8 +6,10 @@ namespace Yiisoft\Rbac\Db\Tests\Mssql;
 
 trait SchemaTrait
 {
-    protected function checkItemsChildrenTableForeignKeys(): void
+    protected function checkItemsChildrenTable(): void
     {
+        parent::checkItemsChildrenTable();
+
         $this->assertCount(2, $this->getDatabase()->getSchema()->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
         $this->assertForeignKey(
             table: self::ITEMS_CHILDREN_TABLE,

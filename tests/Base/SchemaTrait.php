@@ -11,23 +11,6 @@ use Yiisoft\Db\Constraint\IndexConstraint;
 
 trait SchemaTrait
 {
-    protected function checkItemsChildrenTableForeignKeys(): void
-    {
-        $this->assertCount(2, $this->getDatabase()->getSchema()->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
-        $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
-            expectedColumnNames: ['parent'],
-            expectedForeignTableName: self::ITEMS_TABLE,
-            expectedForeignColumnNames: ['name'],
-        );
-        $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
-            expectedColumnNames: ['child'],
-            expectedForeignTableName: self::ITEMS_TABLE,
-            expectedForeignColumnNames: ['name'],
-        );
-    }
-
     protected function assertForeignKey(
         string $table,
         array $expectedColumnNames,
@@ -201,8 +184,6 @@ trait SchemaTrait
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
-
-        $this->checkItemsChildrenTableForeignKeys();
 
         $this->assertCount(1, $databaseSchema->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
         $this->assertIndex(
