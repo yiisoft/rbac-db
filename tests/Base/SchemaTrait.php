@@ -11,6 +11,59 @@ use Yiisoft\Db\Constraint\IndexConstraint;
 
 trait SchemaTrait
 {
+    protected function checkItemsChildrenTableForeignKeys(): void
+    {
+        $this->assertCount(2, $this->getDatabase()->getSchema()->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
+        $this->assertForeignKey(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['parent'],
+            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignColumnNames: ['name'],
+        );
+        $this->assertForeignKey(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['child'],
+            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignColumnNames: ['name'],
+        );
+    }
+
+    protected function assertForeignKey(
+        string $table,
+        array $expectedColumnNames,
+        string $expectedForeignTableName,
+        array $expectedForeignColumnNames,
+        ?string $expectedName = null,
+        string $expectedOnUpdate = 'NO ACTION',
+        string $expectedOnDelete = 'NO ACTION',
+    ): void {
+        /** @var ForeignKeyConstraint[] $foreignKeys */
+        $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
+        $found = false;
+        foreach ($foreignKeys as $foreignKey) {
+            try {
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $foreignKey->getColumnNames());
+                $this->assertSame($expectedForeignTableName, $foreignKey->getForeignTableName());
+                $this->assertEqualsCanonicalizing($expectedForeignColumnNames, $foreignKey->getForeignColumnNames());
+            } catch (ExpectationFailedException) {
+                continue;
+            }
+
+            $found = true;
+
+            $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
+            $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
+
+            if ($expectedName !== null) {
+                $this->assertSame($expectedName, $foreignKey->getName());
+            }
+        }
+
+        if (!$found) {
+            self::fail('Foreign key not found.');
+        }
+    }
+
     private function checkTables(): void
     {
         $this->checkItemsTable();
@@ -149,14 +202,7 @@ trait SchemaTrait
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
 
-        var_dump($databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
-        $this->assertCount(1, $databaseSchema->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
-        $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
-            expectedColumnNames: ['child', 'parent'],
-            expectedForeignTableName: self::ITEMS_TABLE,
-            expectedForeignColumnNames: ['name', 'name'],
-        );
+        $this->checkItemsChildrenTableForeignKeys();
 
         $this->assertCount(1, $databaseSchema->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
         $this->assertIndex(
@@ -165,42 +211,6 @@ trait SchemaTrait
             expectedIsUnique: true,
             expectedIsPrimary: true,
         );
-    }
-
-    private function assertForeignKey(
-        string $table,
-        array $expectedColumnNames,
-        string $expectedForeignTableName,
-        array $expectedForeignColumnNames,
-        ?string $expectedName = null,
-        string $expectedOnUpdate = 'NO ACTION',
-        string $expectedOnDelete = 'NO ACTION',
-    ): void {
-        /** @var ForeignKeyConstraint[] $foreignKeys */
-        $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
-        $found = false;
-        foreach ($foreignKeys as $foreignKey) {
-            try {
-                $this->assertEqualsCanonicalizing($expectedColumnNames, $foreignKey->getColumnNames());
-                $this->assertSame($expectedForeignTableName, $foreignKey->getForeignTableName());
-                $this->assertEqualsCanonicalizing($expectedForeignColumnNames, $foreignKey->getForeignColumnNames());
-            } catch (ExpectationFailedException) {
-                continue;
-            }
-
-            $found = true;
-
-            $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
-            $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
-
-            if ($expectedName !== null) {
-                $this->assertSame($expectedName, $foreignKey->getName());
-            }
-        }
-
-        if (!$found) {
-            self::fail('Foreign key not found.');
-        }
     }
 
     private function assertIndex(
