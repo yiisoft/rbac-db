@@ -184,15 +184,6 @@ trait SchemaTrait
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
-
-        var_dump($databaseSchema->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
-        $this->assertCount(1, $databaseSchema->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
-        $this->assertIndex(
-            table: self::ITEMS_CHILDREN_TABLE,
-            expectedColumnNames: ['parent', 'child'],
-            expectedIsUnique: true,
-            expectedIsPrimary: true,
-        );
     }
 
     private function assertIndex(

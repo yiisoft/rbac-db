@@ -27,5 +27,14 @@ trait SchemaTrait
             expectedOnUpdate: 'RESTRICT',
             expectedOnDelete: 'RESTRICT',
         );
+
+        $this->assertCount(2, $this->getDatabase()->getSchema()->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
+        $this->assertIndex(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['parent', 'child'],
+            expectedIsUnique: true,
+            expectedIsPrimary: true,
+        );
+        $this->assertIndex(table: self::ITEMS_CHILDREN_TABLE, expectedColumnNames: ['child']);
     }
 }

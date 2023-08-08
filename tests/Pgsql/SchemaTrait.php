@@ -23,5 +23,13 @@ trait SchemaTrait
             expectedForeignTableName: self::ITEMS_TABLE,
             expectedForeignColumnNames: ['name'],
         );
+
+        $this->assertCount(1, $this->getDatabase()->getSchema()->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
+        $this->assertIndex(
+            table: self::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['parent', 'child'],
+            expectedIsUnique: true,
+            expectedIsPrimary: true,
+        );
     }
 }
