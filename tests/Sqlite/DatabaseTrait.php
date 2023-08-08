@@ -17,6 +17,7 @@ trait DatabaseTrait
     {
         $pdoDriver = new Driver(dsn: 'sqlite::memory:');
         $pdoDriver->charset('UTF8MB4');
+
         $connection = new Connection($pdoDriver, new SchemaCache(new ArrayCache()));
         $connection->createCommand('PRAGMA foreign_keys = ON;')->execute();
 

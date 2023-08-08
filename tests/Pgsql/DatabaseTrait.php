@@ -9,6 +9,7 @@ use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Pgsql\Connection;
 use Yiisoft\Db\Pgsql\Driver;
+use Yiisoft\Rbac\Db\Tests\Base\Logger;
 
 trait DatabaseTrait
 {
@@ -17,6 +18,12 @@ trait DatabaseTrait
         $pdoDriver = new Driver('pgsql:host=127.0.0.1;dbname=yiitest;port=5432', 'root', 'root');
         $pdoDriver->charset('UTF8');
 
-        return new Connection($pdoDriver, new SchemaCache(new ArrayCache()));
+        $connection = Connection($pdoDriver, new SchemaCache(new ArrayCache()));
+
+        $logger = new Logger();
+        $connection->setLogger($logger);
+        $this->setLogger($logger);
+
+        return $connection;
     }
 }
