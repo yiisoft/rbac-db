@@ -34,8 +34,8 @@ trait SchemaTrait
         string $expectedForeignTableName,
         array $expectedForeignColumnNames,
         ?string $expectedName = null,
-        string $expectedOnUpdate = 'NO ACTION',
-        string $expectedOnDelete = 'NO ACTION',
+        ?string $expectedOnUpdate = 'NO ACTION',
+        ?string $expectedOnDelete = 'NO ACTION',
     ): void {
         /** @var ForeignKeyConstraint[] $foreignKeys */
         $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
