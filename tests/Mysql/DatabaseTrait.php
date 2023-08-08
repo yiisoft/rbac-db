@@ -7,7 +7,6 @@ namespace Yiisoft\Rbac\Db\Tests\Mysql;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Db\Mysql\Connection;
 use Yiisoft\Db\Mysql\Driver;
 use Yiisoft\Rbac\Db\Tests\Base\Logger;
 
