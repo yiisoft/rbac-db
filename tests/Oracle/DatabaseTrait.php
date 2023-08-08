@@ -8,6 +8,7 @@ use PDO;
 use Yiisoft\Cache\ArrayCache;
 use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Oracle\Connection;
 use Yiisoft\Db\Oracle\Driver;
 use Yiisoft\Rbac\Db\Tests\Base\Logger;
 
@@ -19,7 +20,7 @@ trait DatabaseTrait
         $pdoDriver->charset('AL32UTF8');
         $pdoDriver->attributes([PDO::ATTR_STRINGIFY_FETCHES => true]);
 
-        $connection = Connection($pdoDriver, new SchemaCache(new ArrayCache()));
+        $connection = new Connection($pdoDriver, new SchemaCache(new ArrayCache()));
 
         $logger = new Logger();
         $connection->setLogger($logger);
