@@ -218,8 +218,6 @@ trait SchemaTrait
         );
     }
 
-
-
     private function checkNoTables(): void
     {
         $schemaManager = $this->createSchemaManager();
