@@ -45,8 +45,8 @@ trait SchemaTrait
         string $expectedForeignTableName,
         array $expectedForeignColumnNames,
         ?string $expectedName = null,
-        ?string $expectedOnUpdate = 'NO ACTION',
-        ?string $expectedOnDelete = 'NO ACTION',
+        null|string|array $expectedOnUpdate = 'NO ACTION',
+        null|string|array $expectedOnDelete = 'NO ACTION',
     ): void {
         /** @var ForeignKeyConstraint[] $foreignKeys */
         $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
@@ -62,8 +62,17 @@ trait SchemaTrait
 
             $found = true;
 
-            $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
-            $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
+            if (is_array($expectedOnUpdate)) {
+                $this->assertContains($foreignKey->getOnUpdate(), $expectedOnUpdate);
+            } else {
+                $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
+            }
+
+            if (is_array($expectedOnDelete)) {
+                $this->assertContains($foreignKey->getOnDelete(), $expectedOnDelete);
+            } else {
+                $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
+            }
 
             if ($expectedName !== null) {
                 $this->assertSame($expectedName, $foreignKey->getName());
