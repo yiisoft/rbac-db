@@ -11,6 +11,34 @@ use Yiisoft\Db\Constraint\IndexConstraint;
 
 trait SchemaTrait
 {
+    protected function checkItemsChildrenTable(): void
+    {
+        $database = $this->getDatabase();
+        $databaseSchema = $database->getSchema();
+        $table = $databaseSchema->getTableSchema(self::ITEMS_CHILDREN_TABLE);
+
+        $schemaManager = $this->createSchemaManager();
+        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
+
+        $columns = $table->getColumns();
+
+        $this->assertArrayHasKey('parent', $columns);
+        $parent = $columns['parent'];
+        $this->assertSame('string', $parent->getType());
+        $this->assertSame(128, $parent->getSize());
+        $this->assertFalse($parent->isAllowNull());
+
+        $this->assertArrayHasKey('child', $columns);
+        $child = $columns['child'];
+        $this->assertSame('string', $child->getType());
+        $this->assertSame(128, $child->getSize());
+        $this->assertFalse($child->isAllowNull());
+
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
+        $this->assertInstanceOf(Constraint::class, $primaryKey);
+        $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
+    }
+
     protected function assertForeignKey(
         string $table,
         array $expectedColumnNames,
@@ -44,6 +72,38 @@ trait SchemaTrait
 
         if (!$found) {
             self::fail('Foreign key not found.');
+        }
+    }
+
+    protected function assertIndex(
+        string $table,
+        array $expectedColumnNames,
+        ?string $expectedName = null,
+        bool $expectedIsUnique = false,
+        bool $expectedIsPrimary = false,
+    ): void {
+        /** @var IndexConstraint[] $indexes */
+        $indexes = $this->getDatabase()->getSchema()->getTableIndexes($table);
+        $found = false;
+        foreach ($indexes as $index) {
+            try {
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $index->getColumnNames());
+            } catch (ExpectationFailedException) {
+                continue;
+            }
+
+            $found = true;
+
+            $this->assertSame($expectedIsUnique, $index->isUnique());
+            $this->assertSame($expectedIsPrimary, $index->isPrimary());
+
+            if ($expectedName !== null) {
+                $this->assertSame($expectedName, $index->getName());
+            }
+        }
+
+        if (!$found) {
+            self::fail('Index not found.');
         }
     }
 
@@ -158,65 +218,7 @@ trait SchemaTrait
         );
     }
 
-    private function checkItemsChildrenTable(): void
-    {
-        $database = $this->getDatabase();
-        $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ITEMS_CHILDREN_TABLE);
 
-        $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
-
-        $columns = $table->getColumns();
-
-        $this->assertArrayHasKey('parent', $columns);
-        $parent = $columns['parent'];
-        $this->assertSame('string', $parent->getType());
-        $this->assertSame(128, $parent->getSize());
-        $this->assertFalse($parent->isAllowNull());
-
-        $this->assertArrayHasKey('child', $columns);
-        $child = $columns['child'];
-        $this->assertSame('string', $child->getType());
-        $this->assertSame(128, $child->getSize());
-        $this->assertFalse($child->isAllowNull());
-
-        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
-        $this->assertInstanceOf(Constraint::class, $primaryKey);
-        $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
-    }
-
-    private function assertIndex(
-        string $table,
-        array $expectedColumnNames,
-        ?string $expectedName = null,
-        bool $expectedIsUnique = false,
-        bool $expectedIsPrimary = false,
-    ): void {
-        /** @var IndexConstraint[] $indexes */
-        $indexes = $this->getDatabase()->getSchema()->getTableIndexes($table);
-        $found = false;
-        foreach ($indexes as $index) {
-            try {
-                $this->assertEqualsCanonicalizing($expectedColumnNames, $index->getColumnNames());
-            } catch (ExpectationFailedException) {
-                continue;
-            }
-
-            $found = true;
-
-            $this->assertSame($expectedIsUnique, $index->isUnique());
-            $this->assertSame($expectedIsPrimary, $index->isPrimary());
-
-            if ($expectedName !== null) {
-                $this->assertSame($expectedName, $index->getName());
-            }
-        }
-
-        if (!$found) {
-            self::fail('Index not found.');
-        }
-    }
 
     private function checkNoTables(): void
     {
