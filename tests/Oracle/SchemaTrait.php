@@ -16,16 +16,12 @@ trait SchemaTrait
             expectedColumnNames: ['parent'],
             expectedForeignTableName: self::ITEMS_TABLE,
             expectedForeignColumnNames: ['name'],
-            expectedOnUpdate: null,
-            expectedOnDelete: null,
         );
         $this->assertForeignKey(
             table: self::ITEMS_CHILDREN_TABLE,
             expectedColumnNames: ['child'],
             expectedForeignTableName: self::ITEMS_TABLE,
             expectedForeignColumnNames: ['name'],
-            expectedOnUpdate: null,
-            expectedOnDelete: null,
         );
 
         $this->assertCount(1, $this->getDatabase()->getSchema()->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
