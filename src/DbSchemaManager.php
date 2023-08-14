@@ -92,7 +92,7 @@ final class DbSchemaManager
     public function createItemsChildrenTable(): void
     {
         if (
-            $this->itemsTable ===null ||
+            $this->itemsTable === null ||
             $this->itemsChildrenTable === null ||
             $this->hasTable($this->itemsChildrenTable)
         ) {
