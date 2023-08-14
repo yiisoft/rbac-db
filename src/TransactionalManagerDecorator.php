@@ -143,9 +143,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
     public function updatePermission(string $name, Permission $permission): ManagerInterface
     {
         $manager = $this->manager;
-        $this->database->transaction(static function () use ($manager, $name, $permission): void {
-            $manager->updatePermission($name, $permission);
-        });
+        $this->database->transaction(static fn (): void => $manager->updatePermission($name, $permission));
 
         return $this;
     }
