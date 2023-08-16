@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Sqlite;
 
 class AssignmentsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\AssignmentsStorageTest
 {
-    use SqliteTrait;
+    use DatabaseTrait;
 }

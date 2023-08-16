@@ -14,37 +14,41 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 final class DbSchemaManager
 {
     /**
-     * @var string A name of the table for storing RBAC items (roles and permissions).
-     * @psalm-var non-empty-string
+     * @var string|null A name of the table for storing RBAC items (roles and permissions).
+     * @psalm-var ?non-empty-string
      */
-    private string $itemsTable;
+    private ?string $itemsTable;
     /**
-     * @var string A name of the table for storing RBAC assignments.
-     * @psalm-var non-empty-string
+     * @var string|null A name of the table for storing RBAC assignments.
+     * @psalm-var ?non-empty-string
      */
-    private string $assignmentsTable;
+    private ?string $assignmentsTable;
     /**
-     * @var string A name of the table for storing relations between RBAC items.
-     * @psalm-var non-empty-string
+     * @var string|null A name of the table for storing relations between RBAC items.
+     * @psalm-var ?non-empty-string
      */
-    private string $itemsChildrenTable;
+    private ?string $itemsChildrenTable;
 
     /**
-     * @param string $itemsTable A name of the table for storing RBAC items (roles and permissions).
-     * @param string $assignmentsTable A name of the table for storing RBAC assignments.
      * @param ConnectionInterface $database Yii Database connection instance.
+     * @param string|null $itemsTable A name of the table for storing RBAC items (roles and permissions).
      * @param string|null $itemsChildrenTable A name of the table for storing relations between RBAC items. When set to
      * `null`, it will be automatically generated using {@see $itemsTable}.
+     * @param string|null $assignmentsTable A name of the table for storing RBAC assignments.
      *
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
     public function __construct(
-        string $itemsTable,
-        string $assignmentsTable,
         private ConnectionInterface $database,
-        string|null $itemsChildrenTable = null,
+        ?string $itemsTable = null,
+        ?string $itemsChildrenTable = null,
+        ?string $assignmentsTable = null,
     ) {
-        $this->initTables($itemsTable, $assignmentsTable, $itemsChildrenTable);
+        $this->initTables(
+            itemsTable: $itemsTable,
+            itemsChildrenTable: $itemsChildrenTable,
+            assignmentsTable: $assignmentsTable,
+        );
     }
 
     /**
@@ -54,6 +58,10 @@ final class DbSchemaManager
      */
     public function createItemsTable(): void
     {
+        if ($this->itemsTable === null || $this->hasTable($this->itemsTable)) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -83,6 +91,14 @@ final class DbSchemaManager
      */
     public function createItemsChildrenTable(): void
     {
+        if (
+            $this->itemsTable === null ||
+            $this->itemsChildrenTable === null ||
+            $this->hasTable($this->itemsChildrenTable)
+        ) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -106,6 +122,10 @@ final class DbSchemaManager
      */
     public function createAssignmentsTable(): void
     {
+        if ($this->assignmentsTable === null || $this->hasTable($this->assignmentsTable)) {
+            return;
+        }
+
         $this
             ->database
             ->createCommand()
@@ -116,7 +136,6 @@ final class DbSchemaManager
                     'userId' => 'string(128) NOT NULL',
                     'createdAt' => 'integer NOT NULL',
                     'PRIMARY KEY ([[itemName]], [[userId]])',
-                    "FOREIGN KEY ([[itemName]]) REFERENCES {{%$this->itemsTable}} ([[name]])",
                 ],
             )
             ->execute();
@@ -127,10 +146,15 @@ final class DbSchemaManager
      *
      * @param string $tableName Table name for checking.
      *
+     * @throws InvalidArgumentException When a table name is set to the empty string.
      * @return bool Whether a table exists: `true` - exists, `false` - doesn't exist.
      */
     public function hasTable(string $tableName): bool
     {
+        if ($tableName === '') {
+            throw new InvalidArgumentException('Table name must be non-empty.');
+        }
+
         return $this->database->getSchema()->getTableSchema($tableName) !== null;
     }
 
@@ -138,9 +162,15 @@ final class DbSchemaManager
      * Drops a table in {@see $database} by a given name.
      *
      * @param string $tableName Table name for dropping.
+     *
+     * @throws InvalidArgumentException When a table name is set to the empty string.
      */
     public function dropTable(string $tableName): void
     {
+        if ($tableName === '') {
+            throw new InvalidArgumentException('Table name must be non-empty.');
+        }
+
         $this->database->createCommand()->dropTable($tableName)->execute();
     }
 
@@ -150,17 +180,9 @@ final class DbSchemaManager
      */
     public function ensureTables(): void
     {
-        if (!$this->hasTable($this->itemsTable)) {
-            $this->createItemsTable();
-        }
-
-        if (!$this->hasTable($this->itemsChildrenTable)) {
-            $this->createItemsChildrenTable();
-        }
-
-        if (!$this->hasTable($this->assignmentsTable)) {
-            $this->createAssignmentsTable();
-        }
+        $this->createItemsTable();
+        $this->createItemsChildrenTable();
+        $this->createAssignmentsTable();
     }
 
     /**
@@ -169,15 +191,15 @@ final class DbSchemaManager
      */
     public function ensureNoTables(): void
     {
-        if ($this->hasTable($this->itemsChildrenTable)) {
+        if ($this->itemsChildrenTable !== null && $this->hasTable($this->itemsChildrenTable)) {
             $this->dropTable($this->itemsChildrenTable);
         }
 
-        if ($this->hasTable($this->assignmentsTable)) {
+        if ($this->assignmentsTable !== null && $this->hasTable($this->assignmentsTable)) {
             $this->dropTable($this->assignmentsTable);
         }
 
-        if ($this->hasTable($this->itemsTable)) {
+        if ($this->itemsTable !== null && $this->hasTable($this->itemsTable)) {
             $this->dropTable($this->itemsTable);
         }
     }
@@ -185,11 +207,11 @@ final class DbSchemaManager
     /**
      * Gets name of the table for storing RBAC items (roles and permissions).
      *
-     * @return string Table name
+     * @return string|null Table name.
      *
      * @see $itemsTable
      */
-    public function getItemsTable(): string
+    public function getItemsTable(): ?string
     {
         return $this->itemsTable;
     }
@@ -197,11 +219,11 @@ final class DbSchemaManager
     /**
      * Gets name of the table for storing RBAC assignments.
      *
-     * @return string Table name.
+     * @return string|null Table name.
      *
      * @see $assignmentsTable
      */
-    public function getAssignmentsTable(): string
+    public function getAssignmentsTable(): ?string
     {
         return $this->assignmentsTable;
     }
@@ -209,11 +231,11 @@ final class DbSchemaManager
     /**
      * Gets name of the table for storing relations between RBAC items.
      *
-     * @return string Table name
+     * @return string|null Table name.
      *
      * @see $itemsChildrenTable
      */
-    public function getItemsChildrenTable(): string
+    public function getItemsChildrenTable(): ?string
     {
         return $this->itemsChildrenTable;
     }
@@ -223,8 +245,12 @@ final class DbSchemaManager
      *
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
-    private function initTables(string $itemsTable, string $assignmentsTable, string|null $itemsChildrenTable): void
+    private function initTables(?string $itemsTable, ?string $itemsChildrenTable, ?string $assignmentsTable): void
     {
+        if ($itemsTable === null && $assignmentsTable === null) {
+            throw new InvalidArgumentException('At least items table or assignments table name must be set.');
+        }
+
         if ($itemsTable === '') {
             throw new InvalidArgumentException('Items table name can\'t be empty.');
         }
@@ -241,6 +267,8 @@ final class DbSchemaManager
             throw new InvalidArgumentException('Items children table name can\'t be empty.');
         }
 
-        $this->itemsChildrenTable = $itemsChildrenTable ?? ($this->itemsTable . '_child');
+        $this->itemsChildrenTable = $itemsTable !== null && $itemsChildrenTable === null
+            ? $itemsTable . '_child'
+            : $itemsChildrenTable;
     }
 }

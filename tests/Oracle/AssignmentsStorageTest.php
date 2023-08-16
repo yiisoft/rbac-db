@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Oracle;
 
 class AssignmentsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\AssignmentsStorageTest
 {
-    use OracleTrait;
+    use DatabaseTrait;
 }

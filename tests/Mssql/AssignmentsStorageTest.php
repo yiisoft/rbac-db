@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Mssql;
 
 class AssignmentsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\AssignmentsStorageTest
 {
-    use MssqlTrait;
+    use DatabaseTrait;
 }

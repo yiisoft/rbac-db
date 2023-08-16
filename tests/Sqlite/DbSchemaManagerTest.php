@@ -6,5 +6,6 @@ namespace Yiisoft\Rbac\Db\Tests\Sqlite;
 
 class DbSchemaManagerTest extends \Yiisoft\Rbac\Db\Tests\Base\DbSchemaManagerTest
 {
-    use SqliteTrait;
+    use DatabaseTrait;
+    use SchemaTrait;
 }

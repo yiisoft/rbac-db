@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use InvalidArgumentException;
-use Yiisoft\Db\Constraint\IndexConstraint;
 use Yiisoft\Rbac\Db\DbSchemaManager;
 
 abstract class DbSchemaManagerTest extends TestCase
 {
+    use SchemaTrait;
+
     protected function setUp(): void
     {
         // Skip
@@ -17,9 +18,19 @@ abstract class DbSchemaManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (!str_starts_with($this->getName(), 'testInitWithEmptyTableNames')) {
-            parent::tearDown();
+        if (str_starts_with($this->getName(), 'testInitWithEmptyTableNames')) {
+            return;
         }
+
+        if ($this->getName() === 'testHasTableWithEmptyString' || $this->getName() === 'testDropTableWithEmptyString') {
+            return;
+        }
+
+        if (str_starts_with($this->getName(), 'testGet')) {
+            return;
+        }
+
+        parent::tearDown();
     }
 
     protected function populateDatabase(): void
@@ -30,26 +41,35 @@ abstract class DbSchemaManagerTest extends TestCase
     public function dataInitWithEmptyTableNames(): array
     {
         return [
-            [['itemsTable' => '', 'assignmentsTable' => 'assignments'], 'Items'],
-            [['itemsTable' => 'items', 'assignmentsTable' => ''], 'Assignments'],
-            [['itemsTable' => '', 'assignmentsTable' => ''], 'Items'],
+            [[], 'At least items table or assignments table name must be set.'],
             [
-                ['itemsTable' => 'items', 'assignmentsTable' => 'assignments', 'itemsChildrenTable' => ''],
-                'Items children',
+                ['itemsTable' => null, 'itemsChildrenTable' => null, 'assignmentsTable' => null],
+                'At least items table or assignments table name must be set.',
             ],
-            [['itemsTable' => '', 'assignmentsTable' => '', 'itemsChildrenTable' => ''], 'Items'],
+            [['itemsChildrenTable' => null], 'At least items table or assignments table name must be set.'],
+            [['itemsTable' => '', 'assignmentsTable' => 'assignments'], 'Items table name can\'t be empty.'],
+            [['itemsTable' => 'items', 'assignmentsTable' => ''], 'Assignments table name can\'t be empty.'],
+            [['itemsTable' => '', 'assignmentsTable' => ''], 'Items table name can\'t be empty.'],
+            [
+                ['itemsTable' => 'items', 'itemsChildrenTable' => '', 'assignmentsTable' => 'assignments'],
+                'Items children table name can\'t be empty.',
+            ],
+            [
+                ['itemsTable' => '', 'itemsChildrenTable' => '', 'assignmentsTable' => ''],
+                'Items table name can\'t be empty.',
+            ],
         ];
     }
 
     /**
      * @dataProvider dataInitWithEmptyTableNames
      */
-    public function testInitWithEmptyTableNames(array $tableNameArguments, $expectedWrongTableName): void
+    public function testInitWithEmptyTableNames(array $tableNameArguments, string $expectedExceptionMessage): void
     {
         $arguments = ['database' => $this->getDatabase()];
         $arguments = array_merge($tableNameArguments, $arguments);
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("$expectedWrongTableName table name can't be empty.");
+        $this->expectExceptionMessage($expectedExceptionMessage);
         new DbSchemaManager(...$arguments);
     }
 
@@ -66,7 +86,7 @@ abstract class DbSchemaManagerTest extends TestCase
      */
     public function testCreateTablesSeparately(string|null $itemsChildrenTable): void
     {
-        $schemaManager = $this->createSchemaManager($itemsChildrenTable);
+        $schemaManager = $this->createSchemaManager(itemsChildrenTable: $itemsChildrenTable);
         $schemaManager->createItemsTable();
         $schemaManager->createItemsChildrenTable();
         $schemaManager->createAssignmentsTable();
@@ -83,127 +103,66 @@ abstract class DbSchemaManagerTest extends TestCase
         $this->checkTables();
     }
 
-    private function checkTables(): void
+    public function testCreateItemTables(): void
     {
+        $schemaManager = $this->createSchemaManager(assignmentsTable: null);
+        $schemaManager->ensureTables();
+
         $this->checkItemsTable();
-        $this->checkAssignmentsTable();
         $this->checkItemsChildrenTable();
+
+        $this->assertFalse($schemaManager->hasTable(self::ASSIGNMENTS_TABLE));
     }
 
-    private function checkItemsTable(): void
+    public function testCreateAssignmentsTable(): void
     {
-        $database = $this->getDatabase();
-        $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE);
+        $schemaManager = $this->createSchemaManager(itemsTable: null, itemsChildrenTable: null);
+        $schemaManager->ensureTables();
 
-        $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsTable()));
+        $this->checkAssignmentsTable();
 
-        $columns = $table->getColumns();
-
-        $this->assertArrayHasKey('name', $columns);
-        $name = $columns['name'];
-        $this->assertSame('string', $name->getType());
-        $this->assertSame(128, $name->getSize());
-        $this->assertFalse($name->isAllowNull());
-
-        $this->assertArrayHasKey('type', $columns);
-        $type = $columns['type'];
-        $this->assertSame('string', $type->getType());
-        $this->assertFalse($type->isAllowNull());
-
-        $this->assertArrayHasKey('description', $columns);
-        $description = $columns['description'];
-        $this->assertSame('string', $description->getType());
-        $this->assertSame(191, $description->getSize());
-        $this->assertTrue($description->isAllowNull());
-
-        $this->assertArrayHasKey('ruleName', $columns);
-        $ruleName = $columns['ruleName'];
-        $this->assertSame('string', $ruleName->getType());
-        $this->assertSame(64, $ruleName->getSize());
-        $this->assertTrue($ruleName->isAllowNull());
-
-        $this->assertArrayHasKey('createdAt', $columns);
-        $createdAt = $columns['createdAt'];
-        $this->assertSame('integer', $createdAt->getType());
-        $this->assertFalse($createdAt->isAllowNull());
-
-        $this->assertArrayHasKey('updatedAt', $columns);
-        $updatedAt = $columns['updatedAt'];
-        $this->assertSame('integer', $updatedAt->getType());
-        $this->assertFalse($updatedAt->isAllowNull());
-
-        /** @var IndexConstraint[] $indexes */
-        $indexes = $databaseSchema->getTableIndexes(self::ITEMS_TABLE);
-        $this->assertCount(2, $indexes);
-        $expectedIndexColumnNames = ['type', 'name'];
-        foreach ($indexes as $index) {
-            $columnNames = $index->getColumnNames();
-            $this->assertCount(1, $columnNames);
-            $this->assertContains($columnNames[0], $expectedIndexColumnNames);
-        }
-
-        $this->assertSame(['name'], $table->getPrimaryKey());
+        $this->assertFalse($schemaManager->hasTable(self::ITEMS_TABLE));
+        $this->assertFalse($schemaManager->hasTable(self::ITEMS_CHILDREN_TABLE));
     }
 
-    private function checkAssignmentsTable(): void
+    public function testHasTableWithEmptyString(): void
     {
-        $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ASSIGNMENTS_TABLE);
-
         $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
 
-        $columns = $table->getColumns();
-
-        $this->assertArrayHasKey('itemName', $columns);
-        $itemName = $columns['itemName'];
-        $this->assertSame('string', $itemName->getType());
-        $this->assertSame(128, $itemName->getSize());
-        $this->assertFalse($itemName->isAllowNull());
-
-        $this->assertArrayHasKey('userId', $columns);
-        $userId = $columns['userId'];
-        $this->assertSame('string', $userId->getType());
-        $this->assertSame(128, $userId->getSize());
-        $this->assertFalse($userId->isAllowNull());
-
-        $this->assertArrayHasKey('createdAt', $columns);
-        $createdAt = $columns['createdAt'];
-        $this->assertSame('integer', $createdAt->getType());
-        $this->assertFalse($createdAt->isAllowNull());
-
-        $this->assertSame(['itemName', 'userId'], $table->getPrimaryKey());
-        $this->assertSame([['auth_item', 'itemName' => 'name']], array_values($table->getForeignKeys()));
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Table name must be non-empty.');
+        $schemaManager->hasTable('');
     }
 
-    private function checkItemsChildrenTable(): void
+    public function testDropTableWithEmptyString(): void
     {
-        $database = $this->getDatabase();
-        $table = $database->getSchema()->getTableSchema(self::ITEMS_CHILDREN_TABLE);
-
         $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
 
-        $columns = $table->getColumns();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Table name must be non-empty.');
+        $schemaManager->dropTable('');
+    }
 
-        $this->assertArrayHasKey('parent', $columns);
-        $parent = $columns['parent'];
-        $this->assertSame('string', $parent->getType());
-        $this->assertSame(128, $parent->getSize());
-        $this->assertFalse($parent->isAllowNull());
+    public function testGetItemsTable(): void
+    {
+        $this->assertSame(self::ITEMS_TABLE, $this->createSchemaManager()->getItemsTable());
+    }
 
-        $this->assertArrayHasKey('child', $columns);
-        $child = $columns['child'];
-        $this->assertSame('string', $child->getType());
-        $this->assertSame(128, $child->getSize());
-        $this->assertFalse($child->isAllowNull());
+    public function testGetItemsChildrenTable(): void
+    {
+        $this->assertSame(self::ITEMS_CHILDREN_TABLE, $this->createSchemaManager()->getItemsChildrenTable());
+    }
 
-        $this->assertEqualsCanonicalizing(['parent', 'child'], $table->getPrimaryKey());
-        $this->assertEqualsCanonicalizing(
-            [['auth_item', 'child' => 'name'], ['auth_item', 'parent' => 'name']],
-            array_values($table->getForeignKeys()),
-        );
+    public function testGetAssignmentsTable(): void
+    {
+        $this->assertSame(self::ASSIGNMENTS_TABLE, $this->createSchemaManager()->getAssignmentsTable());
+    }
+
+    public function testEnsureNoTables(): void
+    {
+        $schemaManager = $this->createSchemaManager();
+        $schemaManager->ensureTables();
+        $schemaManager->ensureNoTables();
+        $this->checkNoTables();
     }
 }

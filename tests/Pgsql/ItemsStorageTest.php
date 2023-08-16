@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Pgsql;
 
 class ItemsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\ItemsStorageTest
 {
-    use PgsqlTrait;
+    use DatabaseTrait;
 }

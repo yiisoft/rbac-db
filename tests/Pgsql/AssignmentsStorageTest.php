@@ -6,5 +6,5 @@ namespace Yiisoft\Rbac\Db\Tests\Pgsql;
 
 class AssignmentsStorageTest extends \Yiisoft\Rbac\Db\Tests\Base\AssignmentsStorageTest
 {
-    use PgsqlTrait;
+    use DatabaseTrait;
 }

@@ -18,6 +18,5 @@ CREATE TABLE "auth_assignment" (
   "itemName" VARCHAR2(128) NOT NULL,
   "userId" VARCHAR2(128) NOT NULL,
   "createdAt" NUMBER(10) NOT NULL,
-  PRIMARY KEY ("itemName", "userId"),
-  FOREIGN KEY ("itemName") REFERENCES "auth_item" ("name")
+  PRIMARY KEY ("itemName", "userId")
 );

@@ -24,7 +24,7 @@ jobs:
     uses: yiisoft/actions/.github/workflows/roave-infection.yml@master
     with:
       min-covered-msi: 100
-      extensions: pdo, pdo_sqlite
+      extensions: pdo, pdo_sqlite, uopz
       os: >-
         ['ubuntu-latest']
       php: >-
