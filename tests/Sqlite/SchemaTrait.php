@@ -10,17 +10,17 @@ trait SchemaTrait
     {
         parent::checkItemsChildrenTable();
 
-        $this->assertCount(1, $this->getDatabase()->getSchema()->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
+        $this->assertCount(1, $this->getDatabase()->getSchema()->getTableForeignKeys('yii_rbac_item_child'));
         $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
+            table: 'yii_rbac_item_child',
             expectedColumnNames: ['parent', 'child'],
-            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignTableName: 'yii_rbac_item',
             expectedForeignColumnNames: ['name', 'name'],
         );
 
-        $this->assertCount(1, $this->getDatabase()->getSchema()->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
+        $this->assertCount(1, $this->getDatabase()->getSchema()->getTableIndexes('yii_rbac_item_child'));
         $this->assertIndex(
-            table: self::ITEMS_CHILDREN_TABLE,
+            table: 'yii_rbac_item_child',
             expectedColumnNames: ['parent', 'child'],
             expectedIsUnique: true,
             expectedIsPrimary: true,

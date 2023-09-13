@@ -10,10 +10,6 @@ use Yiisoft\Rbac\Db\DbSchemaManager;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
-    protected const ITEMS_TABLE = 'auth_item';
-    protected const ASSIGNMENTS_TABLE = 'auth_assignment';
-    protected const ITEMS_CHILDREN_TABLE = 'auth_item_child';
-
     private ?ConnectionInterface $database = null;
     private ?Logger $logger = null;
 
@@ -53,9 +49,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     protected function createSchemaManager(
-        ?string $itemsTable = self::ITEMS_TABLE,
-        ?string $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
-        ?string $assignmentsTable = self::ASSIGNMENTS_TABLE,
+        ?string $itemsTable = DbSchemaManager::ITEMS_TABLE,
+        ?string $itemsChildrenTable = DbSchemaManager::ITEMS_CHILDREN_TABLE,
+        ?string $assignmentsTable = DbSchemaManager::ASSIGNMENTS_TABLE,
     ): DbSchemaManager {
         return new DbSchemaManager(
             database: $this->getDatabase(),

@@ -1,3 +1,3 @@
-DROP TABLE `auth_item_child`;
-DROP TABLE `auth_assignment`;
-DROP TABLE `auth_item`;
+DROP TABLE `yii_rbac_item_child`;
+DROP TABLE `yii_rbac_assignment`;
+DROP TABLE `yii_rbac_item`;

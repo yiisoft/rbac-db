@@ -78,11 +78,11 @@ The structure of plain SQL files:
 - `pgsql-up.sql` - apply the changes for PostgreSQL driver.
 - `pgsql-down.sql` - revert the changes for PostgreSQL driver.
 
-Plain SQL assumes using default names for all 3 tables (`auth_` prefix is used):
+Plain SQL assumes using default names for all 3 tables (`yii_rbac_` prefix is used):
 
-- `auth_item`.
-- `auth_assignment`.
-- `auth_item_child`.
+- `yii_rbac_item`.
+- `yii_rbac_assignment`.
+- `yii_rbac_item_child`.
 
 `DbSchemaManager` allows to customize table names:
 
@@ -91,10 +91,10 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\Db\DbSchemaManager;
 
 /** @var ConnectionInterface $database */
-$schemaManager = new DbSchemaManager(
+$schemaManager = new DbSchemaManager(    
+    database: $database,
     itemsTable: 'custom_items',
     assignmentsTable: 'custom_assignments',
-    database: $database,
     itemsChildrenTable: 'custom_items_children',
 );
 $schemaManager->ensureTables();
@@ -115,11 +115,7 @@ use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\RuleFactoryInterface;
 
 /** @var ConnectionInterface $database */
-$itemsStorage = new ItemsStorage(
-    tableName: 'auth_item',
-    database: $database,
-    childrenTableName: 'auth_item_child', // Optional, will be generated automatically when empty. 
-);
+$itemsStorage = new ItemsStorage($database);
 $assignmentsStorage = new AssignmentsStorage(
     tableName: 'auth_assignment',
     database: $database,

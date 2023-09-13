@@ -31,12 +31,12 @@ abstract class ManagerWithDbItemsAndAssignmentsTest extends ManagerTest
 
     protected function createItemsStorage(): ItemsStorageInterface
     {
-        return new ItemsStorage(self::ITEMS_TABLE, $this->getDatabase(), self::ITEMS_CHILDREN_TABLE);
+        return new ItemsStorage($this->getDatabase());
     }
 
     protected function createAssignmentsStorage(): AssignmentsStorageInterface
     {
-        return new AssignmentsStorage(self::ASSIGNMENTS_TABLE, $this->getDatabase());
+        return new AssignmentsStorage($this->getDatabase());
     }
 
     /**

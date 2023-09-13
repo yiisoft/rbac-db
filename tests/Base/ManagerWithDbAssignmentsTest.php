@@ -29,7 +29,7 @@ abstract class ManagerWithDbAssignmentsTest extends ManagerTest
 
     protected function createAssignmentsStorage(): AssignmentsStorageInterface
     {
-        return new AssignmentsStorage(self::ASSIGNMENTS_TABLE, $this->getDatabase());
+        return new AssignmentsStorage($this->getDatabase());
     }
 
     /**
