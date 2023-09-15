@@ -91,7 +91,7 @@ use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\Db\DbSchemaManager;
 
 /** @var ConnectionInterface $database */
-$schemaManager = new DbSchemaManager(    
+$schemaManager = new DbSchemaManager(
     database: $database,
     itemsTable: 'custom_items',
     assignmentsTable: 'custom_assignments',
@@ -110,25 +110,30 @@ The storages are not intended to be used directly. Instead, use them with `Manag
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Rbac\Db\AssignmentsStorage;
 use Yiisoft\Rbac\Db\ItemsStorage;
+use Yiisoft\Rbac\Db\TransactionalManagerDecorator;
 use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\RuleFactoryInterface;
 
 /** @var ConnectionInterface $database */
 $itemsStorage = new ItemsStorage($database);
-$assignmentsStorage = new AssignmentsStorage(
-    tableName: 'auth_assignment',
-    database: $database,
-);
+$assignmentsStorage = new AssignmentsStorage($database);
 /** @var RuleFactoryInterface $rulesContainer */
-$manager = new Manager(
-    itemsStorage: $itemsStorage, 
-    assignmentsStorage: $assignmentsStorage,
-    // Requires https://github.com/yiisoft/rbac-rules-container or other compatible factory.
-    ruleFactory: $rulesContainer,
+$manager = new TransactionalManagerDecorator(
+    new Manager(
+        itemsStorage: $itemsStorage, 
+        assignmentsStorage: $assignmentsStorage,
+        // Requires https://github.com/yiisoft/rbac-rules-container or other compatible factory.
+        ruleFactory: $rulesContainer,
+    ),
 );
 $manager->addPermission(new Permission('posts.create'));
 ```
+
+> Note wrapping manager with decorator - it additionally provides database transactions to guarantee data integrity.
+
+> Note that it's not necessary to use both DB storages. Combining different implementations is possible. A quite popular 
+> case is to manage items via [PHP files](https://github.com/yiisoft/rbac-php) while store assignments in database.
 
 More examples can be found in [Yii RBAC](https://github.com/yiisoft/rbac) documentation.
 
