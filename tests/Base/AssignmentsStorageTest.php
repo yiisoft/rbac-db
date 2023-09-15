@@ -6,6 +6,7 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Db\AssignmentsStorage;
+use Yiisoft\Rbac\Db\DbSchemaManager;
 use Yiisoft\Rbac\Tests\Common\AssignmentsStorageTestTrait;
 
 abstract class AssignmentsStorageTest extends TestCase
@@ -19,7 +20,7 @@ abstract class AssignmentsStorageTest extends TestCase
         $this->getDatabase()
             ->createCommand()
             ->batchInsert(
-                self::ITEMS_TABLE,
+                DbSchemaManager::ITEMS_TABLE,
                 ['name', 'type', 'createdAt', 'updatedAt'],
                 $fixtures['items'],
             )
@@ -27,7 +28,7 @@ abstract class AssignmentsStorageTest extends TestCase
         $this->getDatabase()
             ->createCommand()
             ->batchInsert(
-                self::ASSIGNMENTS_TABLE,
+                DbSchemaManager::ASSIGNMENTS_TABLE,
                 ['itemName', 'userId', 'createdAt'],
                 $fixtures['assignments'],
             )
@@ -36,6 +37,6 @@ abstract class AssignmentsStorageTest extends TestCase
 
     private function getStorage(): AssignmentsStorageInterface
     {
-        return new AssignmentsStorage(self::ASSIGNMENTS_TABLE, $this->getDatabase());
+        return new AssignmentsStorage($this->getDatabase());
     }
 }

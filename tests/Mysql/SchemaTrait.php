@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\Tests\Mysql;
 
+use Yiisoft\Rbac\Db\DbSchemaManager;
+
 trait SchemaTrait
 {
     protected function checkItemsChildrenTable(): void
@@ -14,31 +16,37 @@ trait SchemaTrait
         $version = $row['version'];
         $onAction = str_starts_with($version, '5') ? 'RESTRICT' : 'NO ACTION';
 
-        $this->assertCount(2, $this->getDatabase()->getSchema()->getTableForeignKeys(self::ITEMS_CHILDREN_TABLE));
+        $this->assertCount(
+            2,
+            $this->getDatabase()->getSchema()->getTableForeignKeys(DbSchemaManager::ITEMS_CHILDREN_TABLE),
+        );
         $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
+            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
             expectedColumnNames: ['parent'],
-            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
             expectedForeignColumnNames: ['name'],
             expectedOnUpdate: $onAction,
             expectedOnDelete: $onAction,
         );
         $this->assertForeignKey(
-            table: self::ITEMS_CHILDREN_TABLE,
+            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
             expectedColumnNames: ['child'],
-            expectedForeignTableName: self::ITEMS_TABLE,
+            expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
             expectedForeignColumnNames: ['name'],
             expectedOnUpdate: $onAction,
             expectedOnDelete: $onAction,
         );
 
-        $this->assertCount(2, $this->getDatabase()->getSchema()->getTableIndexes(self::ITEMS_CHILDREN_TABLE));
+        $this->assertCount(
+            2,
+            $this->getDatabase()->getSchema()->getTableIndexes(DbSchemaManager::ITEMS_CHILDREN_TABLE),
+        );
         $this->assertIndex(
-            table: self::ITEMS_CHILDREN_TABLE,
+            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
             expectedColumnNames: ['parent', 'child'],
             expectedIsUnique: true,
             expectedIsPrimary: true,
         );
-        $this->assertIndex(table: self::ITEMS_CHILDREN_TABLE, expectedColumnNames: ['child']);
+        $this->assertIndex(table: DbSchemaManager::ITEMS_CHILDREN_TABLE, expectedColumnNames: ['child']);
     }
 }

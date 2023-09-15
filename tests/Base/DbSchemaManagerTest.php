@@ -41,23 +41,21 @@ abstract class DbSchemaManagerTest extends TestCase
     public function dataInitWithEmptyTableNames(): array
     {
         return [
-            [[], 'At least items table or assignments table name must be set.'],
             [
                 ['itemsTable' => null, 'itemsChildrenTable' => null, 'assignmentsTable' => null],
-                'At least items table or assignments table name must be set.',
-            ],
-            [['itemsChildrenTable' => null], 'At least items table or assignments table name must be set.'],
-            [['itemsTable' => '', 'assignmentsTable' => 'assignments'], 'Items table name can\'t be empty.'],
-            [['itemsTable' => 'items', 'assignmentsTable' => ''], 'Assignments table name can\'t be empty.'],
-            [['itemsTable' => '', 'assignmentsTable' => ''], 'Items table name can\'t be empty.'],
-            [
-                ['itemsTable' => 'items', 'itemsChildrenTable' => '', 'assignmentsTable' => 'assignments'],
-                'Items children table name can\'t be empty.',
+                'At least items and items children table names or assignments table name must be set.',
             ],
             [
-                ['itemsTable' => '', 'itemsChildrenTable' => '', 'assignmentsTable' => ''],
-                'Items table name can\'t be empty.',
+                ['itemsTable' => 'items', 'itemsChildrenTable' => null, 'assignmentsTable' => null],
+                'Items and items children table names must be set together.',
             ],
+            [
+                ['itemsTable' => null, 'itemsChildrenTable' => 'items_children', 'assignmentsTable' => null],
+                'Items and items children table names must be set together.',
+            ],
+            [['itemsTable' => ''], 'Items table name can\'t be empty.'],
+            [['itemsChildrenTable' => ''], 'Items children table name can\'t be empty.'],
+            [['assignmentsTable' => ''], 'Assignments table name can\'t be empty.'],
         ];
     }
 
@@ -73,20 +71,9 @@ abstract class DbSchemaManagerTest extends TestCase
         new DbSchemaManager(...$arguments);
     }
 
-    public function dataCreateTablesSeparately(): array
+    public function testCreateTablesSeparately(): void
     {
-        return [
-            [self::ITEMS_CHILDREN_TABLE],
-            [null],
-        ];
-    }
-
-    /**
-     * @dataProvider dataCreateTablesSeparately
-     */
-    public function testCreateTablesSeparately(string|null $itemsChildrenTable): void
-    {
-        $schemaManager = $this->createSchemaManager(itemsChildrenTable: $itemsChildrenTable);
+        $schemaManager = $this->createSchemaManager();
         $schemaManager->createItemsTable();
         $schemaManager->createItemsChildrenTable();
         $schemaManager->createAssignmentsTable();
@@ -111,7 +98,7 @@ abstract class DbSchemaManagerTest extends TestCase
         $this->checkItemsTable();
         $this->checkItemsChildrenTable();
 
-        $this->assertFalse($schemaManager->hasTable(self::ASSIGNMENTS_TABLE));
+        $this->assertFalse($schemaManager->hasTable(DbSchemaManager::ASSIGNMENTS_TABLE));
     }
 
     public function testCreateAssignmentsTable(): void
@@ -121,8 +108,8 @@ abstract class DbSchemaManagerTest extends TestCase
 
         $this->checkAssignmentsTable();
 
-        $this->assertFalse($schemaManager->hasTable(self::ITEMS_TABLE));
-        $this->assertFalse($schemaManager->hasTable(self::ITEMS_CHILDREN_TABLE));
+        $this->assertFalse($schemaManager->hasTable(DbSchemaManager::ITEMS_TABLE));
+        $this->assertFalse($schemaManager->hasTable(DbSchemaManager::ITEMS_CHILDREN_TABLE));
     }
 
     public function testHasTableWithEmptyString(): void
@@ -145,17 +132,17 @@ abstract class DbSchemaManagerTest extends TestCase
 
     public function testGetItemsTable(): void
     {
-        $this->assertSame(self::ITEMS_TABLE, $this->createSchemaManager()->getItemsTable());
+        $this->assertSame('yii_rbac_item', $this->createSchemaManager()->getItemsTable());
     }
 
     public function testGetItemsChildrenTable(): void
     {
-        $this->assertSame(self::ITEMS_CHILDREN_TABLE, $this->createSchemaManager()->getItemsChildrenTable());
+        $this->assertSame('yii_rbac_item_child', $this->createSchemaManager()->getItemsChildrenTable());
     }
 
     public function testGetAssignmentsTable(): void
     {
-        $this->assertSame(self::ASSIGNMENTS_TABLE, $this->createSchemaManager()->getAssignmentsTable());
+        $this->assertSame('yii_rbac_assignment', $this->createSchemaManager()->getAssignmentsTable());
     }
 
     public function testEnsureNoTables(): void

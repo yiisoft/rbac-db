@@ -32,29 +32,25 @@ use Yiisoft\Rbac\Role;
 final class ItemsStorage implements ItemsStorageInterface
 {
     /**
-     * @psalm-var non-empty-string A name of the table for storing relations between RBAC items.
-     */
-    private string $childrenTableName;
-    /**
      * @var ItemTreeTraversalInterface|null Lazily created RBAC item tree traversal strategy.
      */
     private ?ItemTreeTraversalInterface $treeTraversal = null;
 
     /**
+     * @param ConnectionInterface $database Yii database connection instance.
+     *
      * @param string $tableName A name of the table for storing RBAC items.
      * @psalm-param non-empty-string $tableName
      *
-     * @param ConnectionInterface $database Yii database connection instance.
-     * @param string|null $childrenTableName A name of the table for storing relations between RBAC items. When set to
+     * @param string $childrenTableName A name of the table for storing relations between RBAC items. When set to
      * `null`, it will be automatically generated using {@see $tableName}.
-     * @psalm-param non-empty-string|null $childrenTableName
+     * @psalm-param non-empty-string $childrenTableName
      */
     public function __construct(
-        private string $tableName,
         private ConnectionInterface $database,
-        ?string $childrenTableName = null,
+        private string $tableName = DbSchemaManager::ITEMS_TABLE,
+        private string $childrenTableName = DbSchemaManager::ITEMS_CHILDREN_TABLE,
     ) {
-        $this->childrenTableName = $childrenTableName ?? $tableName . '_child';
     }
 
     public function clear(): void

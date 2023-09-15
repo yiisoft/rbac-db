@@ -29,7 +29,7 @@ abstract class ManagerWithDbItemsTest extends ManagerTest
 
     protected function createItemsStorage(): ItemsStorageInterface
     {
-        return new ItemsStorage(self::ITEMS_TABLE, $this->getDatabase(), self::ITEMS_CHILDREN_TABLE);
+        return new ItemsStorage($this->getDatabase());
     }
 
     /**

@@ -8,6 +8,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Constraint\ForeignKeyConstraint;
 use Yiisoft\Db\Constraint\IndexConstraint;
+use Yiisoft\Rbac\Db\DbSchemaManager;
 
 trait SchemaTrait
 {
@@ -15,7 +16,7 @@ trait SchemaTrait
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ITEMS_CHILDREN_TABLE);
+        $table = $databaseSchema->getTableSchema(DbSchemaManager::ITEMS_CHILDREN_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
@@ -34,7 +35,7 @@ trait SchemaTrait
         $this->assertSame(128, $child->getSize());
         $this->assertFalse($child->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_CHILDREN_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ITEMS_CHILDREN_TABLE);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
     }
@@ -127,7 +128,7 @@ trait SchemaTrait
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ITEMS_TABLE);
+        $table = $databaseSchema->getTableSchema(DbSchemaManager::ITEMS_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsTable()));
@@ -168,27 +169,31 @@ trait SchemaTrait
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ITEMS_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ITEMS_TABLE);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertSame(['name'], $primaryKey->getColumnNames());
 
-        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::ITEMS_TABLE));
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(DbSchemaManager::ITEMS_TABLE));
 
-        $this->assertCount(2, $databaseSchema->getTableIndexes(self::ITEMS_TABLE));
+        $this->assertCount(2, $databaseSchema->getTableIndexes(DbSchemaManager::ITEMS_TABLE));
         $this->assertIndex(
-            table: self::ITEMS_TABLE,
+            table: DbSchemaManager::ITEMS_TABLE,
             expectedColumnNames: ['name'],
             expectedIsUnique: true,
             expectedIsPrimary: true
         );
-        $this->assertIndex(table: self::ITEMS_TABLE, expectedColumnNames: ['type'], expectedName: 'idx-auth_item-type');
+        $this->assertIndex(
+            table: DbSchemaManager::ITEMS_TABLE,
+            expectedColumnNames: ['type'],
+            expectedName: 'idx-yii_rbac_item-type',
+        );
     }
 
     private function checkAssignmentsTable(): void
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(self::ASSIGNMENTS_TABLE);
+        $table = $databaseSchema->getTableSchema(DbSchemaManager::ASSIGNMENTS_TABLE);
 
         $schemaManager = $this->createSchemaManager();
         $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
@@ -212,15 +217,15 @@ trait SchemaTrait
         $this->assertSame('integer', $createdAt->getType());
         $this->assertFalse($createdAt->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(self::ASSIGNMENTS_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ASSIGNMENTS_TABLE);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['itemName', 'userId'], $primaryKey->getColumnNames());
 
-        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::ASSIGNMENTS_TABLE));
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(DbSchemaManager::ASSIGNMENTS_TABLE));
 
-        $this->assertCount(1, $databaseSchema->getTableIndexes(self::ASSIGNMENTS_TABLE));
+        $this->assertCount(1, $databaseSchema->getTableIndexes(DbSchemaManager::ASSIGNMENTS_TABLE));
         $this->assertIndex(
-            table: self::ASSIGNMENTS_TABLE,
+            table: DbSchemaManager::ASSIGNMENTS_TABLE,
             expectedColumnNames: ['itemName', 'userId'],
             expectedIsUnique: true,
             expectedIsPrimary: true,

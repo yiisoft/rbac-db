@@ -13,6 +13,11 @@ use Yiisoft\Db\Connection\ConnectionInterface;
  */
 final class DbSchemaManager
 {
+    public const TABLE_PREFIX = 'yii_rbac_';
+    public const ITEMS_TABLE = self::TABLE_PREFIX . 'item';
+    public const ITEMS_CHILDREN_TABLE = self::TABLE_PREFIX . 'item_child';
+    public const ASSIGNMENTS_TABLE = self::TABLE_PREFIX . 'assignment';
+
     /**
      * @var string|null A name of the table for storing RBAC items (roles and permissions).
      * @psalm-var ?non-empty-string
@@ -40,9 +45,9 @@ final class DbSchemaManager
      */
     public function __construct(
         private ConnectionInterface $database,
-        ?string $itemsTable = null,
-        ?string $itemsChildrenTable = null,
-        ?string $assignmentsTable = null,
+        ?string $itemsTable = self::ITEMS_TABLE,
+        ?string $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
+        ?string $assignmentsTable = self::ASSIGNMENTS_TABLE,
     ) {
         $this->initTables(
             itemsTable: $itemsTable,
@@ -247,8 +252,17 @@ final class DbSchemaManager
      */
     private function initTables(?string $itemsTable, ?string $itemsChildrenTable, ?string $assignmentsTable): void
     {
-        if ($itemsTable === null && $assignmentsTable === null) {
-            throw new InvalidArgumentException('At least items table or assignments table name must be set.');
+        if ($itemsTable === null && $itemsChildrenTable === null && $assignmentsTable === null) {
+            $message = 'At least items and items children table names or assignments table name must be set.';
+
+            throw new InvalidArgumentException($message);
+        }
+
+        if (
+            ($itemsTable !== null && $itemsChildrenTable === null) ||
+            ($itemsTable === null && $itemsChildrenTable !== null)
+        ) {
+            throw new InvalidArgumentException('Items and items children table names must be set together.');
         }
 
         if ($itemsTable === '') {
@@ -267,8 +281,6 @@ final class DbSchemaManager
             throw new InvalidArgumentException('Items children table name can\'t be empty.');
         }
 
-        $this->itemsChildrenTable = $itemsTable !== null && $itemsChildrenTable === null
-            ? $itemsTable . '_child'
-            : $itemsChildrenTable;
+        $this->itemsChildrenTable = $itemsChildrenTable;
     }
 }

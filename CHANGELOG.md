@@ -9,6 +9,9 @@
 - Enh #35: Decouple storages: allow to manage tables just for 1 storage in `DbSchemaManager` (@arogachev)
 - Enh #35: Add `TransactionlManageDecorator` for `Manager` to guarantee data integrity (@arogachev)
 - Bug #35: Implement `AssignmentStorage::renameItem()`, fix bug when implicit renaming had no effect (@arogachev)
+- Enh #26: Add default table names (@arogachev)
+- Chg #25: Use prefix for default table names (@arogachev)
+- Bug #44: Fix hardcoded items children table name in item tree traversal query for MySQL 5 (@arogachev)
 
 ## 1.0.0 April 20, 2023
 
