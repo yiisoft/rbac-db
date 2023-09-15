@@ -252,8 +252,17 @@ final class DbSchemaManager
      */
     private function initTables(?string $itemsTable, ?string $itemsChildrenTable, ?string $assignmentsTable): void
     {
-        if ($itemsTable === null && $assignmentsTable === null) {
-            throw new InvalidArgumentException('At least items table or assignments table name must be set.');
+        if ($itemsTable === null && $itemsChildrenTable === null && $assignmentsTable === null) {
+            $message = 'At least items and items children table names or assignments table name must be set.';
+
+            throw new InvalidArgumentException($message);
+        }
+
+        if (
+            ($itemsTable !== null && $itemsChildrenTable === null) ||
+            ($itemsTable === null && $itemsChildrenTable !== null)
+        ) {
+            throw new InvalidArgumentException('Items and items children table names must be set together.');
         }
 
         if ($itemsTable === '') {

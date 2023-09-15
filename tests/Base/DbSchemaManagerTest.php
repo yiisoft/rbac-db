@@ -43,19 +43,19 @@ abstract class DbSchemaManagerTest extends TestCase
         return [
             [
                 ['itemsTable' => null, 'itemsChildrenTable' => null, 'assignmentsTable' => null],
-                'At least items table or assignments table name must be set.',
-            ],
-            [['itemsTable' => '', 'assignmentsTable' => 'assignments'], 'Items table name can\'t be empty.'],
-            [['itemsTable' => 'items', 'assignmentsTable' => ''], 'Assignments table name can\'t be empty.'],
-            [['itemsTable' => '', 'assignmentsTable' => ''], 'Items table name can\'t be empty.'],
-            [
-                ['itemsTable' => 'items', 'itemsChildrenTable' => '', 'assignmentsTable' => 'assignments'],
-                'Items children table name can\'t be empty.',
+                'At least items and items children table names or assignments table name must be set.',
             ],
             [
-                ['itemsTable' => '', 'itemsChildrenTable' => '', 'assignmentsTable' => ''],
-                'Items table name can\'t be empty.',
+                ['itemsTable' => 'items', 'itemsChildrenTable' => null, 'assignmentsTable' => null],
+                'Items and items children table names must be set together.',
             ],
+            [
+                ['itemsTable' => null, 'itemsChildrenTable' => 'items_children', 'assignmentsTable' => null],
+                'Items and items children table names must be set together.',
+            ],
+            [['itemsTable' => ''], 'Items table name can\'t be empty.'],
+            [['itemsChildrenTable' => ''], 'Items children table name can\'t be empty.'],
+            [['assignmentsTable' => ''], 'Assignments table name can\'t be empty.'],
         ];
     }
 
