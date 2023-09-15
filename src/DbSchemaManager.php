@@ -36,18 +36,18 @@ final class DbSchemaManager
 
     /**
      * @param ConnectionInterface $database Yii Database connection instance.
-     * @param string $itemsTable A name of the table for storing RBAC items (roles and permissions).
-     * @param string $itemsChildrenTable A name of the table for storing relations between RBAC items. When set to
+     * @param string|null $itemsTable A name of the table for storing RBAC items (roles and permissions).
+     * @param string|null $itemsChildrenTable A name of the table for storing relations between RBAC items. When set to
      * `null`, it will be automatically generated using {@see $itemsTable}.
-     * @param string $assignmentsTable A name of the table for storing RBAC assignments.
+     * @param string|null $assignmentsTable A name of the table for storing RBAC assignments.
      *
      * @throws InvalidArgumentException When a table name is set to the empty string.
      */
     public function __construct(
         private ConnectionInterface $database,
-        string $itemsTable = self::ITEMS_TABLE,
-        string $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
-        string $assignmentsTable = self::ASSIGNMENTS_TABLE,
+        ?string $itemsTable = self::ITEMS_TABLE,
+        ?string $itemsChildrenTable = self::ITEMS_CHILDREN_TABLE,
+        ?string $assignmentsTable = self::ASSIGNMENTS_TABLE,
     ) {
         $this->initTables(
             itemsTable: $itemsTable,
