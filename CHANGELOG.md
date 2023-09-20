@@ -12,6 +12,7 @@
 - Enh #26: Add default table names (@arogachev)
 - Chg #25: Use prefix for default table names (@arogachev)
 - Bug #44: Fix hardcoded items children table name in item tree traversal query for MySQL 5 (@arogachev)
+- Enh #?: Improve perfomaтce (@arogachev)
 
 ## 1.0.0 April 20, 2023
 

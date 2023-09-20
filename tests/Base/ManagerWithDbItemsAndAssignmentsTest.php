@@ -38,12 +38,4 @@ abstract class ManagerWithDbItemsAndAssignmentsTest extends ManagerTest
     {
         return new AssignmentsStorage($this->getDatabase());
     }
-
-    /**
-     * @link https://github.com/yiisoft/rbac/issues/165
-     */
-    public function testRemoveChild(): void
-    {
-        $this->markTestSkipped();
-    }
 }

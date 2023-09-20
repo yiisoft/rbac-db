@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
 
+use Yiisoft\Db\Command\CommandInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Expression\Expression;
+use Yiisoft\Db\Query\Query;
+use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Rbac\Db\ItemsStorage;
+use Yiisoft\Rbac\Item;
 
 /**
  * A RBAC item tree traversal strategy based on specific functionality for MySQL 5, without support for CTE (Common
@@ -53,18 +58,55 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getChildrenRows(string $name): array
     {
-        $sql = "SELECT DISTINCT item.* FROM (
-            SELECT DISTINCT child
-            FROM (SELECT * FROM $this->childrenTableName ORDER by parent) item_child_sorted,
-            (SELECT @pv := :name) init
-            WHERE find_in_set(parent, @pv) AND length(@pv := concat(@pv, ',', child))
-        ) s
-        LEFT JOIN $this->tableName AS item ON item.name = s.child";
+        $baseOuterQuery = (new Query($this->database))->select([new Expression('item.*')])->distinct();
 
         /** @psalm-var RawItem[] */
-        return $this
-            ->database
-            ->createCommand($sql, [':name' => $name])
-            ->queryAll();
+        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+    }
+
+    public function getChildPermissionRows(string $name): array
+    {
+        $baseOuterQuery = (new Query($this->database))
+            ->select([new Expression('item.*')])
+            ->distinct()
+            ->where(['item.type' => Item::TYPE_PERMISSION]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+    }
+
+    public function getChildRoleRows(string $name): array
+    {
+        $baseOuterQuery = (new Query($this->database))
+            ->select([new Expression('item.*')])
+            ->distinct()
+            ->where(['item.type' => Item::TYPE_ROLE]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+    }
+
+    public function hasChild(string $parentName, string $childName): bool
+    {
+        $baseOuterQuery = (new Query($this->database))
+            ->select([new Expression('1 AS item_child_exists')])
+            ->andWhere(['item.name' => $childName]);
+        /** @psalm-var array<0, 1>|false $result */
+        $result = $this->getChildrenRowsStatement($parentName, baseOuterQuery: $baseOuterQuery)->queryScalar();
+
+        return $result !== false;
+    }
+
+    private function getChildrenRowsStatement(string $name, QueryInterface $baseOuterQuery): CommandInterface
+    {
+        $fromSql = "SELECT DISTINCT child
+        FROM (SELECT * FROM $this->childrenTableName ORDER by parent) item_child_sorted,
+        (SELECT @pv := :name) init
+        WHERE find_in_set(parent, @pv) AND length(@pv := concat(@pv, ',', child))";
+        $outerQuery = $baseOuterQuery
+            ->from(new Expression("($fromSql) s"))
+            ->leftJoin($this->tableName . ' AS item', ['item.name' => new Expression('s.child')]);
+
+        return $this->database->createCommand($outerQuery->createCommand()->getSql(), [':name' => $name]);
     }
 }

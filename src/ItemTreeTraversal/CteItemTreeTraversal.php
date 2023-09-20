@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
 
+use Yiisoft\Db\Command\CommandInterface;
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Expression\Expression;
+use Yiisoft\Db\Query\Query;
+use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Rbac\Db\ItemsStorage;
+use Yiisoft\Rbac\Item;
 
 /**
  * A RBAC item tree traversal strategy based on CTE (common table expression). Uses `WITH` expression to form a
@@ -36,40 +41,57 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getParentRows(string $name): array
     {
-        $sql = "{$this->getWithExpression()} parent_of(child_name) AS (
-            SELECT [[name]] FROM {{%$this->tableName}} WHERE [[name]] = :name_for_recursion
-            UNION ALL
-            SELECT [[parent]] FROM {{%$this->childrenTableName}} item_child_recursive, parent_of
-            WHERE item_child_recursive.[[child]] = parent_of.child_name
-        )
-        SELECT {{%item}}.* FROM parent_of
-        LEFT JOIN {{%$this->tableName}} {{%item}} ON {{%item}}.[[name]] = parent_of.child_name
-        WHERE {{%item}}.[[name]] != :excluded_name";
+        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=','item.name', $name]);
 
         /** @psalm-var RawItem[] */
-        return $this
-            ->database
-            ->createCommand($sql, [':name_for_recursion' => $name, ':excluded_name' => $name])
-            ->queryAll();
+        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function getChildrenRows(string $name): array
     {
-        $sql = "{$this->getWithExpression()} child_of(parent_name) AS (
-            SELECT [[name]] FROM {{%$this->tableName}} WHERE [[name]] = :name_for_recursion
-            UNION ALL
-            SELECT [[child]] FROM {{%$this->childrenTableName}} item_child_recursive, child_of
-            WHERE item_child_recursive.[[parent]] = child_of.parent_name
-        )
-        SELECT {{%item}}.* FROM child_of
-        LEFT JOIN {{%$this->tableName}} {{%item}} ON {{%item}}.[[name]] = child_of.parent_name
-        WHERE {{%item}}.[[name]] != :excluded_name";
+        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=','item.name', $name]);
 
         /** @psalm-var RawItem[] */
-        return $this
-            ->database
-            ->createCommand($sql, [':name_for_recursion' => $name, ':excluded_name' => $name])
-            ->queryAll();
+        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+    }
+
+    public function getChildPermissionRows(string $name): array
+    {
+        $baseOuterQuery = (new Query($this->database))
+            ->select('item.*')
+            ->where(['!=','item.name', $name])
+            ->andWhere(['item.type' => Item::TYPE_PERMISSION]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+    }
+
+    public function getChildRoleRows(string $name): array
+    {
+        $baseOuterQuery = (new Query($this->database))
+            ->select('item.*')
+            ->where(['!=','item.name', $name])
+            ->andWhere(['item.type' => Item::TYPE_ROLE]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+    }
+
+    public function hasChild(string $parentName, string $childName): bool
+    {
+        /**
+         * @infection-ignore-all
+         * - ArrayItemRemoval, select.
+         */
+        $baseOuterQuery = (new Query($this->database))
+            ->select([new Expression('1 AS item_child_exists')])
+            ->andWhere(['item.name' => $childName]);
+        /** @psalm-var array<0, 1>|false $result */
+        $result = $this
+            ->getRowsStatement($parentName, baseOuterQuery: $baseOuterQuery, areParents: false)
+            ->queryScalar();
+
+        return $result !== false;
     }
 
     /**
@@ -83,5 +105,49 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
     protected function getWithExpression(): string
     {
         return 'WITH RECURSIVE';
+    }
+
+    private function getRowsStatement(
+        string $name,
+        QueryInterface $baseOuterQuery,
+        bool $areParents = true,
+    ): CommandInterface {
+        if ($areParents) {
+            $cteSelectRelationName = 'parent';
+            $cteConditionRelationName = 'child';
+            $cteName = 'parent_of';
+            $cteParameterName = 'child_name';
+        } else {
+            $cteSelectRelationName = 'child';
+            $cteConditionRelationName = 'parent';
+            $cteName = 'child_of';
+            $cteParameterName = 'parent_name';
+        }
+
+        $cteSelectItemQuery = (new Query($this->database))
+            ->select('name')
+            ->from($this->tableName)
+            ->where(['name' => $name]);
+        $cteSelectRelationQuery = (new Query($this->database))
+            ->select($cteSelectRelationName)
+            ->from([
+                "{{%$this->childrenTableName}}" . new Expression(' item_child_recursive'),
+                new Expression($cteName),
+            ])
+            ->where([
+                new Expression('item_child_recursive.') . "[[$cteConditionRelationName]]" =>
+                new Expression("$cteName.$cteParameterName"),
+            ]);
+        $outerQuery = $baseOuterQuery
+            ->from(new Expression($cteName))
+            ->leftJoin($this->tableName . ' item', ['item.name' => new Expression("$cteName.$cteParameterName")]);
+        $sql = "{$this->getWithExpression()} $cteName($cteParameterName) AS (
+            {$cteSelectItemQuery->createCommand()->getRawSql()}
+            UNION ALL
+            {$cteSelectRelationQuery->createCommand()->getRawSql()}
+        )
+        {$outerQuery->createCommand()->getRawSql()}";
+
+        return $this->database->createCommand($sql);
     }
 }
