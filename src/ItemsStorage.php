@@ -274,7 +274,7 @@ final class ItemsStorage implements ItemsStorageInterface
     public function getDirectChildren(string $name): array
     {
         $quoter = $this->database->getQuoter();
-        $quotedJoinColumn = $quoter->quoteTableName($this->tableName)  . '.' . $quoter->quoteColumnName('name');
+        $quotedJoinColumn = $quoter->quoteTableName($this->tableName) . '.' . $quoter->quoteColumnName('name');
         /** @psalm-var RawItem[] $rawItems */
         $rawItems = (new Query($this->database))
             ->select($this->tableName . '.*')
