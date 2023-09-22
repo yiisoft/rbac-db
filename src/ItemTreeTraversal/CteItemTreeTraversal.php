@@ -128,12 +128,11 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->select('name')
             ->from($this->tableName)
             ->where(['name' => $name]);
+        $quoter = $this->database->getQuoter();
         $cteSelectRelationQuery = (new Query($this->database))
             ->select($cteSelectRelationName)
             ->from([
-                new Expression(
-                    "{$this->database->getQuoter()->quoteTableName($this->childrenTableName)} item_child_recursive",
-                ),
+                new Expression("{$quoter->quoteTableName($this->childrenTableName)} item_child_recursive"),
                 new Expression($cteName),
             ])
             ->where([

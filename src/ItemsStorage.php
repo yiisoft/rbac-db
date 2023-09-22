@@ -273,11 +273,16 @@ final class ItemsStorage implements ItemsStorageInterface
 
     public function getDirectChildren(string $name): array
     {
+        $quoter = $this->database->getQuoter();
+        $quotedJoinColumn = $quoter->quoteTableName($this->tableName)  . '.' . $quoter->quoteColumnName('name');
         /** @psalm-var RawItem[] $rawItems */
         $rawItems = (new Query($this->database))
             ->select($this->tableName . '.*')
             ->from($this->tableName)
-            ->leftJoin($this->childrenTableName, [$this->childrenTableName . '.child' => new Expression($this->tableName . '.name')])
+            ->leftJoin(
+                $this->childrenTableName,
+                [$this->childrenTableName . '.child' => new Expression($quotedJoinColumn)],
+            )
             ->where(['parent' => $name])
             ->all();
 
