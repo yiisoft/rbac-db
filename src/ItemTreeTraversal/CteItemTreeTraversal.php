@@ -41,40 +41,40 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getParentRows(string $name): array
     {
-        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=','item.name', $name]);
+        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=', 'item.name', $name]);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function getChildrenRows(string $name): array
     {
-        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=','item.name', $name]);
+        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=', 'item.name', $name]);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
     }
 
     public function getChildPermissionRows(string $name): array
     {
         $baseOuterQuery = (new Query($this->database))
             ->select('item.*')
-            ->where(['!=','item.name', $name])
+            ->where(['!=', 'item.name', $name])
             ->andWhere(['item.type' => Item::TYPE_PERMISSION]);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
     }
 
     public function getChildRoleRows(string $name): array
     {
         $baseOuterQuery = (new Query($this->database))
             ->select('item.*')
-            ->where(['!=','item.name', $name])
+            ->where(['!=', 'item.name', $name])
             ->andWhere(['item.type' => Item::TYPE_ROLE]);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsStatement($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
     }
 
     public function hasChild(string $parentName, string $childName): bool
@@ -88,7 +88,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->andWhere(['item.name' => $childName]);
         /** @psalm-var array<0, 1>|false $result */
         $result = $this
-            ->getRowsStatement($parentName, baseOuterQuery: $baseOuterQuery, areParents: false)
+            ->getRowsCommand($parentName, baseOuterQuery: $baseOuterQuery, areParents: false)
             ->queryScalar();
 
         return $result !== false;
@@ -107,7 +107,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         return 'WITH RECURSIVE';
     }
 
-    private function getRowsStatement(
+    private function getRowsCommand(
         string $name,
         QueryInterface $baseOuterQuery,
         bool $areParents = true,

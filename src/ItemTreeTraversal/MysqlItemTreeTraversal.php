@@ -61,7 +61,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
         $baseOuterQuery = (new Query($this->database))->select([new Expression('item.*')])->distinct();
 
         /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function getChildPermissionRows(string $name): array
@@ -72,7 +72,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->where(['item.type' => Item::TYPE_PERMISSION]);
 
         /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function getChildRoleRows(string $name): array
@@ -83,7 +83,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->where(['item.type' => Item::TYPE_ROLE]);
 
         /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsStatement($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function hasChild(string $parentName, string $childName): bool
@@ -92,12 +92,12 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->select([new Expression('1 AS item_child_exists')])
             ->andWhere(['item.name' => $childName]);
         /** @psalm-var array<0, 1>|false $result */
-        $result = $this->getChildrenRowsStatement($parentName, baseOuterQuery: $baseOuterQuery)->queryScalar();
+        $result = $this->getChildrenRowsCommand($parentName, baseOuterQuery: $baseOuterQuery)->queryScalar();
 
         return $result !== false;
     }
 
-    private function getChildrenRowsStatement(string $name, QueryInterface $baseOuterQuery): CommandInterface
+    private function getChildrenRowsCommand(string $name, QueryInterface $baseOuterQuery): CommandInterface
     {
         $fromSql = "SELECT DISTINCT child
         FROM (SELECT * FROM $this->childrenTableName ORDER by parent) item_child_sorted,
@@ -105,8 +105,9 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
         WHERE find_in_set(parent, @pv) AND length(@pv := concat(@pv, ',', child))";
         $outerQuery = $baseOuterQuery
             ->from(new Expression("($fromSql) s"))
-            ->leftJoin($this->tableName . ' AS item', ['item.name' => new Expression('s.child')]);
+            ->leftJoin($this->tableName . ' AS item', ['item.name' => new Expression('s.child')])
+            ->addParams([':name' => $name]);
 
-        return $this->database->createCommand($outerQuery->createCommand()->getSql(), [':name' => $name]);
+        return $this->database->createCommand($outerQuery->createCommand()->getRawSql());
     }
 }
