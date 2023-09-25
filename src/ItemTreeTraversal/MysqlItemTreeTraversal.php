@@ -108,6 +108,6 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->leftJoin($this->tableName . ' AS item', ['item.name' => new Expression('s.child')])
             ->addParams([':name' => $name]);
 
-        return $this->database->createCommand($outerQuery->createCommand()->getRawSql());
+        return $outerQuery->createCommand();
     }
 }
