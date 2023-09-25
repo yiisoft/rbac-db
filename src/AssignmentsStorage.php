@@ -55,8 +55,9 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function getByUserId(string $userId): array
     {
-        /** @psalm-var RawAssignment[] $rawAssignments */
+        /** @psalm-var array{itemName: string, createdAt: int|string} $rawAssignments */
         $rawAssignments = (new Query($this->database))
+            ->select(['itemName', 'createdAt'])
             ->from($this->tableName)
             ->where(['userId' => $userId])
             ->all();
