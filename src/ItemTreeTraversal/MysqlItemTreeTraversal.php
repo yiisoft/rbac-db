@@ -104,7 +104,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
         (SELECT @pv := :name) init
         WHERE find_in_set(parent, @pv) AND length(@pv := concat(@pv, ',', child))";
         $outerQuery = $baseOuterQuery
-            ->from(new Expression("($fromSql) s"))
+            ->from(['s' => "($fromSql)"])
             ->leftJoin(['item' => $this->tableName], ['item.name' => new Expression('s.child')])
             ->addParams([':name' => $name]);
 
