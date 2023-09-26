@@ -24,7 +24,7 @@
     - `hasChild()`;
     - `hasDirectChild()`.
       (@arogachev)
-- Enh #165: Add methods to `AssignmentsStorage`:
+- Enh #46: Add methods to `AssignmentsStorage`:
     - `getByItemNames()`;
     - `exists()`;
     - `userHasItem()`.
