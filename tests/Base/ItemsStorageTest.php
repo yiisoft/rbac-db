@@ -19,6 +19,16 @@ abstract class ItemsStorageTest extends TestCase
         testClearRoles as protected traitTestClearRoles;
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
     public function testClear(): void
     {
         $this->traitTestClear();
@@ -26,13 +36,13 @@ abstract class ItemsStorageTest extends TestCase
         $itemsChildrenExist = (new Query($this->getDatabase()))
             ->from(DbSchemaManager::ITEMS_CHILDREN_TABLE)
             ->exists();
-        $this->assertSame(false, $itemsChildrenExist);
+        $this->assertFalse($itemsChildrenExist);
     }
 
     public function testRemove(): void
     {
-        $storage = $this->getStorage();
-        $initialItemChildrenCount = count($storage->getChildren('Parent 2'));
+        $storage = $this->getItemsStorage();
+        $initialItemChildrenCount = count($storage->getAllChildren('Parent 2'));
 
         $this->traitTestRemove();
 
@@ -78,7 +88,7 @@ abstract class ItemsStorageTest extends TestCase
             ->execute();
     }
 
-    private function getStorage(): ItemsStorageInterface
+    protected function getItemsStorage(): ItemsStorageInterface
     {
         return new ItemsStorage($this->getDatabase());
     }

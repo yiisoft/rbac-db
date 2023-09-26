@@ -56,9 +56,9 @@ final class TransactionalManagerDecorator implements ManagerInterface
         return $this->manager->hasChild($parentName, $childName);
     }
 
-    public function assign(string $itemName, int|Stringable|string $userId): ManagerInterface
+    public function assign(string $itemName, int|Stringable|string $userId, ?int $createdAt = null): ManagerInterface
     {
-        $this->manager->assign($itemName, $userId);
+        $this->manager->assign($itemName, $userId, $createdAt);
 
         return $this;
     }

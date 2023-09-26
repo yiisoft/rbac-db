@@ -55,33 +55,80 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function getByUserId(string $userId): array
     {
-        /** @psalm-var RawAssignment[] $rows */
-        $rows = (new Query($this->database))
+        /** @psalm-var list<array{itemName: string, createdAt: int|string}> $rawAssignments */
+        $rawAssignments = (new Query($this->database))
+            ->select(['itemName', 'createdAt'])
             ->from($this->tableName)
             ->where(['userId' => $userId])
             ->all();
+        $assignments = [];
+        foreach ($rawAssignments as $rawAssignment) {
+            $assignments[$rawAssignment['itemName']] = new Assignment(
+                $userId,
+                $rawAssignment['itemName'],
+                (int) $rawAssignment['createdAt'],
+            );
+        }
 
-        return array_combine(
-            array_column($rows, 'itemName'),
-            array_map(
-                static fn(array $row): Assignment => new Assignment($userId, $row['itemName'], (int) $row['createdAt']),
-                $rows,
-            )
-        );
+        return $assignments;
+    }
+
+    public function getByItemNames(array $itemNames): array
+    {
+        if (empty($itemNames)) {
+            return [];
+        }
+
+        /** @psalm-var RawAssignment[] $rawAssignments */
+        $rawAssignments = (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['itemName' => $itemNames])
+            ->all();
+        $assignments = [];
+        foreach ($rawAssignments as $rawAssignment) {
+            $assignments[] = new Assignment(
+                $rawAssignment['userId'],
+                $rawAssignment['itemName'],
+                (int) $rawAssignment['createdAt'],
+            );
+        }
+
+        return $assignments;
     }
 
     public function get(string $itemName, string $userId): ?Assignment
     {
         /** @psalm-var RawAssignment|null $row */
         $row = (new Query($this->database))
+            ->select(['createdAt'])
             ->from($this->tableName)
             ->where(['itemName' => $itemName, 'userId' => $userId])
             ->one();
 
-        return $row === null ? null : new Assignment($row['userId'], $row['itemName'], (int) $row['createdAt']);
+        return $row === null ? null : new Assignment($userId, $itemName, (int) $row['createdAt']);
     }
 
-    public function add(string $itemName, string $userId): void
+    public function exists(string $itemName, string $userId): bool
+    {
+        return (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['itemName' => $itemName, 'userId' => $userId])
+            ->exists();
+    }
+
+    public function userHasItem(string $userId, array $itemNames): bool
+    {
+        if (empty($itemNames)) {
+            return false;
+        }
+
+        return (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['userId' => $userId, 'itemName' => $itemNames])
+            ->exists();
+    }
+
+    public function add(Assignment $assignment): void
     {
         $this
             ->database
@@ -89,8 +136,8 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
             ->insert(
                 $this->tableName,
                 [
-                    'itemName' => $itemName,
-                    'userId' => $userId,
+                    'itemName' => $assignment->getItemName(),
+                    'userId' => $assignment->getUserId(),
                     'createdAt' => time(),
                 ],
             )

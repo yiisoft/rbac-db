@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\Rbac\Db;
 
 use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Expression\Expression;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Rbac\Db\ItemTreeTraversal\ItemTreeTraversalFactory;
 use Yiisoft\Rbac\Db\ItemTreeTraversal\ItemTreeTraversalInterface;
@@ -22,6 +23,22 @@ use Yiisoft\Rbac\Role;
  * @psalm-import-type ItemsIndexedByName from ItemsStorageInterface
  * @psalm-type RawItem = array{
  *     type: Item::TYPE_*,
+ *     name: string,
+ *     description: string|null,
+ *     ruleName: string|null,
+ *     createdAt: int|string,
+ *     updatedAt: int|string
+ * }
+ * @psalm-type RawRole = array{
+ *     type: Item::TYPE_ROLE,
+ *     name: string,
+ *     description: string|null,
+ *     ruleName: string|null,
+ *     createdAt: int|string,
+ *     updatedAt: int|string
+ *  }
+ * @psalm-type RawPermission = array{
+ *     type: Item::TYPE_PERMISSION,
  *     name: string,
  *     description: string|null,
  *     ruleName: string|null,
@@ -97,6 +114,14 @@ final class ItemsStorage implements ItemsStorageInterface
         return (new Query($this->database))
             ->from($this->tableName)
             ->where(['name' => $name])
+            ->exists();
+    }
+
+    public function roleExists(string $name): bool
+    {
+        return (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['name' => $name, 'type' => Item::TYPE_ROLE])
             ->exists();
     }
 
@@ -182,6 +207,22 @@ final class ItemsStorage implements ItemsStorageInterface
         return $this->getItemsByType(Item::TYPE_ROLE);
     }
 
+    public function getRolesByNames(array $names): array
+    {
+        if (empty($names)) {
+            return [];
+        }
+
+        /** @psalm-var RawRole[] $rawItems */
+        $rawItems = (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['type' => Item::TYPE_ROLE, 'name' => $names])
+            ->all();
+
+        /** @psalm-var array<string, Role> */
+        return $this->getItemsIndexedByName($rawItems);
+    }
+
     public function getRole(string $name): ?Role
     {
         return $this->getItemByTypeAndName(Item::TYPE_ROLE, $name);
@@ -195,6 +236,22 @@ final class ItemsStorage implements ItemsStorageInterface
     public function getPermissions(): array
     {
         return $this->getItemsByType(Item::TYPE_PERMISSION);
+    }
+
+    public function getPermissionsByNames(array $names): array
+    {
+        if (empty($names)) {
+            return [];
+        }
+
+        /** @psalm-var RawPermission[] $rawItems */
+        $rawItems = (new Query($this->database))
+            ->from($this->tableName)
+            ->where(['type' => Item::TYPE_PERMISSION, 'name' => $names])
+            ->all();
+
+        /** @psalm-var array<string, Permission> */
+        return $this->getItemsIndexedByName($rawItems);
     }
 
     public function getPermission(string $name): ?Permission
@@ -214,10 +271,44 @@ final class ItemsStorage implements ItemsStorageInterface
         return $this->getItemsIndexedByName($rawItems);
     }
 
-    public function getChildren(string $name): array
+    public function getDirectChildren(string $name): array
+    {
+        $quoter = $this->database->getQuoter();
+        $quotedJoinColumn = $quoter->quoteTableName($this->tableName) . '.' . $quoter->quoteColumnName('name');
+        /** @psalm-var RawItem[] $rawItems */
+        $rawItems = (new Query($this->database))
+            ->select($this->tableName . '.*')
+            ->from($this->tableName)
+            ->leftJoin(
+                $this->childrenTableName,
+                [$this->childrenTableName . '.child' => new Expression($quotedJoinColumn)],
+            )
+            ->where(['parent' => $name])
+            ->all();
+
+        return $this->getItemsIndexedByName($rawItems);
+    }
+
+    public function getAllChildren(string $name): array
     {
         $rawItems = $this->getTreeTraversal()->getChildrenRows($name);
 
+        return $this->getItemsIndexedByName($rawItems);
+    }
+
+    public function getAllChildPermissions(string $name): array
+    {
+        $rawItems = $this->getTreeTraversal()->getChildPermissionRows($name);
+
+        /** @psalm-var array<string, Permission> */
+        return $this->getItemsIndexedByName($rawItems);
+    }
+
+    public function getAllChildRoles(string $name): array
+    {
+        $rawItems = $this->getTreeTraversal()->getChildRoleRows($name);
+
+        /** @psalm-var array<string, Role> */
         return $this->getItemsIndexedByName($rawItems);
     }
 
@@ -226,6 +317,19 @@ final class ItemsStorage implements ItemsStorageInterface
         return (new Query($this->database))
             ->from($this->childrenTableName)
             ->where(['parent' => $name])
+            ->exists();
+    }
+
+    public function hasChild(string $parentName, string $childName): bool
+    {
+        return $this->getTreeTraversal()->hasChild($parentName, $childName);
+    }
+
+    public function hasDirectChild(string $parentName, string $childName): bool
+    {
+        return (new Query($this->database))
+            ->from($this->childrenTableName)
+            ->where(['parent' => $parentName, 'child' => $childName])
             ->exists();
     }
 
@@ -266,7 +370,7 @@ final class ItemsStorage implements ItemsStorageInterface
      * @psalm-param Item::TYPE_* $type
      *
      * @return array A list of roles / permissions.
-     * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission[] : Role[])
+     * @psalm-return ($type is Item::TYPE_PERMISSION ? array<string, Permission> : array<string, Role>)
      */
     private function getItemsByType(string $type): array
     {
