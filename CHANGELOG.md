@@ -12,7 +12,23 @@
 - Enh #26: Add default table names (@arogachev)
 - Chg #25: Use prefix for default table names (@arogachev)
 - Bug #44: Fix hardcoded items children table name in item tree traversal query for MySQL 5 (@arogachev)
-- Enh #46: Improve perfomaтce (@arogachev)
+- Enh #46: Improve perfomance (@arogachev, @Tigrov)
+- Enh #46: Rename `getChildren()` method to `getDirectAchildren()` in `ItemsStorage` (@arogachev)
+- Enh #46: Add methods to `ItemsStorage`:
+    - `roleExists()`;
+    - `getRolesByNames()`;
+    - `getPermissionsByNames()`;
+    - `getAllChildren()`;
+    - `getAllChildRoles()`;
+    - `getAllChildPermissions()`;
+    - `hasChild()`;
+    - `hasDirectChild()`.
+      (@arogachev)
+- Enh #165: Add methods to `AssignmentsStorage`:
+    - `getByItemNames()`;
+    - `exists()`;
+    - `userHasItem()`.
+      (@arogachev)
 
 ## 1.0.0 April 20, 2023
 
