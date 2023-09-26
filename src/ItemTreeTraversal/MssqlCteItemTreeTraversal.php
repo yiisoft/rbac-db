@@ -11,4 +11,5 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class MssqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
+    protected bool $useRecursiveInWith = false;
 }
