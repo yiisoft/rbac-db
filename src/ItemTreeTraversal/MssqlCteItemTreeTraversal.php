@@ -11,8 +11,4 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class MssqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
-    public function getWithExpression(): string
-    {
-        return 'WITH';
-    }
 }

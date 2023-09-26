@@ -94,19 +94,6 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         return $result !== false;
     }
 
-    /**
-     * Gets `WITH` expression used in DB query.
-     *
-     * @infection-ignore-all
-     * - ProtectedVisibility.
-     *
-     * @return string `WITH` expression.
-     */
-    protected function getWithExpression(): string
-    {
-        return 'WITH RECURSIVE';
-    }
-
     private function getRowsCommand(
         string $name,
         QueryInterface $baseOuterQuery,
