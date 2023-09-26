@@ -100,11 +100,12 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
     {
         /** @psalm-var RawAssignment|null $row */
         $row = (new Query($this->database))
+            ->select(['createdAt'])
             ->from($this->tableName)
             ->where(['itemName' => $itemName, 'userId' => $userId])
             ->one();
 
-        return $row === null ? null : new Assignment($row['userId'], $row['itemName'], (int) $row['createdAt']);
+        return $row === null ? null : new Assignment($userId, $itemName, (int) $row['createdAt']);
     }
 
     public function exists(string $itemName, string $userId): bool
