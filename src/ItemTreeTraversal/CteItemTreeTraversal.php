@@ -124,31 +124,27 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             $cteParameterName = 'parent_name';
         }
 
+        $cteSelectRelationQuery = (new Query($this->database))
+            ->select($cteSelectRelationName)
+            ->from(['item_child_recursive' => $this->childrenTableName])
+            ->innerJoin($cteName, [
+                "item_child_recursive.$cteConditionRelationName" => new Expression(
+                    "{{{$cteName}}}.[[$cteParameterName]]",
+                ),
+            ]);
         $cteSelectItemQuery = (new Query($this->database))
             ->select('name')
             ->from($this->tableName)
-            ->where(['name' => $name]);
-        $quoter = $this->database->getQuoter();
-        $cteSelectRelationQuery = (new Query($this->database))
-            ->select($cteSelectRelationName)
-            ->from([
-                new Expression("{$quoter->quoteTableName($this->childrenTableName)} item_child_recursive"),
-                new Expression($cteName),
-            ])
-            ->where([
-                new Expression('item_child_recursive.') . "[[$cteConditionRelationName]]" =>
-                new Expression("$cteName.$cteParameterName"),
-            ]);
+            ->where(['name' => $name])
+            ->union($cteSelectRelationQuery, all: true);
         $outerQuery = $baseOuterQuery
-            ->from(new Expression($cteName))
-            ->leftJoin($this->tableName . ' item', ['item.name' => new Expression("$cteName.$cteParameterName")]);
-        $sql = "{$this->getWithExpression()} $cteName($cteParameterName) AS (
-            {$cteSelectItemQuery->createCommand()->getRawSql()}
-            UNION ALL
-            {$cteSelectRelationQuery->createCommand()->getRawSql()}
-        )
-        {$outerQuery->createCommand()->getRawSql()}";
+            ->withQuery($cteSelectItemQuery, "$cteName($cteParameterName)", recursive: true)
+            ->from($cteName)
+            ->leftJoin(
+                ['item' => $this->tableName],
+                ['item.name' => new Expression("{{{$cteName}}}.[[$cteParameterName]]")],
+            );
 
-        return $this->database->createCommand($sql);
+        return $outerQuery->createCommand();
     }
 }
