@@ -12,7 +12,7 @@
 - Enh #26: Add default table names (@arogachev)
 - Chg #25: Use prefix for default table names (@arogachev)
 - Bug #44: Fix hardcoded items children table name in item tree traversal query for MySQL 5 (@arogachev)
-- Enh #46: Improve perfomance (@arogachev, @Tigrov)
+- Enh #46: Improve performance (@arogachev, @Tigrov)
 - Enh #46: Rename `getChildren()` method to `getDirectAchildren()` in `ItemsStorage` (@arogachev)
 - Enh #46: Add methods to `ItemsStorage`:
     - `roleExists()`;
