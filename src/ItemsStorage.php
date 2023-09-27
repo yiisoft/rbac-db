@@ -374,12 +374,13 @@ final class ItemsStorage implements ItemsStorageInterface
      */
     private function getItemsByType(string $type): array
     {
-        /** @psalm-var RawItem[] $rawItems */
+        /** @psalm-var RawPermission[] | RawRole[] $rawItems */
         $rawItems = (new Query($this->database))
             ->from($this->tableName)
             ->where(['type' => $type])
             ->all();
 
+        /** @psalm-var array<string, Permission> | array<string, Role> */
         return $this->getItemsIndexedByName($rawItems);
     }
 
