@@ -380,7 +380,6 @@ final class ItemsStorage implements ItemsStorageInterface
             ->where(['type' => $type])
             ->all();
 
-        /** @psalm-var array<string, Permission> | array<string, Role> */
         return $this->getItemsIndexedByName($rawItems);
     }
 
