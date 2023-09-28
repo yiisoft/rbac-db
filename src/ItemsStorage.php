@@ -431,12 +431,20 @@ final class ItemsStorage implements ItemsStorageInterface
         string|null $description = null,
         string|null $ruleName = null,
     ): Permission|Role {
-        return $this
+        $item = $this
             ->createItemByTypeAndName($type, $name)
-            ->withDescription($description ?? '')
-            ->withRuleName($ruleName ?? null)
             ->withCreatedAt((int) $createdAt)
             ->withUpdatedAt((int) $updatedAt);
+
+        if ($description !== null) {
+            $item = $item->withDescription($description);
+        }
+
+        if ($ruleName !== null) {
+            $item = $item->withRuleName($ruleName);
+        }
+
+        return $item;
     }
 
     /**
