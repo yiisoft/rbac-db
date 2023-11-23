@@ -138,7 +138,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
                 [
                     'itemName' => $assignment->getItemName(),
                     'userId' => $assignment->getUserId(),
-                    'createdAt' => time(),
+                    'createdAt' => $assignment->getCreatedAt(),
                 ],
             )
             ->execute();
