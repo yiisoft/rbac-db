@@ -141,4 +141,17 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 
         return $outerQuery->createCommand();
     }
+
+    /**
+     * @psalm-param string|non-empty-array<array-key, string> $names
+     */
+    private function getChildrenBaseOuterQuery(string|array $names): QueryInterface
+    {
+        $baseOuterQuery = (new Query($this->database))->select('item.*')->distinct();
+        if (is_string($names)) {
+            return $baseOuterQuery->where(['!=', 'item.name', $names])
+        }
+
+        return $baseOuterQuery->where(['not in', 'item.name', $names]);
+    }
 }
