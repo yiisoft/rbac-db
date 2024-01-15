@@ -57,7 +57,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->select(['parent', new Expression($this->getTrimConcatChildrenExpression())])
             ->from("$this->childrenTableName AS item_child_recursive")
             ->innerJoin('parent_of', [
-                "item_child_recursive.child" => new Expression('{{parent_of}}.[[child_name]]'),
+                'item_child_recursive.child' => new Expression('{{parent_of}}.[[child_name]]'),
             ]);
         $cteSelectItemQuery = (new Query($this->database))
             ->select(['name', new Expression($this->getEmptyChildrenExpression())])
