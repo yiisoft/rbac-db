@@ -20,6 +20,7 @@ use Yiisoft\Rbac\Item;
  * @internal
  *
  * @psalm-import-type RawItem from ItemsStorage
+ * @psalm-import-type AccessTree from ItemTreeTraversalInterface
  */
 abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 {
@@ -49,34 +50,60 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
-    public function getChildrenRows(string $name): array
+    public function getAccessTree(string $name): array
     {
-        $baseOuterQuery = (new Query($this->database))->select('item.*')->where(['!=', 'item.name', $name]);
+        $baseOuterQuery = (new Query($this->database))->select(['item.*', 'parent_of.children']);
+        $cteSelectRelationQuery = (new Query($this->database))
+            ->select(['parent', new Expression($this->getTrimConcatChildrenExpression())])
+            ->from("$this->childrenTableName AS item_child_recursive")
+            ->innerJoin('parent_of', [
+                "item_child_recursive.child" => new Expression('{{parent_of}}.[[child_name]]'),
+            ]);
+        $cteSelectItemQuery = (new Query($this->database))
+            ->select(['name', new Expression($this->getEmptyChildrenExpression())])
+            ->from($this->tableName)
+            ->where(['name' => $name])
+            ->union($cteSelectRelationQuery, all: true);
+        $quoter = $this->database->getQuoter();
+        $outerQuery = $baseOuterQuery
+            ->withQuery(
+                $cteSelectItemQuery,
+                $quoter->quoteTableName('parent_of') . '(' . $quoter->quoteColumnName('child_name') . ',' .
+                $quoter->quoteColumnName('children') . ')',
+                recursive: $this->useRecursiveInWith,
+            )
+            ->from('parent_of')
+            ->leftJoin(
+                ['item' => $this->tableName],
+                ['item.name' => new Expression('{{parent_of}}.[[child_name]]')],
+            );
 
-        /** @psalm-var RawItem[] */
-        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        /** @psalm-var AccessTree */
+        return $outerQuery->createCommand()->queryAll();
     }
 
-    public function getChildPermissionRows(string $name): array
+    public function getChildrenRows(string|array $names): array
     {
-        $baseOuterQuery = (new Query($this->database))
-            ->select('item.*')
-            ->where(['!=', 'item.name', $name])
-            ->andWhere(['item.type' => Item::TYPE_PERMISSION]);
+        $baseOuterQuery = $this->getChildrenBaseOuterQuery($names);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        return $this->getRowsCommand($names, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
     }
 
-    public function getChildRoleRows(string $name): array
+    public function getChildPermissionRows(string|array $names): array
     {
-        $baseOuterQuery = (new Query($this->database))
-            ->select('item.*')
-            ->where(['!=', 'item.name', $name])
-            ->andWhere(['item.type' => Item::TYPE_ROLE]);
+        $baseOuterQuery = $this->getChildrenBaseOuterQuery($names)->andWhere(['item.type' => Item::TYPE_PERMISSION]);
 
         /** @psalm-var RawItem[] */
-        return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+        return $this->getRowsCommand($names, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
+    }
+
+    public function getChildRoleRows(string|array $names): array
+    {
+        $baseOuterQuery = $this->getChildrenBaseOuterQuery($names)->andWhere(['item.type' => Item::TYPE_ROLE]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getRowsCommand($names, baseOuterQuery: $baseOuterQuery, areParents: false)->queryAll();
     }
 
     public function hasChild(string $parentName, string $childName): bool
@@ -96,8 +123,27 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         return $result !== false;
     }
 
+    /**
+     * @infection-ignore-all
+     *  - ProtectedVisibility.
+     *
+     * @psalm-return non-empty-string
+     */
+    protected function getEmptyChildrenExpression(): string
+    {
+        return "''";
+    }
+
+    /**
+     * @psalm-return non-empty-string
+     */
+    protected function getTrimConcatChildrenExpression(): string
+    {
+        return "TRIM(',' FROM CONCAT(children, ',', item_child_recursive.child))";
+    }
+
     private function getRowsCommand(
-        string $name,
+        string|array $names,
         QueryInterface $baseOuterQuery,
         bool $areParents = true,
     ): CommandInterface {
@@ -124,7 +170,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         $cteSelectItemQuery = (new Query($this->database))
             ->select('name')
             ->from($this->tableName)
-            ->where(['name' => $name])
+            ->where(['name' => $names])
             ->union($cteSelectRelationQuery, all: true);
         $quoter = $this->database->getQuoter();
         $outerQuery = $baseOuterQuery
@@ -149,7 +195,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
     {
         $baseOuterQuery = (new Query($this->database))->select('item.*')->distinct();
         if (is_string($names)) {
-            return $baseOuterQuery->where(['!=', 'item.name', $names])
+            return $baseOuterQuery->where(['!=', 'item.name', $names]);
         }
 
         return $baseOuterQuery->where(['not in', 'item.name', $names]);

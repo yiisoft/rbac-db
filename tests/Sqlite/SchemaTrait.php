@@ -13,14 +13,20 @@ trait SchemaTrait
         parent::checkItemsChildrenTable();
 
         $this->assertCount(
-            1,
+            2,
             $this->getDatabase()->getSchema()->getTableForeignKeys(DbSchemaManager::ITEMS_CHILDREN_TABLE),
         );
         $this->assertForeignKey(
             table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
-            expectedColumnNames: ['parent', 'child'],
+            expectedColumnNames: ['parent'],
             expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
-            expectedForeignColumnNames: ['name', 'name'],
+            expectedForeignColumnNames: ['name'],
+        );
+        $this->assertForeignKey(
+            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
+            expectedColumnNames: ['child'],
+            expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
+            expectedForeignColumnNames: ['name'],
         );
 
         $this->assertCount(

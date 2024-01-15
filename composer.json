@@ -23,7 +23,7 @@
         "ext-pdo": "*",
         "php": "^8.1",
         "yiisoft/db": "^1.0",
-        "yiisoft/rbac": "dev-master"
+        "yiisoft/rbac": "dev-master#cba39d8471677970282fdad302271c858f5c7912"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",

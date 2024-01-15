@@ -29,7 +29,7 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
     public function testUpdateRoleTransactionError(): void
     {
         $manager = $this->createFilledManager();
-        $role = $this->itemsStorage->getRole('reader')->withName('new reader');
+        $role = $manager->getRole('reader')->withName('new reader');
         $manager->updateRole('reader', $role);
 
         $this->assertTransaction();
@@ -38,7 +38,7 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
     public function testUpdatePermissionTransactionError(): void
     {
         $manager = $this->createFilledManager();
-        $permission = $this->itemsStorage->getPermission('updatePost')->withName('newUpdatePost');
+        $permission = $manager->getPermission('updatePost')->withName('newUpdatePost');
         $manager->updatePermission('updatePost', $permission);
 
         $this->assertTransaction();

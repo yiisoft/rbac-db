@@ -35,26 +35,26 @@ abstract class ManagerTransactionErrorTest extends ManagerTest
     public function testUpdateRoleTransactionError(): void
     {
         $manager = $this->createFilledManager();
-        $role = $this->itemsStorage->getRole('reader')->withName('new reader');
+        $role = $manager->getRole('reader')->withName('new reader');
 
         try {
             $manager->updateRole('reader', $role);
         } catch (RuntimeException) {
-            $this->assertNotNull($this->itemsStorage->getRole('reader'));
-            $this->assertNull($this->itemsStorage->getRole('new reader'));
+            $this->assertNotNull($manager->getRole('reader'));
+            $this->assertNull($manager->getRole('new reader'));
         }
     }
 
     public function testUpdatePermissionTransactionError(): void
     {
         $manager = $this->createFilledManager();
-        $permission = $this->itemsStorage->getPermission('updatePost')->withName('newUpdatePost');
+        $permission = $manager->getPermission('updatePost')->withName('newUpdatePost');
 
         try {
             $manager->updatePermission('updatePost', $permission);
         } catch (RuntimeException) {
-            $this->assertNotNull($this->itemsStorage->getPermission('updatePost'));
-            $this->assertNull($this->itemsStorage->getPermission('newUpdatePost'));
+            $this->assertNotNull($manager->getPermission('updatePost'));
+            $this->assertNull($manager->getPermission('newUpdatePost'));
         }
     }
 }

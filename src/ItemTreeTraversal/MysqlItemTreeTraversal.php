@@ -19,6 +19,7 @@ use Yiisoft\Rbac\Item;
  * @internal
  *
  * @psalm-import-type RawItem from ItemsStorage
+ * @psalm-import-type AccessTree from ItemTreeTraversalInterface
  */
 final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
 {
@@ -42,9 +43,8 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
     {
         $sql = "SELECT DISTINCT item.* FROM (
             SELECT @r AS child_name,
-            (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent,
-            @l := @l + 1 AS level
-            FROM (SELECT @r := :name, @l := 0) val, $this->childrenTableName
+            (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent
+            FROM (SELECT @r := :name) val, $this->childrenTableName
         ) s
         LEFT JOIN $this->tableName AS item ON item.name = s.child_name
         WHERE item.name != :name";
@@ -56,34 +56,45 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->queryAll();
     }
 
-    public function getChildrenRows(string $name): array
+    public function getAccessTree(string $name): array
     {
-        $baseOuterQuery = (new Query($this->database))->select([new Expression('item.*')])->distinct();
+        $sql = "SELECT item.*, access_tree_base.children FROM (
+            SELECT child_name, MIN(TRIM(BOTH ',' FROM TRIM(BOTH child_name FROM raw_children))) as children FROM (
+                SELECT @r AS child_name, @path := concat(@path, ',', @r) as raw_children,
+                (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent
+                FROM (SELECT @r := :name, @path := '') val, $this->childrenTableName
+            ) raw_access_tree_base
+            GROUP BY child_name
+        ) access_tree_base
+        LEFT JOIN $this->tableName AS item ON item.name = access_tree_base.child_name";
 
-        /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        /** @psalm-var AccessTree */
+        return $this
+            ->database
+            ->createCommand($sql, [':name' => $name])
+            ->queryAll();
     }
 
-    public function getChildPermissionRows(string $name): array
+    public function getChildrenRows(string|array $names): array
     {
-        $baseOuterQuery = (new Query($this->database))
-            ->select([new Expression('item.*')])
-            ->distinct()
-            ->where(['item.type' => Item::TYPE_PERMISSION]);
-
         /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getChildrenRowsCommand($names, baseOuterQuery: $this->getChildrenBaseOuterQuery())->queryAll();
     }
 
-    public function getChildRoleRows(string $name): array
+    public function getChildPermissionRows(string|array $names): array
     {
-        $baseOuterQuery = (new Query($this->database))
-            ->select([new Expression('item.*')])
-            ->distinct()
-            ->where(['item.type' => Item::TYPE_ROLE]);
+        $baseOuterQuery = $this->getChildrenBaseOuterQuery()->where(['item.type' => Item::TYPE_PERMISSION]);
 
         /** @psalm-var RawItem[] */
-        return $this->getChildrenRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
+        return $this->getChildrenRowsCommand($names, baseOuterQuery: $baseOuterQuery)->queryAll();
+    }
+
+    public function getChildRoleRows(string|array $names): array
+    {
+        $baseOuterQuery = $this->getChildrenBaseOuterQuery()->where(['item.type' => Item::TYPE_ROLE]);
+
+        /** @psalm-var RawItem[] */
+        return $this->getChildrenRowsCommand($names, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
     public function hasChild(string $parentName, string $childName): bool
@@ -97,17 +108,52 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
         return $result !== false;
     }
 
-    private function getChildrenRowsCommand(string $name, QueryInterface $baseOuterQuery): CommandInterface
+    /**
+     * @param string|string[] $names
+     */
+    private function getChildrenRowsCommand(string|array $names, QueryInterface $baseOuterQuery): CommandInterface
     {
+        $names = (array) $names;
         $fromSql = "SELECT DISTINCT child
-        FROM (SELECT * FROM $this->childrenTableName ORDER by parent) item_child_sorted,
-        (SELECT @pv := :name) init
-        WHERE find_in_set(parent, @pv) AND length(@pv := concat(@pv, ',', child))";
-        $outerQuery = $baseOuterQuery
-            ->from(['s' => "($fromSql)"])
-            ->leftJoin(['item' => $this->tableName], ['item.name' => new Expression('s.child')])
-            ->addParams([':name' => $name]);
+        FROM (SELECT * FROM $this->childrenTableName ORDER by parent) item_child_sorted,\n";
+        $where = '';
+        $excludedNamesStr = '';
+        $parameters = [];
+        $lastNameIndex = array_key_last($names);
 
-        return $outerQuery->createCommand();
+        foreach ($names as $index => $name) {
+            $fromSql .= "(SELECT @pv$index := :name$index) init$index";
+            $excludedNamesStr .= "@pv$index";
+
+            if ($index !== $lastNameIndex) {
+                $fromSql .= ',';
+                $excludedNamesStr .= ', ';
+            }
+
+            $fromSql .= "\n";
+
+            if ($index !== 0) {
+                $where .= ' OR ';
+            }
+
+            $where .= "(find_in_set(parent, @pv$index) AND length(@pv$index := concat(@pv$index, ',', child)))";
+
+            $parameters[":name$index"] = $name;
+        }
+
+        $where = "($where) AND child NOT IN ($excludedNamesStr)";
+        $fromSql .= "WHERE $where";
+        $outerQuery = $baseOuterQuery
+            ->from(new Expression("($fromSql) s"))
+            ->leftJoin(['item' => $this->tableName], ['item.name' => new Expression('s.child')]);
+        /** @psalm-var non-empty-string $outerQuerySql */
+        $outerQuerySql = $outerQuery;
+
+        return $this->database->createCommand($outerQuerySql, $parameters);
+    }
+
+    private function getChildrenBaseOuterQuery(): QueryInterface
+    {
+        return (new Query($this->database))->select('item.*')->distinct();
     }
 }

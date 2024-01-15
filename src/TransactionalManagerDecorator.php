@@ -56,6 +56,11 @@ final class TransactionalManagerDecorator implements ManagerInterface
         return $this->manager->hasChild($parentName, $childName);
     }
 
+    public function hasChildren(string $parentName): bool
+    {
+        return $this->manager->hasChildren($parentName);
+    }
+
     public function assign(string $itemName, int|Stringable|string $userId, ?int $createdAt = null): ManagerInterface
     {
         $this->manager->assign($itemName, $userId, $createdAt);
@@ -75,6 +80,11 @@ final class TransactionalManagerDecorator implements ManagerInterface
         $this->manager->revokeAll($userId);
 
         return $this;
+    }
+
+    public function getItemsByUserId(int|Stringable|string $userId): array
+    {
+        return $this->manager->getItemsByUserId($userId);
     }
 
     public function getRolesByUserId(int|Stringable|string $userId): array
@@ -109,6 +119,11 @@ final class TransactionalManagerDecorator implements ManagerInterface
         return $this;
     }
 
+    public function getRole(string $name): ?Role
+    {
+        return $this->manager->getRole($name);
+    }
+
     public function removeRole(string $name): ManagerInterface
     {
         $this->manager->removeRole($name);
@@ -131,9 +146,14 @@ final class TransactionalManagerDecorator implements ManagerInterface
         return $this;
     }
 
-    public function removePermission(string $permissionName): ManagerInterface
+    public function getPermission(string $name): ?Permission
     {
-        $this->manager->removePermission($permissionName);
+        return $this->manager->getPermission($name);
+    }
+
+    public function removePermission(string $name): ManagerInterface
+    {
+        $this->manager->removePermission($name);
 
         return $this;
     }
@@ -168,5 +188,15 @@ final class TransactionalManagerDecorator implements ManagerInterface
         $this->manager->setGuestRoleName($name);
 
         return $this;
+    }
+
+    public function getGuestRoleName(): ?string
+    {
+        return $this->manager->getGuestRoleName();
+    }
+
+    public function getGuestRole(): ?Role
+    {
+        return $this->manager->getGuestRole();
     }
 }
