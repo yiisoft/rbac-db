@@ -15,6 +15,11 @@ final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
 
     protected function getTrimConcatChildrenExpression(): string
     {
-        return "TRIM (',' FROM children || ',' || item_child_recursive.child)";
+        $quoter = $this->database->getQuoter();
+        $childrenColumnString =  $quoter->quoteColumnName('children');
+        $childColumnString = $quoter->quoteTableName('item_child_recursive') . '.' .
+            $quoter->quoteColumnName('child');
+
+        return "TRIM (',' FROM $childrenColumnString || ',' || $childColumnString)";
     }
 }
