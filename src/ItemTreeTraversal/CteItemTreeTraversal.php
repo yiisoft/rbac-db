@@ -79,7 +79,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             );
 
         /** @psalm-var AccessTree */
-        return $outerQuery->createCommand()->queryAll();
+        return $outerQuery->all();
     }
 
     public function getChildrenRows(string|array $names): array
