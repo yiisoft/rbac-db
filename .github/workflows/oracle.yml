@@ -37,7 +37,6 @@ jobs:
           - ubuntu-latest
 
         php:
-          - 8.0
           - 8.1
           - 8.2
 
@@ -91,7 +90,7 @@ jobs:
         run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Install db-oracle
-        run: composer require --dev yiisoft/db-oracle --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        run: composer require --dev "yiisoft/db-oracle:^1.2" --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
 
       - name: Run tests with phpunit
         run: vendor/bin/phpunit --testsuite Oracle --coverage-clover=coverage.xml --colors=always

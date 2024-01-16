@@ -12,4 +12,8 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class MysqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
+    protected function getEmptyChildrenExpression(): string
+    {
+        return "CAST('' AS CHAR(21844))";
+    }
 }

@@ -12,4 +12,14 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
 final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
 {
     protected bool $useRecursiveInWith = false;
+
+    protected function getTrimConcatChildrenExpression(): string
+    {
+        $quoter = $this->database->getQuoter();
+        $childrenColumnString = $quoter->quoteColumnName('children');
+        $childColumnString = $quoter->quoteTableName('item_child_recursive') . '.' .
+            $quoter->quoteColumnName('child');
+
+        return "TRIM (',' FROM $childrenColumnString || ',' || $childColumnString)";
+    }
 }

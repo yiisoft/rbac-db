@@ -18,15 +18,15 @@ abstract class DbSchemaManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (str_starts_with($this->getName(), 'testInitWithEmptyTableNames')) {
+        if (str_starts_with($this->name(), 'testInitWithEmptyTableNames')) {
             return;
         }
 
-        if ($this->getName() === 'testHasTableWithEmptyString' || $this->getName() === 'testDropTableWithEmptyString') {
+        if ($this->name() === 'testHasTableWithEmptyString' || $this->name() === 'testDropTableWithEmptyString') {
             return;
         }
 
-        if (str_starts_with($this->getName(), 'testGet')) {
+        if (str_starts_with($this->name(), 'testGet')) {
             return;
         }
 
@@ -38,7 +38,7 @@ abstract class DbSchemaManagerTest extends TestCase
         // Skip
     }
 
-    public function dataInitWithEmptyTableNames(): array
+    public static function dataInitWithEmptyTableNames(): array
     {
         return [
             [

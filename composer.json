@@ -21,15 +21,15 @@
     "minimum-stability": "dev",
     "require": {
         "ext-pdo": "*",
-        "php": "^8.0",
-        "yiisoft/db": "^1.0",
-        "yiisoft/rbac": "dev-master"
+        "php": "^8.1",
+        "yiisoft/db": "^1.2",
+        "yiisoft/rbac": "dev-master#cba39d8471677970282fdad302271c858f5c7912"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
         "ext-uopz": "*",
         "maglnet/composer-require-checker": "^4.3",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^10.5.5",
         "rector/rector": "^0.19.0",
         "roave/infection-static-analysis-plugin": "^1.25",
         "slope-it/clock-mock": "0.4.0",
@@ -55,7 +55,8 @@
         "psr-4": {
             "Yiisoft\\Rbac\\Db\\Tests\\": "tests",
             "Yiisoft\\Rbac\\Tests\\": "vendor/yiisoft/rbac/tests"
-        }
+        },
+        "files": ["tests/bootstrap.php"]
     },
     "config": {
         "sort-packages": true,
