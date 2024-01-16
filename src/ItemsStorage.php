@@ -289,7 +289,9 @@ final class ItemsStorage implements ItemsStorageInterface
         $childrenNamesMap = [];
 
         foreach ($this->getTreeTraversal()->getAccessTree($name) as $data) {
-            $childrenNamesMap[$data['name']] = $data['children'] !== '' ? explode(',', $data['children']) : [];
+            $childrenNamesMap[$data['name']] = $data['children'] !== '' && $data['children'] !== null
+                ? explode(',', $data['children'])
+                : [];
             unset($data['children']);
             $tree[$data['name']] = ['item' => $this->createItem(...$data)];
         }

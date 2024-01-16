@@ -20,7 +20,7 @@ use Yiisoft\Rbac\Item;
  *     ruleName: string|null,
  *     createdAt: int|string,
  *     updatedAt: int|string,
- *     children: string
+ *     children: string|null
  * }>
  *
  * @psalm-import-type RawItem from ItemsStorage
