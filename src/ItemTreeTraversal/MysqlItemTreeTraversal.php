@@ -147,9 +147,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->from(new Expression("($fromSql) s"))
             ->leftJoin(['item' => $this->tableName], ['item.name' => new Expression('s.child')]);
         /** @psalm-var non-empty-string $outerQuerySql */
-        $outerQuerySql = $outerQuery->createCommand()->getSql();
-
-        return $this->database->createCommand($outerQuerySql, $parameters);
+        return $outerQuery->addParams($parameters)->createCommand();
     }
 
     private function getChildrenBaseOuterQuery(): QueryInterface
