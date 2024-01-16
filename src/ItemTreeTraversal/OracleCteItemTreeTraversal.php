@@ -16,7 +16,7 @@ final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
     protected function getTrimConcatChildrenExpression(): string
     {
         $quoter = $this->database->getQuoter();
-        $childrenColumnString =  $quoter->quoteColumnName('children');
+        $childrenColumnString = $quoter->quoteColumnName('children');
         $childColumnString = $quoter->quoteTableName('item_child_recursive') . '.' .
             $quoter->quoteColumnName('child');
 
