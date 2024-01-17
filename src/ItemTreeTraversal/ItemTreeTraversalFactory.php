@@ -28,10 +28,9 @@ class ItemTreeTraversalFactory
      * @param string $namesSeparator Separator used for joining item names.
      * @psalm-param non-empty-string $namesSeparator
      *
-     * @return ItemTreeTraversalInterface Item tree traversal strategy.
-     *
      * @throws RuntimeException When a database was configured with unknown driver, either because it is not supported
      * by Yii Database out of the box or newly added by Yii Database and not supported / tested yet in this package.
+     * @return ItemTreeTraversalInterface Item tree traversal strategy.
      */
     public static function getItemTreeTraversal(
         ConnectionInterface $database,
