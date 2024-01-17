@@ -30,7 +30,8 @@
     - `userHasItem()`.
       (@arogachev)
 - Bug #54: Fix ignoring of using `Assignment::$createdAt` in `AssignmentsStorage::add()` (@arogachev)
-- Chg #?: Raise PHP version to 8.1 (@arogachev)
+- Chg #57: Raise PHP version to 8.1 (@arogachev)
+- Chg #59: Add customizable separator for joining and splitting item names (@arogachev)
 
 ## 1.0.0 April 20, 2023
 

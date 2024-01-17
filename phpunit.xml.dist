@@ -17,18 +17,23 @@
     <testsuites>
         <testsuite name="Sqlite">
             <directory>./tests/Sqlite</directory>
+            <directory>./tests/Common</directory>
         </testsuite>
         <testsuite name="Mysql">
             <directory>./tests/Mysql</directory>
+            <directory>./tests/Common</directory>
         </testsuite>
         <testsuite name="Pgsql">
             <directory>./tests/Pgsql</directory>
+            <directory>./tests/Common</directory>
         </testsuite>
         <testsuite name="Mssql">
             <directory>./tests/Mssql</directory>
+            <directory>./tests/Common</directory>
         </testsuite>
         <testsuite name="Oracle">
             <directory>./tests/Oracle</directory>
+            <directory>./tests/Common</directory>
         </testsuite>
     </testsuites>
     <source>

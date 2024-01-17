@@ -31,11 +31,15 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
      *
      * @param string $childrenTableName A name of the table for storing relations between RBAC items.
      * @psalm-param non-empty-string $childrenTableName
+     *
+     * @param string $namesSeparator Separator used for joining item names.
+     * @psalm-param non-empty-string $namesSeparator
      */
     public function __construct(
         protected ConnectionInterface $database,
         protected string $tableName,
         protected string $childrenTableName,
+        protected string $namesSeparator,
     ) {
     }
 
@@ -59,8 +63,11 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
     public function getAccessTree(string $name): array
     {
         $sql = "SELECT item.*, access_tree_base.children FROM (
-            SELECT child_name, MIN(TRIM(BOTH ',' FROM TRIM(BOTH child_name FROM raw_children))) as children FROM (
-                SELECT @r AS child_name, @path := concat(@path, ',', @r) as raw_children,
+            SELECT
+                child_name,
+                MIN(TRIM(BOTH '$this->namesSeparator'
+            FROM TRIM(BOTH child_name FROM raw_children))) as children FROM (
+                SELECT @r AS child_name, @path := concat(@path, '$this->namesSeparator', @r) as raw_children,
                 (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent
                 FROM (SELECT @r := :name, @path := '') val, $this->childrenTableName
             ) raw_access_tree_base

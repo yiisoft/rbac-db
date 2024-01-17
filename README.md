@@ -28,6 +28,7 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
   - [Microsoft SQL Server](https://github.com/yiisoft/db-mssql)
   - [Oracle](https://github.com/yiisoft/db-oracle)
 - `PDO` PHP extension for the selected driver.
+- In case of using with SQL Server, minimal required version of PDO is 5.11.1.
 
 ## Installation
 

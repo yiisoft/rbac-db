@@ -25,6 +25,9 @@ class ItemTreeTraversalFactory
      * @param string $childrenTableName A name of the table for storing relations between RBAC items.
      * @psalm-param non-empty-string $childrenTableName
      *
+     * @param string $namesSeparator Separator used for joining item names.
+     * @psalm-param non-empty-string $namesSeparator
+     *
      * @throws RuntimeException When a database was configured with unknown driver, either because it is not supported
      * by Yii Database out of the box or newly added by Yii Database and not supported / tested yet in this package.
      * @return ItemTreeTraversalInterface Item tree traversal strategy.
@@ -33,15 +36,16 @@ class ItemTreeTraversalFactory
         ConnectionInterface $database,
         string $tableName,
         string $childrenTableName,
+        string $namesSeparator,
     ): ItemTreeTraversalInterface {
-        $arguments = [$database, $tableName, $childrenTableName];
+        $arguments = [$database, $tableName, $childrenTableName, $namesSeparator];
         $driver = $database->getDriverName();
 
         // default - ignored due to a complexity of testing and preventing splitting of database argument.
         // @codeCoverageIgnoreStart
         return match ($driver) {
             'sqlite' => new SqliteCteItemTreeTraversal(...$arguments),
-            'mysql' => self::getMysqlItemTreeTraversal($database, $tableName, $childrenTableName),
+            'mysql' => self::getMysqlItemTreeTraversal($database, $tableName, $childrenTableName, $namesSeparator),
             'pgsql' => new PostgresCteItemTreeTraversal(...$arguments),
             'sqlsrv' => new MssqlCteItemTreeTraversal(...$arguments),
             'oci' => new OracleCteItemTreeTraversal(...$arguments),
@@ -61,14 +65,21 @@ class ItemTreeTraversalFactory
      * @param string $childrenTableName A name of the table for storing relations between RBAC items.
      * @psalm-param non-empty-string $childrenTableName
      *
+     * @param string $namesSeparator Separator used for joining item names.
+     * @psalm-param non-empty-string $namesSeparator
+     *
      * @return MysqlCteItemTreeTraversal|MysqlItemTreeTraversal Item tree traversal strategy.
      */
-    private static function getMysqlItemTreeTraversal($database, $tableName, $childrenTableName): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal
-    {
+    private static function getMysqlItemTreeTraversal(
+        ConnectionInterface $database,
+        string $tableName,
+        string $childrenTableName,
+        string $namesSeparator
+    ): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal {
         /** @psalm-var array{version: string} $row */
         $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();
         $version = $row['version'];
-        $arguments = [$database, $tableName, $childrenTableName];
+        $arguments = [$database, $tableName, $childrenTableName, $namesSeparator];
 
         return str_starts_with($version, '5')
             ? new MysqlItemTreeTraversal(...$arguments)
