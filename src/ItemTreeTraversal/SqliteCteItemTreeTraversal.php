@@ -14,6 +14,6 @@ final class SqliteCteItemTreeTraversal extends CteItemTreeTraversal
 {
     protected function getTrimConcatChildrenExpression(): string
     {
-        return "TRIM(children || ',' || item_child_recursive.child, ',')";
+        return "TRIM(children || '$this->namesSeparator' || item_child_recursive.child, '$this->namesSeparator')";
     }
 }

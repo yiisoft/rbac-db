@@ -38,6 +38,11 @@ interface ItemTreeTraversalInterface
     public function getParentRows(string $name): array;
 
     /**
+     * Returns the parents tree for a single item which additionally contains children for each parent (only among the
+     * found items). The base item is included too, its children list is always empty.
+     *
+     * @param string $name The child name.
+     *
      * @psalm-return AccessTree
      */
     public function getAccessTree(string $name): array;

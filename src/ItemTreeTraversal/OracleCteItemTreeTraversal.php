@@ -20,6 +20,7 @@ final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
         $childColumnString = $quoter->quoteTableName('item_child_recursive') . '.' .
             $quoter->quoteColumnName('child');
 
-        return "TRIM (',' FROM $childrenColumnString || ',' || $childColumnString)";
+        return "TRIM ('$this->namesSeparator' FROM $childrenColumnString || '$this->namesSeparator' || " .
+            "$childColumnString)";
     }
 }
