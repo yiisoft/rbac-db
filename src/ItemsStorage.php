@@ -74,8 +74,8 @@ final class ItemsStorage implements ItemsStorageInterface
      */
     public function __construct(
         private ConnectionInterface $database,
-        private string $tableName = DbSchemaManager::ITEMS_TABLE,
-        private string $childrenTableName = DbSchemaManager::ITEMS_CHILDREN_TABLE,
+        private string $tableName = 'yii_rbac_item',
+        private string $childrenTableName = 'yii_rbac_item_child',
         string $namesSeparator = ',',
     ) {
         $this->assertNamesSeparator($namesSeparator);

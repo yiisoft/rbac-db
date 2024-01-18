@@ -30,7 +30,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
      */
     public function __construct(
         private ConnectionInterface $database,
-        private string $tableName = DbSchemaManager::ASSIGNMENTS_TABLE,
+        private string $tableName = 'yii_rbac_assignment',
     ) {
     }
 

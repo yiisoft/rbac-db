@@ -15,9 +15,11 @@ abstract class ManagerWithDbAssignmentsTest extends ManagerTest
         tearDown as protected traitTearDown;
     }
 
+    protected static array $migrationsSubfolders = ['assignments'];
+
     protected function setUp(): void
     {
-        $this->createSchemaManager(itemsTable: null, itemsChildrenTable: null)->ensureTables();
+        parent::setUp();
         $this->traitSetUp();
     }
 

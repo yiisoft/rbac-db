@@ -17,6 +17,14 @@ abstract class ManagerTest extends TestCase
 {
     use ManagerConfigurationTestTrait;
 
+    protected function tearDown(): void
+    {
+        $this->createItemsStorage()->clear();
+        $this->createAssignmentsStorage()->clear();
+
+        parent::tearDown();
+    }
+
     protected function populateDatabase(): void
     {
         // Skip

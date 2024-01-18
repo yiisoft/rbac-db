@@ -8,18 +8,46 @@ use PHPUnit\Framework\ExpectationFailedException;
 use Yiisoft\Db\Constraint\Constraint;
 use Yiisoft\Db\Constraint\ForeignKeyConstraint;
 use Yiisoft\Db\Constraint\IndexConstraint;
-use Yiisoft\Rbac\Db\DbSchemaManager;
 
 trait SchemaTrait
 {
+    public static function setUpBeforeClass(): void
+    {
+        // Skip
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        // Skip
+    }
+
+    protected function setUp(): void
+    {
+        // Skip
+    }
+
+    protected function populateDatabase(): void
+    {
+        // Skip
+    }
+
+    public function testSchema(): void
+    {
+        $this->checkNoTables();
+        $this->runMigrations();
+        $this->checkTables();
+
+        $this->rollbackMigrations();
+        $this->checkNoTables();
+    }
+
     protected function checkItemsChildrenTable(): void
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(DbSchemaManager::ITEMS_CHILDREN_TABLE);
 
-        $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
+        $table = $databaseSchema->getTableSchema(self::$itemsChildrenTable);
+        $this->assertNotNull($table);
 
         $columns = $table->getColumns();
 
@@ -35,7 +63,7 @@ trait SchemaTrait
         $this->assertSame(128, $child->getSize());
         $this->assertFalse($child->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ITEMS_CHILDREN_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::$itemsChildrenTable);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
     }
@@ -128,10 +156,9 @@ trait SchemaTrait
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(DbSchemaManager::ITEMS_TABLE);
 
-        $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getItemsTable()));
+        $table = $databaseSchema->getTableSchema(self::$itemsTable);
+        $this->assertNotNull($table);
 
         $columns = $table->getColumns();
 
@@ -169,21 +196,21 @@ trait SchemaTrait
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ITEMS_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::$itemsTable);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertSame(['name'], $primaryKey->getColumnNames());
 
-        $this->assertCount(0, $databaseSchema->getTableForeignKeys(DbSchemaManager::ITEMS_TABLE));
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::$itemsTable));
 
-        $this->assertCount(2, $databaseSchema->getTableIndexes(DbSchemaManager::ITEMS_TABLE));
+        $this->assertCount(2, $databaseSchema->getTableIndexes(self::$itemsTable));
         $this->assertIndex(
-            table: DbSchemaManager::ITEMS_TABLE,
+            table: self::$itemsTable,
             expectedColumnNames: ['name'],
             expectedIsUnique: true,
             expectedIsPrimary: true
         );
         $this->assertIndex(
-            table: DbSchemaManager::ITEMS_TABLE,
+            table: self::$itemsTable,
             expectedColumnNames: ['type'],
             expectedName: 'idx-yii_rbac_item-type',
         );
@@ -193,10 +220,9 @@ trait SchemaTrait
     {
         $database = $this->getDatabase();
         $databaseSchema = $database->getSchema();
-        $table = $databaseSchema->getTableSchema(DbSchemaManager::ASSIGNMENTS_TABLE);
 
-        $schemaManager = $this->createSchemaManager();
-        $this->assertTrue($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
+        $table = $databaseSchema->getTableSchema(self::$assignmentsTable);
+        $this->assertNotNull($table);
 
         $columns = $table->getColumns();
 
@@ -217,15 +243,15 @@ trait SchemaTrait
         $this->assertSame('integer', $createdAt->getType());
         $this->assertFalse($createdAt->isAllowNull());
 
-        $primaryKey = $databaseSchema->getTablePrimaryKey(DbSchemaManager::ASSIGNMENTS_TABLE);
+        $primaryKey = $databaseSchema->getTablePrimaryKey(self::$assignmentsTable);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
         $this->assertEqualsCanonicalizing(['itemName', 'userId'], $primaryKey->getColumnNames());
 
-        $this->assertCount(0, $databaseSchema->getTableForeignKeys(DbSchemaManager::ASSIGNMENTS_TABLE));
+        $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::$assignmentsTable));
 
-        $this->assertCount(1, $databaseSchema->getTableIndexes(DbSchemaManager::ASSIGNMENTS_TABLE));
+        $this->assertCount(1, $databaseSchema->getTableIndexes(self::$assignmentsTable));
         $this->assertIndex(
-            table: DbSchemaManager::ASSIGNMENTS_TABLE,
+            table: self::$assignmentsTable,
             expectedColumnNames: ['itemName', 'userId'],
             expectedIsUnique: true,
             expectedIsPrimary: true,
@@ -234,10 +260,8 @@ trait SchemaTrait
 
     private function checkNoTables(): void
     {
-        $schemaManager = $this->createSchemaManager();
-
-        $this->assertFalse($schemaManager->hasTable($schemaManager->getItemsTable()));
-        $this->assertFalse($schemaManager->hasTable($schemaManager->getAssignmentsTable()));
-        $this->assertFalse($schemaManager->hasTable($schemaManager->getItemsChildrenTable()));
+        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsTable));
+        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsChildrenTable));
+        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$assignmentsTable));
     }
 }
