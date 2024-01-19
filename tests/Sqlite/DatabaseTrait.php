@@ -9,7 +9,6 @@ use Yiisoft\Db\Cache\SchemaCache;
 use Yiisoft\Db\Connection\ConnectionInterface;
 use Yiisoft\Db\Sqlite\Connection;
 use Yiisoft\Db\Sqlite\Driver;
-use Yiisoft\Rbac\Db\Tests\Base\Logger;
 
 trait DatabaseTrait
 {
@@ -20,10 +19,6 @@ trait DatabaseTrait
 
         $connection = new Connection($pdoDriver, new SchemaCache(new ArrayCache()));
         $connection->createCommand('PRAGMA foreign_keys = ON;')->execute();
-
-        $logger = new Logger();
-        $connection->setLogger($logger);
-        $this->setLogger($logger);
 
         return $connection;
     }

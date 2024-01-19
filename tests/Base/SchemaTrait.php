@@ -260,8 +260,8 @@ trait SchemaTrait
 
     private function checkNoTables(): void
     {
-        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsTable));
-        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsChildrenTable));
-        $this->assertNotNull($this->getDatabase()->getSchema()->getTableSchema(self::$assignmentsTable));
+        $this->assertNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsTable));
+        $this->assertNull($this->getDatabase()->getSchema()->getTableSchema(self::$itemsChildrenTable));
+        $this->assertNull($this->getDatabase()->getSchema()->getTableSchema(self::$assignmentsTable));
     }
 }
