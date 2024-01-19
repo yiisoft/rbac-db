@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Yiisoft\Db\Migration\MigrationBuilder;
 use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Db\Migration\TransactionalMigrationInterface;
@@ -35,7 +37,7 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
                 'updatedAt' => 'integer NOT NULL',
             ],
         );
-        $b->createIndex(self::ITEMS_TABLE, 'idx-' . self::ITEMS_TABLE  . '-type', 'type');
+        $b->createIndex(self::ITEMS_TABLE, 'idx-' . self::ITEMS_TABLE . '-type', 'type');
     }
 
     private function createItemsChildrenTable(MigrationBuilder $b): void
