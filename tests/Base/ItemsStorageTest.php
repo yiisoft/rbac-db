@@ -9,7 +9,6 @@ use InvalidArgumentException;
 use SlopeIt\ClockMock\ClockMock;
 use Yiisoft\Db\Query\Query;
 use Yiisoft\Rbac\Db\Exception\SeparatorCollisionException;
-use Yiisoft\Rbac\Db\DbSchemaManager;
 use Yiisoft\Rbac\Db\ItemsStorage;
 use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Permission;
@@ -27,6 +26,8 @@ abstract class ItemsStorageTest extends TestCase
         testClearRoles as protected traitTestClearRoles;
     }
 
+    protected static array $migrationsSubfolders = ['items'];
+
     protected function setUp(): void
     {
         if ($this->name() === 'testGetAccessTreeWithCustomSeparator') {
@@ -39,8 +40,8 @@ abstract class ItemsStorageTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->traitTearDown();
         parent::tearDown();
+        $this->traitTearDown();
 
         if ($this->name() === 'testGetAccessTreeWithCustomSeparator') {
             ClockMock::reset();
@@ -52,7 +53,7 @@ abstract class ItemsStorageTest extends TestCase
         $this->traitTestClear();
 
         $itemsChildrenExist = (new Query($this->getDatabase()))
-            ->from(DbSchemaManager::ITEMS_CHILDREN_TABLE)
+            ->from(self::$itemsChildrenTable)
             ->exists();
         $this->assertFalse($itemsChildrenExist);
     }
@@ -65,7 +66,7 @@ abstract class ItemsStorageTest extends TestCase
         $this->traitTestRemove();
 
         $itemsChildren = (new Query($this->getDatabase()))
-            ->from(DbSchemaManager::ITEMS_CHILDREN_TABLE)
+            ->from(self::$itemsChildrenTable)
             ->count();
         $this->assertSame($this->initialItemsChildrenCount - $initialItemChildrenCount, $itemsChildren);
     }
@@ -75,7 +76,7 @@ abstract class ItemsStorageTest extends TestCase
         $this->traitTestClearPermissions();
 
         $itemsChildrenCount = (new Query($this->getDatabase()))
-            ->from(DbSchemaManager::ITEMS_CHILDREN_TABLE)
+            ->from(self::$itemsChildrenTable)
             ->count();
         $this->assertSame($this->initialBothRolesChildrenCount, $itemsChildrenCount);
     }
@@ -85,7 +86,7 @@ abstract class ItemsStorageTest extends TestCase
         $this->traitTestClearRoles();
 
         $itemsChildrenCount = (new Query($this->getDatabase()))
-            ->from(DbSchemaManager::ITEMS_CHILDREN_TABLE)
+            ->from(self::$itemsChildrenTable)
             ->count();
         $this->assertSame($this->initialBothPermissionsChildrenCount, $itemsChildrenCount);
     }
@@ -158,12 +159,12 @@ abstract class ItemsStorageTest extends TestCase
         $this
             ->getDatabase()
             ->createCommand()
-            ->batchInsert(DbSchemaManager::ITEMS_TABLE, ['name', 'type', 'createdAt', 'updatedAt'], $fixtures['items'])
+            ->batchInsert(self::$itemsTable, ['name', 'type', 'createdAt', 'updatedAt'], $fixtures['items'])
             ->execute();
         $this
             ->getDatabase()
             ->createCommand()
-            ->batchInsert(DbSchemaManager::ITEMS_CHILDREN_TABLE, ['parent', 'child'], $fixtures['itemsChildren'])
+            ->batchInsert(self::$itemsChildrenTable, ['parent', 'child'], $fixtures['itemsChildren'])
             ->execute();
     }
 

@@ -30,7 +30,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
      */
     public function __construct(
         private ConnectionInterface $database,
-        private string $tableName = DbSchemaManager::ASSIGNMENTS_TABLE,
+        private string $tableName = 'yii_rbac_assignment',
     ) {
     }
 
@@ -98,7 +98,11 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function get(string $itemName, string $userId): ?Assignment
     {
-        /** @psalm-var RawAssignment|null $row */
+        /**
+         * @psalm-var RawAssignment|null $row
+         * @infection-ignore-all
+         * - ArrayItemRemoval, select.
+         */
         $row = (new Query($this->database))
             ->select(['createdAt'])
             ->from($this->tableName)

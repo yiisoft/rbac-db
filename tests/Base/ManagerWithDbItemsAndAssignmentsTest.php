@@ -19,7 +19,7 @@ abstract class ManagerWithDbItemsAndAssignmentsTest extends ManagerTest
 
     protected function setUp(): void
     {
-        $this->createSchemaManager()->ensureTables();
+        parent::setUp();
         $this->traitSetUp();
     }
 

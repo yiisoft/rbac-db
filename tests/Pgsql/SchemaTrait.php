@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\Rbac\Db\Tests\Pgsql;
 
-use Yiisoft\Rbac\Db\DbSchemaManager;
-
 trait SchemaTrait
 {
     protected function checkItemsChildrenTable(): void
@@ -14,27 +12,27 @@ trait SchemaTrait
 
         $this->assertCount(
             2,
-            $this->getDatabase()->getSchema()->getTableForeignKeys(DbSchemaManager::ITEMS_CHILDREN_TABLE),
+            $this->getDatabase()->getSchema()->getTableForeignKeys(self::$itemsChildrenTable),
         );
         $this->assertForeignKey(
-            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
+            table: self::$itemsChildrenTable,
             expectedColumnNames: ['parent'],
-            expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
+            expectedForeignTableName: self::$itemsTable,
             expectedForeignColumnNames: ['name'],
         );
         $this->assertForeignKey(
-            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
+            table: self::$itemsChildrenTable,
             expectedColumnNames: ['child'],
-            expectedForeignTableName: DbSchemaManager::ITEMS_TABLE,
+            expectedForeignTableName: self::$itemsTable,
             expectedForeignColumnNames: ['name'],
         );
 
         $this->assertCount(
             1,
-            $this->getDatabase()->getSchema()->getTableIndexes(DbSchemaManager::ITEMS_CHILDREN_TABLE),
+            $this->getDatabase()->getSchema()->getTableIndexes(self::$itemsChildrenTable),
         );
         $this->assertIndex(
-            table: DbSchemaManager::ITEMS_CHILDREN_TABLE,
+            table: self::$itemsChildrenTable,
             expectedColumnNames: ['parent', 'child'],
             expectedIsUnique: true,
             expectedIsPrimary: true,
