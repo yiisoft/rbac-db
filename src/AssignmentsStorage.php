@@ -98,7 +98,11 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function get(string $itemName, string $userId): ?Assignment
     {
-        /** @psalm-var RawAssignment|null $row */
+        /**
+         * @psalm-var RawAssignment|null $row
+         * @infection-ignore-all
+         * - ArrayItemRemoval, select.
+         */
         $row = (new Query($this->database))
             ->select(['createdAt'])
             ->from($this->tableName)
