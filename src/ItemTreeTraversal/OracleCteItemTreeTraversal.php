@@ -11,6 +11,8 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class OracleCteItemTreeTraversal extends CteItemTreeTraversal
 {
+    protected bool $useRecursiveInWith = false;
+
     protected function getTrimConcatChildrenExpression(): string
     {
         $quoter = $this->database->getQuoter();
