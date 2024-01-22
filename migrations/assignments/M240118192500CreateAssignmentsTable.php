@@ -26,8 +26,8 @@ final class M240118192500CreateAssignmentsTable implements RevertibleMigrationIn
         $b->createTable(
             self::ASSIGNMENTS_TABLE,
             [
-                'item_name' => 'string(128) NOT NULL',
-                'user_id' => 'string(128) NOT NULL',
+                'item_name' => 'string(126) NOT NULL',
+                'user_id' => 'string(126) NOT NULL',
                 'created_at' => 'integer NOT NULL',
                 'PRIMARY KEY ([[item_name]], [[user_id]])',
             ],

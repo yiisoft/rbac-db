@@ -54,13 +54,13 @@ trait SchemaTrait
         $this->assertArrayHasKey('parent', $columns);
         $parent = $columns['parent'];
         $this->assertSame('string', $parent->getType());
-        $this->assertSame(128, $parent->getSize());
+        $this->assertSame(126, $parent->getSize());
         $this->assertFalse($parent->isAllowNull());
 
         $this->assertArrayHasKey('child', $columns);
         $child = $columns['child'];
         $this->assertSame('string', $child->getType());
-        $this->assertSame(128, $child->getSize());
+        $this->assertSame(126, $child->getSize());
         $this->assertFalse($child->isAllowNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$itemsChildrenTable);
@@ -165,7 +165,7 @@ trait SchemaTrait
         $this->assertArrayHasKey('name', $columns);
         $name = $columns['name'];
         $this->assertSame('string', $name->getType());
-        $this->assertSame(128, $name->getSize());
+        $this->assertSame(126, $name->getSize());
         $this->assertFalse($name->isAllowNull());
 
         $this->assertArrayHasKey('type', $columns);
@@ -229,13 +229,13 @@ trait SchemaTrait
         $this->assertArrayHasKey('item_name', $columns);
         $itemName = $columns['item_name'];
         $this->assertSame('string', $itemName->getType());
-        $this->assertSame(128, $itemName->getSize());
+        $this->assertSame(126, $itemName->getSize());
         $this->assertFalse($itemName->isAllowNull());
 
         $this->assertArrayHasKey('user_id', $columns);
         $userId = $columns['user_id'];
         $this->assertSame('string', $userId->getType());
-        $this->assertSame(128, $userId->getSize());
+        $this->assertSame(126, $userId->getSize());
         $this->assertFalse($userId->isAllowNull());
 
         $this->assertArrayHasKey('created_at', $columns);

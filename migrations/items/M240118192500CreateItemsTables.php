@@ -29,7 +29,7 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
         $b->createTable(
             self::ITEMS_TABLE,
             [
-                'name' => 'string(128) NOT NULL PRIMARY KEY',
+                'name' => 'string(126) NOT NULL PRIMARY KEY',
                 'type' => 'string(10) NOT NULL',
                 'description' => 'string(191)',
                 'rule_name' => 'string(64)',
@@ -45,8 +45,8 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
         $b->createTable(
             self::ITEMS_CHILDREN_TABLE,
             [
-                'parent' => 'string(128) NOT NULL',
-                'child' => 'string(128) NOT NULL',
+                'parent' => 'string(126) NOT NULL',
+                'child' => 'string(126) NOT NULL',
                 'PRIMARY KEY ([[parent]], [[child]])',
                 'FOREIGN KEY ([[parent]]) REFERENCES {{%' . self::ITEMS_TABLE . '}} ([[name]])',
                 'FOREIGN KEY ([[child]]) REFERENCES {{%' . self::ITEMS_TABLE . '}} ([[name]])',
