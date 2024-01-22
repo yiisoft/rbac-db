@@ -72,8 +72,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         $outerQuery = $baseOuterQuery
             ->withQuery(
                 $cteSelectItemQuery,
-                $quoter->quoteTableName('parent_of') . '(' . $quoter->quoteColumnName('child_name') . ',' .
-                $quoter->quoteColumnName('children') . ')',
+                'parent_of(child_name, children)',
                 recursive: $this->useRecursiveInWith,
             )
             ->from('parent_of')
