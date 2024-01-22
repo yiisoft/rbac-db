@@ -180,19 +180,19 @@ trait SchemaTrait
         $this->assertSame(191, $description->getSize());
         $this->assertTrue($description->isAllowNull());
 
-        $this->assertArrayHasKey('ruleName', $columns);
-        $ruleName = $columns['ruleName'];
+        $this->assertArrayHasKey('rule_name', $columns);
+        $ruleName = $columns['rule_name'];
         $this->assertSame('string', $ruleName->getType());
         $this->assertSame(64, $ruleName->getSize());
         $this->assertTrue($ruleName->isAllowNull());
 
-        $this->assertArrayHasKey('createdAt', $columns);
-        $createdAt = $columns['createdAt'];
+        $this->assertArrayHasKey('created_at', $columns);
+        $createdAt = $columns['created_at'];
         $this->assertSame('integer', $createdAt->getType());
         $this->assertFalse($createdAt->isAllowNull());
 
-        $this->assertArrayHasKey('updatedAt', $columns);
-        $updatedAt = $columns['updatedAt'];
+        $this->assertArrayHasKey('updated_at', $columns);
+        $updatedAt = $columns['updated_at'];
         $this->assertSame('integer', $updatedAt->getType());
         $this->assertFalse($updatedAt->isAllowNull());
 
@@ -226,33 +226,33 @@ trait SchemaTrait
 
         $columns = $table->getColumns();
 
-        $this->assertArrayHasKey('itemName', $columns);
-        $itemName = $columns['itemName'];
+        $this->assertArrayHasKey('item_name', $columns);
+        $itemName = $columns['item_name'];
         $this->assertSame('string', $itemName->getType());
         $this->assertSame(128, $itemName->getSize());
         $this->assertFalse($itemName->isAllowNull());
 
-        $this->assertArrayHasKey('userId', $columns);
-        $userId = $columns['userId'];
+        $this->assertArrayHasKey('user_id', $columns);
+        $userId = $columns['user_id'];
         $this->assertSame('string', $userId->getType());
         $this->assertSame(128, $userId->getSize());
         $this->assertFalse($userId->isAllowNull());
 
-        $this->assertArrayHasKey('createdAt', $columns);
-        $createdAt = $columns['createdAt'];
+        $this->assertArrayHasKey('created_at', $columns);
+        $createdAt = $columns['created_at'];
         $this->assertSame('integer', $createdAt->getType());
         $this->assertFalse($createdAt->isAllowNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$assignmentsTable);
         $this->assertInstanceOf(Constraint::class, $primaryKey);
-        $this->assertEqualsCanonicalizing(['itemName', 'userId'], $primaryKey->getColumnNames());
+        $this->assertEqualsCanonicalizing(['item_name', 'user_id'], $primaryKey->getColumnNames());
 
         $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::$assignmentsTable));
 
         $this->assertCount(1, $databaseSchema->getTableIndexes(self::$assignmentsTable));
         $this->assertIndex(
             table: self::$assignmentsTable,
-            expectedColumnNames: ['itemName', 'userId'],
+            expectedColumnNames: ['item_name', 'user_id'],
             expectedIsUnique: true,
             expectedIsPrimary: true,
         );

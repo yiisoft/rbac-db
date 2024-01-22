@@ -34,6 +34,7 @@
 - Chg #59: Add customizable separator for joining and splitting item names (@arogachev)
 - Enh #60: Use migrations (@arogachev)
 - Enh #43: Remove duplicate code in `ItemsStorage::add()` (@arogachev)
+- Enh #53: Use snake case for item attribute names (ease migration from Yii 2) (@arogachev)c
 
 ## 1.0.0 April 20, 2023
 
