@@ -63,44 +63,85 @@ $connection = Connection(
 More comprehensive examples can be found at 
 [Yii Database docs](https://github.com/yiisoft/db/blob/master/docs/en/README.md#prerequisites).
 
-### Working with schema
+### Working with migrations
 
-In order to keep less dependencies, this package doesn't provide any CLI for working with schema. There are multiple 
-options to choose from:
+This package uses [Yii DB Migration](https://github.com/yiisoft/db-migration) for managing database tables required for
+storages. There are 3 tables in total (`yii_rbac_` prefix is used).
 
-- Use migration tool like [Yii DB Migration](https://github.com/yiisoft/yii-db-migration). Migrations are dumped as 
-plain SQL in `sql/migrations` folder.
-- Without migrations, `DbSchemaManager` class can be used. An example of CLI command containing it can be found 
-[here](examples/Command/RbacDbInit.php).
-- Use plain SQL that is actual at the moment of installing `rbac-db` package (located at the root of `sql` folder).
-
-The structure of plain SQL files:
-
-- `pgsql-up.sql` - apply the changes for PostgreSQL driver.
-- `pgsql-down.sql` - revert the changes for PostgreSQL driver.
-
-Plain SQL assumes using default names for all 3 tables (`yii_rbac_` prefix is used):
+Items storage:
 
 - `yii_rbac_item`.
-- `yii_rbac_assignment`.
 - `yii_rbac_item_child`.
 
-`DbSchemaManager` allows to customize table names:
+Assignments storage:
+
+- `yii_rbac_assignment`.
+
+#### Configuring migrations
+
+Make sure to include these directories as source paths:
+
+- [migrations/items](./migrations/items);
+- [migrations/assignments](./migrations/assignments).
+
+When using [Yii Console](https://github.com/yiisoft/yii-console), add this to `config/params.php`:
 
 ```php
-use Yiisoft\Db\Connection\ConnectionInterface;
-use Yiisoft\Rbac\Db\DbSchemaManager;
-
-/** @var ConnectionInterface $database */
-$schemaManager = new DbSchemaManager(
-    database: $database,
-    itemsTable: 'custom_items',
-    assignmentsTable: 'custom_assignments',
-    itemsChildrenTable: 'custom_items_children',
-);
-$schemaManager->ensureTables();
-$schemaManager->ensureNoTables(); // Note: All existing data will be erased.
+'yiisoft/db-migration' => [
+    // ...
+    'sourcePaths' => [
+        implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'vendor', 'yiisoft', 'rbac', 'migrations', 'items']),
+        implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'vendor', 'yiisoft', 'rbac', 'migrations', 'assignments']),
+    ],
+],
 ```
+
+and database connection configuration from [previous section](#configuring-database-connection) to DI container 
+(`config/common/db.php)`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Yiisoft\Db\Connection\ConnectionInterface;
+use Yiisoft\Db\Pgsql\Connection as PgsqlConnection;
+
+return [
+    ConnectionInterface::class => [
+        'class' => PgsqlConnection::class,
+        '__construct()' => [
+            // ...
+        ],
+    ]
+];
+```
+
+Because item and assignment storages are completely indepedent, migrations are separated as well in order to prevent
+creation of unused tables. So, for example, if you only want to use assignment storage, add only 
+[migrations/assignments](./migrations/assignments) to source paths.
+
+Other ways of using migrations are covered [here](https://github.com/yiisoft/db-migration#usage).
+
+#### Applying migrations
+
+Using with [Yii Console](https://github.com/yiisoft/yii-console):
+
+```shell
+./yii migrate:up
+```
+
+Other ways of using migrations are covered [here](https://github.com/yiisoft/db-migration#usage).
+
+#### Reverting migrations
+
+Using with [Yii Console](https://github.com/yiisoft/yii-console):
+
+```shell
+./yii migrate:down --limit=2
+```
+
+Other ways of using migrations are covered [here](https://github.com/yiisoft/db-migration#usage).
 
 ### Using storages
 
