@@ -15,9 +15,9 @@ use Yiisoft\Rbac\AssignmentsStorageInterface;
  * Storage for RBAC assignments in the form of database table. Operations are performed using Yii Database.
  *
  * @psalm-type RawAssignment = array{
- *     itemName: string,
- *     userId: string,
- *     createdAt: int|string,
+ *     item_name: string,
+ *     user_id: string,
+ *     created_at: int|string,
  * }
  */
 final class AssignmentsStorage implements AssignmentsStorageInterface
@@ -43,10 +43,10 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
         $assignments = [];
         foreach ($rows as $row) {
-            $assignments[$row['userId']][$row['itemName']] = new Assignment(
-                $row['userId'],
-                $row['itemName'],
-                (int) $row['createdAt'],
+            $assignments[$row['user_id']][$row['item_name']] = new Assignment(
+                $row['user_id'],
+                $row['item_name'],
+                (int) $row['created_at'],
             );
         }
 
@@ -55,18 +55,18 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
     public function getByUserId(string $userId): array
     {
-        /** @psalm-var list<array{itemName: string, createdAt: int|string}> $rawAssignments */
+        /** @psalm-var list<array{item_name: string, created_at: int|string}> $rawAssignments */
         $rawAssignments = (new Query($this->database))
-            ->select(['itemName', 'createdAt'])
+            ->select(['item_name', 'created_at'])
             ->from($this->tableName)
-            ->where(['userId' => $userId])
+            ->where(['user_id' => $userId])
             ->all();
         $assignments = [];
         foreach ($rawAssignments as $rawAssignment) {
-            $assignments[$rawAssignment['itemName']] = new Assignment(
+            $assignments[$rawAssignment['item_name']] = new Assignment(
                 $userId,
-                $rawAssignment['itemName'],
-                (int) $rawAssignment['createdAt'],
+                $rawAssignment['item_name'],
+                (int) $rawAssignment['created_at'],
             );
         }
 
@@ -82,14 +82,14 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
         /** @psalm-var RawAssignment[] $rawAssignments */
         $rawAssignments = (new Query($this->database))
             ->from($this->tableName)
-            ->where(['itemName' => $itemNames])
+            ->where(['item_name' => $itemNames])
             ->all();
         $assignments = [];
         foreach ($rawAssignments as $rawAssignment) {
             $assignments[] = new Assignment(
-                $rawAssignment['userId'],
-                $rawAssignment['itemName'],
-                (int) $rawAssignment['createdAt'],
+                $rawAssignment['user_id'],
+                $rawAssignment['item_name'],
+                (int) $rawAssignment['created_at'],
             );
         }
 
@@ -104,19 +104,19 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
          * - ArrayItemRemoval, select.
          */
         $row = (new Query($this->database))
-            ->select(['createdAt'])
+            ->select(['created_at'])
             ->from($this->tableName)
-            ->where(['itemName' => $itemName, 'userId' => $userId])
+            ->where(['item_name' => $itemName, 'user_id' => $userId])
             ->one();
 
-        return $row === null ? null : new Assignment($userId, $itemName, (int) $row['createdAt']);
+        return $row === null ? null : new Assignment($userId, $itemName, (int) $row['created_at']);
     }
 
     public function exists(string $itemName, string $userId): bool
     {
         return (new Query($this->database))
             ->from($this->tableName)
-            ->where(['itemName' => $itemName, 'userId' => $userId])
+            ->where(['item_name' => $itemName, 'user_id' => $userId])
             ->exists();
     }
 
@@ -128,20 +128,20 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
 
         return (new Query($this->database))
             ->from($this->tableName)
-            ->where(['userId' => $userId, 'itemName' => $itemNames])
+            ->where(['user_id' => $userId, 'item_name' => $itemNames])
             ->exists();
     }
 
     public function filterUserItemNames(string $userId, array $itemNames): array
     {
-        /** @var array{itemName: string} $rows */
+        /** @var array{item_name: string} $rows */
         $rows = (new Query($this->database))
-            ->select('itemName')
+            ->select('item_name')
             ->from($this->tableName)
-            ->where(['userId' => $userId, 'itemName' => $itemNames])
+            ->where(['user_id' => $userId, 'item_name' => $itemNames])
             ->all();
 
-        return array_column($rows, 'itemName');
+        return array_column($rows, 'item_name');
     }
 
     public function add(Assignment $assignment): void
@@ -152,9 +152,9 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
             ->insert(
                 $this->tableName,
                 [
-                    'itemName' => $assignment->getItemName(),
-                    'userId' => $assignment->getUserId(),
-                    'createdAt' => $assignment->getCreatedAt(),
+                    'item_name' => $assignment->getItemName(),
+                    'user_id' => $assignment->getUserId(),
+                    'created_at' => $assignment->getCreatedAt(),
                 ],
             )
             ->execute();
@@ -164,7 +164,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
     {
         return (new Query($this->database))
             ->from($this->tableName)
-            ->where(['itemName' => $name])
+            ->where(['item_name' => $name])
             ->exists();
     }
 
@@ -173,7 +173,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
         $this
             ->database
             ->createCommand()
-            ->update($this->tableName, columns: ['itemName' => $newName], condition: ['itemName' => $oldName])
+            ->update($this->tableName, columns: ['item_name' => $newName], condition: ['item_name' => $oldName])
             ->execute();
     }
 
@@ -182,7 +182,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
         $this
             ->database
             ->createCommand()
-            ->delete($this->tableName, ['itemName' => $itemName, 'userId' => $userId])
+            ->delete($this->tableName, ['item_name' => $itemName, 'user_id' => $userId])
             ->execute();
     }
 
@@ -191,7 +191,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
         $this
             ->database
             ->createCommand()
-            ->delete($this->tableName, ['userId' => $userId])
+            ->delete($this->tableName, ['user_id' => $userId])
             ->execute();
     }
 
@@ -200,7 +200,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
         $this
             ->database
             ->createCommand()
-            ->delete($this->tableName, ['itemName' => $itemName])
+            ->delete($this->tableName, ['item_name' => $itemName])
             ->execute();
     }
 

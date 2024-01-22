@@ -25,7 +25,7 @@
         "yiisoft/db": "^1.2",
         "yiisoft/db-migration": "^1.1",
         "yiisoft/friendly-exception": "^1.1",
-        "yiisoft/rbac": "dev-master#cba39d8471677970282fdad302271c858f5c7912"
+        "yiisoft/rbac": "dev-master"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",

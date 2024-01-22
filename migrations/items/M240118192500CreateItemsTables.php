@@ -32,9 +32,9 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
                 'name' => 'string(128) NOT NULL PRIMARY KEY',
                 'type' => 'string(10) NOT NULL',
                 'description' => 'string(191)',
-                'ruleName' => 'string(64)',
-                'createdAt' => 'integer NOT NULL',
-                'updatedAt' => 'integer NOT NULL',
+                'rule_name' => 'string(64)',
+                'created_at' => 'integer NOT NULL',
+                'updated_at' => 'integer NOT NULL',
             ],
         );
         $b->createIndex(self::ITEMS_TABLE, 'idx-' . self::ITEMS_TABLE . '-type', 'type');

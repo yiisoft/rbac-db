@@ -17,9 +17,9 @@ use Yiisoft\Rbac\Item;
  *     type: Item::TYPE_*,
  *     name: string,
  *     description: string|null,
- *     ruleName: string|null,
- *     createdAt: int|string,
- *     updatedAt: int|string,
+ *     rule_name: string|null,
+ *     created_at: int|string,
+ *     updated_at: int|string,
  *     children: string|null
  * }>
  *

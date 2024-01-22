@@ -27,25 +27,25 @@ use Yiisoft\Rbac\Role;
  *     type: Item::TYPE_*,
  *     name: string,
  *     description: string|null,
- *     ruleName: string|null,
- *     createdAt: int|string,
- *     updatedAt: int|string
+ *     rule_name: string|null,
+ *     created_at: int|string,
+ *     updated_at: int|string
  * }
  * @psalm-type RawRole = array{
  *     type: Item::TYPE_ROLE,
  *     name: string,
  *     description: string|null,
- *     ruleName: string|null,
- *     createdAt: int|string,
- *     updatedAt: int|string
+ *     rule_name: string|null,
+ *     created_at: int|string,
+ *     updated_at: int|string
  *  }
  * @psalm-type RawPermission = array{
  *     type: Item::TYPE_PERMISSION,
  *     name: string,
  *     description: string|null,
- *     ruleName: string|null,
- *     createdAt: int|string,
- *     updatedAt: int|string
+ *     rule_name: string|null,
+ *     created_at: int|string,
+ *     updated_at: int|string
  * }
  */
 final class ItemsStorage implements ItemsStorageInterface
@@ -130,7 +130,7 @@ final class ItemsStorage implements ItemsStorageInterface
             ->where(['name' => $name])
             ->one();
 
-        return $row === null ? null : $this->createItem(...$row);
+        return $row === null ? null : $this->createItem($row);
     }
 
     public function exists(string $name): bool
@@ -295,7 +295,7 @@ final class ItemsStorage implements ItemsStorageInterface
                 ? explode($this->namesSeparator, $data['children'])
                 : [];
             unset($data['children']);
-            $tree[$data['name']] = ['item' => $this->createItem(...$data)];
+            $tree[$data['name']] = ['item' => $this->createItem($data)];
         }
 
         foreach ($tree as $index => $_item) {
@@ -460,43 +460,31 @@ final class ItemsStorage implements ItemsStorageInterface
             ->where(['type' => $type, 'name' => $name])
             ->one();
 
-        return $row === null ? null : $this->createItem(...$row);
+        return $row === null ? null : $this->createItem($row);
     }
 
     /**
      * A factory method for creating single item with all attributes filled.
      *
-     * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
-     * @psalm-param Item::TYPE_* $type
-     *
-     * @param string $name Unique name.
-     * @param int|string $createdAt UNIX timestamp for creation time.
-     * @param int|string $updatedAt UNIX timestamp for updating time.
-     * @param string|null $description Optional description.
-     * @param string|null $ruleName Optional associated rule name.
+     * @psalm-param RawPermission|RawRole $rawItem
      *
      * @return Permission|Role Either role or permission, depending on initial type specified.
-     * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)
      */
-    private function createItem(
-        string $type,
-        string $name,
-        int|string $createdAt,
-        int|string $updatedAt,
-        string|null $description = null,
-        string|null $ruleName = null,
-    ): Permission|Role {
+    private function createItem(array $rawItem): Permission|Role
+    {
         $item = $this
-            ->createItemByTypeAndName($type, $name)
-            ->withCreatedAt((int) $createdAt)
-            ->withUpdatedAt((int) $updatedAt);
+            ->createItemByTypeAndName($rawItem['type'], $rawItem['name'])
+            ->withDescription($rawItem['description'] ?? '')
+            ->withRuleName($rawItem['rule_name'] ?? null)
+            ->withCreatedAt((int) $rawItem['created_at'])
+            ->withUpdatedAt((int) $rawItem['updated_at']);
 
-        if ($description !== null) {
-            $item = $item->withDescription($description);
+        if ($rawItem['description'] !== null) {
+            $item = $item->withDescription($rawItem['description']);
         }
 
-        if ($ruleName !== null) {
-            $item = $item->withRuleName($ruleName);
+        if ($rawItem['rule_name'] !== null) {
+            $item = $item->withRuleName($rawItem['rule_name']);
         }
 
         return $item;
@@ -607,7 +595,7 @@ final class ItemsStorage implements ItemsStorageInterface
         $items = [];
 
         foreach ($rawItems as $rawItem) {
-            $items[$rawItem['name']] = $this->createItem(...$rawItem);
+            $items[$rawItem['name']] = $this->createItem($rawItem);
         }
 
         return $items;
