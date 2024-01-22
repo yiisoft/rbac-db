@@ -324,7 +324,7 @@ final class ItemsStorage implements ItemsStorageInterface
             ->from($this->tableName)
             ->leftJoin(
                 $this->childrenTableName,
-                [$this->childrenTableName . '.child' => new Expression($quotedJoinColumn)],
+                [$this->childrenTableName . '.child' => new Expression($this->tableName . '.name')],
             )
             ->where(['parent' => $name])
             ->all();
