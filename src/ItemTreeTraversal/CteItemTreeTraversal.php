@@ -68,7 +68,6 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->from($this->tableName)
             ->where(['name' => $name])
             ->union($cteSelectRelationQuery, all: true);
-        $quoter = $this->database->getQuoter();
         $outerQuery = $baseOuterQuery
             ->withQuery(
                 $cteSelectItemQuery,
@@ -176,11 +175,10 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->from($this->tableName)
             ->where(['name' => $names])
             ->union($cteSelectRelationQuery, all: true);
-        $quoter = $this->database->getQuoter();
         $outerQuery = $baseOuterQuery
             ->withQuery(
                 $cteSelectItemQuery,
-                $quoter->quoteTableName($cteName) . '(' . $quoter->quoteColumnName($cteParameterName) . ')',
+                "$cteName($cteParameterName)",
                 recursive: $this->useRecursiveInWith,
             )
             ->from($cteName)
