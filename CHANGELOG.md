@@ -36,8 +36,9 @@
 - Enh #43: Remove duplicate code in `ItemsStorage::add()` (@arogachev)
 - Enh #53: Use snake case for item attribute names (ease migration from Yii 2) (@arogachev)
 - Chg #64: Sync with changes in db package (simplify quoting and recursive query) (@arogachev)
-- Enh #53: Use snake case for item attribute names (ease migration from Yii 2) (@arogachev)c
+- Enh #53: Use snake case for item attribute names (ease migration from Yii 2) (@arogachev)
 - Enh #45: Decrease size for string columns from 128 to 126 for PostgreSQL optimization (@arogachev)
+- Chg #58: Sync with changes in db package (simplify quoting and recursive query) (@arogachev)
 
 ## 1.0.0 April 20, 2023
 
