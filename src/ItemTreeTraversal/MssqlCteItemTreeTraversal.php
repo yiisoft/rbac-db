@@ -11,8 +11,6 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  */
 final class MssqlCteItemTreeTraversal extends CteItemTreeTraversal
 {
-    protected bool $useRecursiveInWith = false;
-
     protected function getEmptyChildrenExpression(): string
     {
         return "CAST('' AS NVARCHAR(MAX))";
