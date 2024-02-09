@@ -24,8 +24,6 @@ use Yiisoft\Rbac\Item;
  */
 abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 {
-    protected bool $useRecursiveInWith = true;
-
     /**
      * @param ConnectionInterface $database Yii Database connection instance.
      *
@@ -68,14 +66,8 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->from($this->tableName)
             ->where(['name' => $name])
             ->union($cteSelectRelationQuery, all: true);
-        $quoter = $this->database->getQuoter();
         $outerQuery = $baseOuterQuery
-            ->withQuery(
-                $cteSelectItemQuery,
-                $quoter->quoteTableName('parent_of') . '(' . $quoter->quoteColumnName('child_name') . ',' .
-                $quoter->quoteColumnName('children') . ')',
-                recursive: $this->useRecursiveInWith,
-            )
+            ->withQuery($cteSelectItemQuery, 'parent_of(child_name, children)', recursive: true)
             ->from('parent_of')
             ->leftJoin(
                 ['item' => $this->tableName],
@@ -177,13 +169,8 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->from($this->tableName)
             ->where(['name' => $names])
             ->union($cteSelectRelationQuery, all: true);
-        $quoter = $this->database->getQuoter();
         $outerQuery = $baseOuterQuery
-            ->withQuery(
-                $cteSelectItemQuery,
-                $quoter->quoteTableName($cteName) . '(' . $quoter->quoteColumnName($cteParameterName) . ')',
-                recursive: $this->useRecursiveInWith,
-            )
+            ->withQuery($cteSelectItemQuery, "$cteName($cteParameterName)", recursive: true)
             ->from($cteName)
             ->leftJoin(
                 ['item' => $this->tableName],
