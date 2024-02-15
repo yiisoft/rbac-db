@@ -65,7 +65,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->select(['name', new Expression($this->getEmptyChildrenExpression())])
             ->from($this->tableName)
             ->where(['name' => $name])
-            ->union($cteSelectRelationQuery, all: true);
+            ->union($cteSelectRelationQuery);
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, 'parent_of(child_name, children)', recursive: true)
             ->from('parent_of')
@@ -168,7 +168,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->select('name')
             ->from($this->tableName)
             ->where(['name' => $names])
-            ->union($cteSelectRelationQuery, all: true);
+            ->union($cteSelectRelationQuery);
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, "$cteName($cteParameterName)", recursive: true)
             ->from($cteName)
