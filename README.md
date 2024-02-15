@@ -19,7 +19,7 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 
 ## Requirements
 
-- PHP 8.0 or higher.
+- PHP 8.1 or higher.
 - `PDO` PHP extension.
 - One of the following drivers:
   - [SQLite](https://github.com/yiisoft/db-sqlite) (minimal required version is 3.8.3)

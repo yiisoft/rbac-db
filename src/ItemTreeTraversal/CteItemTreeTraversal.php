@@ -20,7 +20,7 @@ use Yiisoft\Rbac\Item;
  * @internal
  *
  * @psalm-import-type RawItem from ItemsStorage
- * @psalm-import-type AccessTree from ItemTreeTraversalInterface
+ * @psalm-import-type Hierarchy from ItemTreeTraversalInterface
  */
 abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
 {
@@ -52,7 +52,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         return $this->getRowsCommand($name, baseOuterQuery: $baseOuterQuery)->queryAll();
     }
 
-    public function getAccessTree(string $name): array
+    public function getHierarchy(string $name): array
     {
         $baseOuterQuery = (new Query($this->database))->select(['item.*', 'parent_of.children']);
         $cteSelectRelationQuery = (new Query($this->database))
@@ -61,11 +61,13 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->innerJoin('parent_of', [
                 'item_child_recursive.child' => new Expression('{{parent_of}}.[[child_name]]'),
             ]);
+        /** @infection-ignore-all FalseValuem, union */
         $cteSelectItemQuery = (new Query($this->database))
             ->select(['name', new Expression($this->getEmptyChildrenExpression())])
             ->from($this->tableName)
             ->where(['name' => $name])
             ->union($cteSelectRelationQuery, all: true);
+        /** @infection-ignore-all FalseValue, recursive */
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, 'parent_of(child_name, children)', recursive: true)
             ->from('parent_of')
@@ -74,7 +76,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
                 ['item.name' => new Expression('{{parent_of}}.[[child_name]]')],
             );
 
-        /** @psalm-var AccessTree */
+        /** @psalm-var Hierarchy */
         return $outerQuery->all();
     }
 
@@ -164,11 +166,13 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
                     "{{{$cteName}}}.[[$cteParameterName]]",
                 ),
             ]);
+        /** @infection-ignore-all FalseValue, union */
         $cteSelectItemQuery = (new Query($this->database))
             ->select('name')
             ->from($this->tableName)
             ->where(['name' => $names])
             ->union($cteSelectRelationQuery, all: true);
+        /** @infection-ignore-all FalseValue, recursive */
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, "$cteName($cteParameterName)", recursive: true)
             ->from($cteName)
