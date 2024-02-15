@@ -62,7 +62,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
 
     public function getHierarchy(string $name): array
     {
-        $sql = "SELECT item.*, access_tree_base.children FROM (
+        $sql = "SELECT item.*, hierarchy_base.children FROM (
             SELECT
                 child_name,
                 MIN(TRIM(BOTH '$this->namesSeparator'
@@ -70,10 +70,11 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
                 SELECT @r AS child_name, @path := concat(@path, '$this->namesSeparator', @r) as raw_children,
                 (SELECT @r := parent FROM $this->childrenTableName WHERE child = child_name LIMIT 1) AS parent
                 FROM (SELECT @r := :name, @path := '') val, $this->childrenTableName
-            ) raw_access_tree_base
+            ) raw_hierarchy_base
             GROUP BY child_name
-        ) access_tree_base
-        LEFT JOIN $this->tableName AS item ON item.name = access_tree_base.child_name";
+        ) hierarchy_base
+        LEFT JOIN $this->tableName AS item ON item.name = hierarchy_base.child_name
+        WHERE item.name IS NOT NULL";
 
         /** @psalm-var Hierarchy */
         return $this
