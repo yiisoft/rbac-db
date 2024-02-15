@@ -19,7 +19,7 @@ use Yiisoft\Rbac\Item;
  * @internal
  *
  * @psalm-import-type RawItem from ItemsStorage
- * @psalm-import-type AccessTree from ItemTreeTraversalInterface
+ * @psalm-import-type Hierarchy from ItemTreeTraversalInterface
  */
 final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
 {
@@ -60,7 +60,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
             ->queryAll();
     }
 
-    public function getAccessTree(string $name): array
+    public function getHierarchy(string $name): array
     {
         $sql = "SELECT item.*, access_tree_base.children FROM (
             SELECT
@@ -75,7 +75,7 @@ final class MysqlItemTreeTraversal implements ItemTreeTraversalInterface
         ) access_tree_base
         LEFT JOIN $this->tableName AS item ON item.name = access_tree_base.child_name";
 
-        /** @psalm-var AccessTree */
+        /** @psalm-var Hierarchy */
         return $this
             ->database
             ->createCommand($sql, [':name' => $name])

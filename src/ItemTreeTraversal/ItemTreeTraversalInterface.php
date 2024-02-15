@@ -13,7 +13,7 @@ use Yiisoft\Rbac\Item;
  *
  * @internal
  *
- * @psalm-type AccessTree = non-empty-list<array{
+ * @psalm-type Hierarchy = non-empty-list<array{
  *     type: Item::TYPE_*,
  *     name: string,
  *     description: string|null,
@@ -43,9 +43,9 @@ interface ItemTreeTraversalInterface
      *
      * @param string $name The child name.
      *
-     * @psalm-return AccessTree
+     * @psalm-return Hierarchy
      */
-    public function getAccessTree(string $name): array;
+    public function getHierarchy(string $name): array;
 
     /**
      * Get all children rows for an item by the given name.

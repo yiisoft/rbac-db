@@ -39,6 +39,7 @@
 - Enh #53: Use snake case for item attribute names (ease migration from Yii 2) (@arogachev)
 - Enh #45: Decrease size for string columns from 128 to 126 for PostgreSQL optimization (@arogachev)
 - Chg #58: Sync with changes in db package (simplify quoting and recursive query) (@arogachev)
+- Chg #: Rename `getAccessTree()` to `getHierarchy()` in `ItemsStorageInterface` implentations (@arogachev)
 
 ## 1.0.0 April 20, 2023
 

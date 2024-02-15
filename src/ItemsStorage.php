@@ -285,12 +285,12 @@ final class ItemsStorage implements ItemsStorageInterface
         return $this->getItemsIndexedByName($rawItems);
     }
 
-    public function getAccessTree(string $name): array
+    public function getHierarchy(string $name): array
     {
         $tree = [];
         $childrenNamesMap = [];
 
-        foreach ($this->getTreeTraversal()->getAccessTree($name) as $data) {
+        foreach ($this->getTreeTraversal()->getHierarchy($name) as $data) {
             $childrenNamesMap[$data['name']] = $data['children'] !== '' && $data['children'] !== null
                 ? explode($this->namesSeparator, $data['children'])
                 : [];
