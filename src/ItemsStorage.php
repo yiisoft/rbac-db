@@ -474,8 +474,6 @@ final class ItemsStorage implements ItemsStorageInterface
     {
         $item = $this
             ->createItemByTypeAndName($rawItem['type'], $rawItem['name'])
-            ->withDescription($rawItem['description'] ?? '')
-            ->withRuleName($rawItem['rule_name'] ?? null)
             ->withCreatedAt((int) $rawItem['created_at'])
             ->withUpdatedAt((int) $rawItem['updated_at']);
 
