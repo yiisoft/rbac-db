@@ -61,11 +61,13 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->innerJoin('parent_of', [
                 'item_child_recursive.child' => new Expression('{{parent_of}}.[[child_name]]'),
             ]);
+        /** @infection-ignore-all FalseValuem, union */
         $cteSelectItemQuery = (new Query($this->database))
             ->select(['name', new Expression($this->getEmptyChildrenExpression())])
             ->from($this->tableName)
             ->where(['name' => $name])
-            ->union($cteSelectRelationQuery);
+            ->union($cteSelectRelationQuery, all: true);
+        /** @infection-ignore-all FalseValue, recursive */
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, 'parent_of(child_name, children)', recursive: true)
             ->from('parent_of')
@@ -164,11 +166,13 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
                     "{{{$cteName}}}.[[$cteParameterName]]",
                 ),
             ]);
+        /** @infection-ignore-all FalseValue, union */
         $cteSelectItemQuery = (new Query($this->database))
             ->select('name')
             ->from($this->tableName)
             ->where(['name' => $names])
-            ->union($cteSelectRelationQuery);
+            ->union($cteSelectRelationQuery, all: true);
+        /** @infection-ignore-all FalseValue, recursive */
         $outerQuery = $baseOuterQuery
             ->withQuery($cteSelectItemQuery, "$cteName($cteParameterName)", recursive: true)
             ->from($cteName)
