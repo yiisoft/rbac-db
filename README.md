@@ -12,10 +12,20 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 [![Latest Stable Version](https://poser.pugx.org/yiisoft/rbac-db/v/stable.png)](https://packagist.org/packages/yiisoft/rbac-db)
 [![Total Downloads](https://poser.pugx.org/yiisoft/rbac-db/downloads.png)](https://packagist.org/packages/yiisoft/rbac-db)
 [![Build status](https://github.com/yiisoft/rbac-db/workflows/build/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Abuild)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yiisoft/rbac-db/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-db/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/yiisoft/rbac-db/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yiisoft/rbac-db/?branch=master)
+[![codecov](https://codecov.io/gh/yiisoft/rbac-db/graph/badge.svg?token=OAABFCCC7A)](https://codecov.io/gh/yiisoft/rbac-db)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frbac-db%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/rbac-db/master)
 [![static analysis](https://github.com/yiisoft/rbac-db/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3A%22static+analysis%22)
+[![type-coverage](https://shepherd.dev/github/yiisoft/rbac-db/coverage.svg)](https://shepherd.dev/github/yiisoft/rbac-db)
+
+Detailed build statuses:
+
+| RDBMS                | Status                                                                                                                                                |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SQLite               | [![SQLite status](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite) |
+| MySQL                | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mysql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amysql)    |
+| PostgreSQL           | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/pgsql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Apgsql)    |
+| Microsoft SQL Server | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mssql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amssql)    |
+| Oracle               | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/oracle/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Aoracle)  |
 
 ## Requirements
 
