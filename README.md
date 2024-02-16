@@ -90,8 +90,8 @@ When using [Yii Console](https://github.com/yiisoft/yii-console), add this to `c
 'yiisoft/db-migration' => [
     // ...
     'sourcePaths' => [
-        implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'vendor', 'yiisoft', 'rbac', 'migrations', 'items']),
-        implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'vendor', 'yiisoft', 'rbac', 'migrations', 'assignments']),
+        dirname(__DIR__) . '/vendor/yiisoft/rbac-db/migrations/items']),
+        dirname(__DIR__), '/vendor/yiisoft/rbac-db/migrations/assignments']),
     ],
 ],
 ```
