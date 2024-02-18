@@ -7,15 +7,14 @@ namespace Yiisoft\Rbac\Db\Tests\Base;
 use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Db\TransactionalManagerDecorator;
 use Yiisoft\Rbac\ItemsStorageInterface;
-use Yiisoft\Rbac\Manager;
 use Yiisoft\Rbac\ManagerInterface;
-use Yiisoft\Rbac\RuleFactoryInterface;
 use Yiisoft\Rbac\Tests\Common\ManagerConfigurationTestTrait;
-use Yiisoft\Rbac\Tests\Support\SimpleRuleFactory;
 
 abstract class ManagerTest extends TestCase
 {
-    use ManagerConfigurationTestTrait;
+    use ManagerConfigurationTestTrait {
+        createManager as protected traitCreateManager;
+    }
 
     protected function tearDown(): void
     {
@@ -33,18 +32,11 @@ abstract class ManagerTest extends TestCase
     protected function createManager(
         ?ItemsStorageInterface $itemsStorage = null,
         ?AssignmentsStorageInterface $assignmentsStorage = null,
-        ?RuleFactoryInterface $ruleFactory = null,
         ?bool $enableDirectPermissions = false
     ): ManagerInterface {
-        $arguments = [
-            $itemsStorage ?? $this->createItemsStorage(),
-            $assignmentsStorage ?? $this->createAssignmentsStorage(),
-            $ruleFactory ?? new SimpleRuleFactory(),
-        ];
-        if ($enableDirectPermissions !== null) {
-            $arguments[] = $enableDirectPermissions;
-        }
-
-        return new TransactionalManagerDecorator(new Manager(...$arguments), $this->getDatabase());
+        return new TransactionalManagerDecorator(
+            $this->traitCreateManager($itemsStorage, $assignmentsStorage, $enableDirectPermissions),
+            $this->getDatabase(),
+        );
     }
 }
