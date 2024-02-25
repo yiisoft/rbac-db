@@ -10,7 +10,7 @@ use Yiisoft\FriendlyException\FriendlyExceptionInterface;
 
 class SeparatorCollisionException extends RuntimeException implements FriendlyExceptionInterface
 {
-    public function __construct(string $message = '', int $code = 0, ?Throwable $previous = null)
+    public function __construct(int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct('Separator collision has been detected.', $code, $previous);
     }

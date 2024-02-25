@@ -13,7 +13,7 @@ use Yiisoft\Rbac\Db\ItemsStorage;
 use Yiisoft\Rbac\Item;
 
 /**
- * A RBAC item tree traversal strategy based on specific functionality for MySQL 5, without support for CTE (Common
+ * An RBAC item tree traversal strategy based on specific functionality for MySQL 5, without support for CTE (Common
  * Table Expressions).
  *
  * @internal

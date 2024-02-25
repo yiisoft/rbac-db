@@ -54,7 +54,7 @@ final class ItemsStorage implements ItemsStorageInterface
      * @var string Separator used for joining and splitting item names.
      * @psalm-var non-empty-string
      */
-    private string $namesSeparator = ',';
+    private string $namesSeparator;
     /**
      * @var ItemTreeTraversalInterface|null Lazily created RBAC item tree traversal strategy.
      */
@@ -73,9 +73,9 @@ final class ItemsStorage implements ItemsStorageInterface
      * @param string $namesSeparator Separator used for joining and splitting item names.
      */
     public function __construct(
-        private ConnectionInterface $database,
-        private string $tableName = 'yii_rbac_item',
-        private string $childrenTableName = 'yii_rbac_item_child',
+        private readonly ConnectionInterface $database,
+        private readonly string $tableName = 'yii_rbac_item',
+        private readonly string $childrenTableName = 'yii_rbac_item_child',
         string $namesSeparator = ',',
     ) {
         $this->assertNamesSeparator($namesSeparator);
@@ -419,7 +419,7 @@ final class ItemsStorage implements ItemsStorageInterface
     }
 
     /**
-     * Gets either all existing roles or permissions, depending on specified type.
+     * Gets either all existing roles or permissions, depending on a specified type.
      *
      * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
@@ -439,12 +439,12 @@ final class ItemsStorage implements ItemsStorageInterface
     }
 
     /**
-     * Gets single item by its type and name.
+     * Gets a single item by its type and name.
      *
      * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
-     * @return Permission|Role|null Either role or permission, depending on initial type specified. `null` is returned
+     * @return Permission|Role|null Either role or permission, depending on an initial type specified. `null` is returned
      * when no item was found by given condition.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)|null
      */
@@ -468,7 +468,7 @@ final class ItemsStorage implements ItemsStorageInterface
      *
      * @psalm-param RawPermission|RawRole $rawItem
      *
-     * @return Permission|Role Either role or permission, depending on initial type specified.
+     * @return Permission|Role Either role or permission, depending on an initial type specified.
      */
     private function createItem(array $rawItem): Permission|Role
     {
@@ -489,12 +489,12 @@ final class ItemsStorage implements ItemsStorageInterface
     }
 
     /**
-     * A basic factory method for creating single item with name only.
+     * A basic factory method for creating a single item with name only.
      *
      * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
-     * @return Permission|Role Either role or permission, depending on initial type specified.
+     * @return Permission|Role Either role or permission, depending on an initial type specified.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)
      */
     private function createItemByTypeAndName(string $type, string $name): Permission|Role
@@ -517,7 +517,7 @@ final class ItemsStorage implements ItemsStorageInterface
     }
 
     /**
-     * Removes all existing items of specified type.
+     * Removes all existing items of a specified type.
      *
      * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
@@ -567,7 +567,8 @@ final class ItemsStorage implements ItemsStorageInterface
     }
 
     /**
-     * Creates RBAC item tree traversal strategy and returns it. In case it was already created, just retrieves
+     * Creates RBAC item tree traversal strategy and returns it.
+     * In case it was already created, it just retrieves
      * previously saved instance.
      */
     private function getTreeTraversal(): ItemTreeTraversalInterface
