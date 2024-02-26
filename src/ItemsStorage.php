@@ -444,8 +444,8 @@ final class ItemsStorage implements ItemsStorageInterface
      * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
-     * @return Permission|Role|null Either role or permission, depending on an initial type specified. `null` is returned
-     * when no item was found by given condition.
+     * @return Permission|Role|null Either role or permission, depending on an initial type specified. `null` is
+     * returned when no item was found by given condition.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)|null
      */
     private function getItemByTypeAndName(string $type, string $name): Permission|Role|null
@@ -568,8 +568,7 @@ final class ItemsStorage implements ItemsStorageInterface
 
     /**
      * Creates RBAC item tree traversal strategy and returns it.
-     * In case it was already created, it just retrieves
-     * previously saved instance.
+     * In case it was already created, it just retrieves previously saved instance.
      */
     private function getTreeTraversal(): ItemTreeTraversalInterface
     {

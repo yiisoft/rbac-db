@@ -127,8 +127,8 @@ return [
 ];
 ```
 
-Because item and assignment storages are completely independent, migrations are separated as well to prevent
-the creation of unused tables. So, for example, if you only want to use assignment storage, add only 
+Because item and assignment storages are completely independent, migrations are separated as well to prevent the
+creation of unused tables. So, for example, if you only want to use assignment storage, add only
 [migrations/assignments](./migrations/assignments) to source paths.
 
 Other ways of using migrations are covered [here](https://github.com/yiisoft/db-migration#usage).

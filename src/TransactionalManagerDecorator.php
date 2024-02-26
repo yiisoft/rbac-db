@@ -15,7 +15,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
 {
     public function __construct(
         private readonly ManagerInterface $manager,
-        private readonly ConnectionInterface $database
+        private readonly ConnectionInterface $database,
     ) {
     }
 
