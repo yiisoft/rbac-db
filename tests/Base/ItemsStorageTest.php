@@ -21,7 +21,7 @@ abstract class ItemsStorageTest extends TestCase
         setUp as protected traitSetUp;
         tearDown as protected traitTearDown;
         testClear as protected traitTestClear;
-        dataRemove as protected traitDataRemove;
+        dataRemove as public traitDataRemove;
         testRemove as protected traitTestRemove;
         testClearPermissions as protected traitTestClearPermissions;
         testClearRoles as protected traitTestClearRoles;

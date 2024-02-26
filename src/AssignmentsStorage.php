@@ -29,8 +29,8 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
      * @psalm-param non-empty-string $tableName
      */
     public function __construct(
-        private ConnectionInterface $database,
-        private string $tableName = 'yii_rbac_assignment',
+        private readonly ConnectionInterface $database,
+        private readonly string $tableName = 'yii_rbac_assignment',
     ) {
     }
 

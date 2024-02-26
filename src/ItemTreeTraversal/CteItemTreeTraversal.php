@@ -14,8 +14,8 @@ use Yiisoft\Rbac\Item;
 
 /**
  * A RBAC item tree traversal strategy based on CTE (common table expression). Uses `WITH` expression to form a
- * recursive query. The base queries are unified as much possible to work for all RDBMS supported by Yii Database with
- * minimal differences.
+ * recursive query. The base queries are unified as much as possible to work for all RDBMS supported by Yii Database
+ * with minimal differences.
  *
  * @internal
  *
@@ -61,7 +61,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
             ->innerJoin('parent_of', [
                 'item_child_recursive.child' => new Expression('{{parent_of}}.[[child_name]]'),
             ]);
-        /** @infection-ignore-all FalseValuem, union */
+        /** @infection-ignore-all FalseValue, union */
         $cteSelectItemQuery = (new Query($this->database))
             ->select(['name', new Expression($this->getEmptyChildrenExpression())])
             ->from($this->tableName)

@@ -81,12 +81,12 @@ interface ItemTreeTraversalInterface
     public function getChildRoleRows(string|array $names): array;
 
     /**
-     * Whether a selected parent has specific child.
+     * Whether a selected parent has a specific child.
      *
      * @param string $parentName Parent item name.
      * @param string $childName Child item name.
      *
-     * @return bool Whether a selected parent has specific child.
+     * @return bool Whether a selected parent has a specific child.
      */
     public function hasChild(string $parentName, string $childName): bool;
 }

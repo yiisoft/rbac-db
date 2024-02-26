@@ -11,13 +11,13 @@ final class SeparatorCollisionExceptionTest extends TestCase
 {
     public function testGetCode(): void
     {
-        $exception = new SeparatorCollisionException('test');
+        $exception = new SeparatorCollisionException();
         $this->assertSame(0, $exception->getCode());
     }
 
     public function testReturnTypes(): void
     {
-        $exception = new SeparatorCollisionException('test');
+        $exception = new SeparatorCollisionException();
         $this->assertIsString($exception->getName());
         $this->assertIsString($exception->getSolution());
     }

@@ -38,7 +38,7 @@ Detailed build statuses:
   - [Microsoft SQL Server](https://github.com/yiisoft/db-mssql)
   - [Oracle](https://github.com/yiisoft/db-oracle)
 - `PDO` PHP extension for the selected driver.
-- In case of using with SQL Server, minimal required version of PDO is 5.11.1.
+- In the case of using with SQL Server, a minimal required version of PDO is 5.11.1.
 
 ## Installation
 
@@ -76,7 +76,7 @@ More comprehensive examples can be found at
 ### Working with migrations
 
 This package uses [Yii DB Migration](https://github.com/yiisoft/db-migration) for managing database tables required for
-storages. There are 3 tables in total (`yii_rbac_` prefix is used).
+storages. There are three tables in total (`yii_rbac_` prefix is used).
 
 Items storage:
 
@@ -127,8 +127,8 @@ return [
 ];
 ```
 
-Because item and assignment storages are completely indepedent, migrations are separated as well in order to prevent
-creation of unused tables. So, for example, if you only want to use assignment storage, add only 
+Because item and assignment storages are completely independent, migrations are separated as well to prevent the
+creation of unused tables. So, for example, if you only want to use assignment storage, add only
 [migrations/assignments](./migrations/assignments) to source paths.
 
 Other ways of using migrations are covered [here](https://github.com/yiisoft/db-migration#usage).
@@ -175,17 +175,17 @@ $manager = new TransactionalManagerDecorator(
     new Manager(
         itemsStorage: $itemsStorage, 
         assignmentsStorage: $assignmentsStorage,
-        // Requires https://github.com/yiisoft/rbac-rules-container or other compatible factory.
+        // Requires https://github.com/yiisoft/rbac-rules-container or another compatible factory.
         ruleFactory: $rulesContainer,
     ),
 );
 $manager->addPermission(new Permission('posts.create'));
 ```
 
-> Note wrapping manager with decorator - it additionally provides database transactions to guarantee data integrity.
+> Note wrapping manager with decorator—it additionally provides database transactions to guarantee data integrity.
 
 > Note that it's not necessary to use both DB storages. Combining different implementations is possible. A quite popular 
-> case is to manage items via [PHP files](https://github.com/yiisoft/rbac-php) while store assignments in database.
+> case is to manage items via [PHP files](https://github.com/yiisoft/rbac-php) while storing assignments in a database.
 
 More examples can be found in [Yii RBAC](https://github.com/yiisoft/rbac) documentation.
 
