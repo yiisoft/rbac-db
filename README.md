@@ -210,17 +210,17 @@ return [
             'posts.update.all',
         ],
     ],
--    [
--        'name' => 'posts.redactor',
--        'type' => 'role',        
--        'created_at' => 1683707079,
--        'updated_at' => 1683707079,
--        'children' => [
--            'posts.viewer',
--            'posts.create',
--            'posts.update',
--        ],
--    ],
+-   [
+-       'name' => 'posts.redactor',
+-       'type' => 'role',        
+-       'created_at' => 1683707079,
+-       'updated_at' => 1683707079,
+-       'children' => [
+-           'posts.viewer',
+-           'posts.create',
+-           'posts.update',
+-       ],
+-   ],
     [
         'name' => 'posts.viewer',
         'type' => 'role',        
@@ -242,13 +242,13 @@ return [
         'created_at' => 1683707079,
         'updated_at' => 1683707079,
     ],
--    [
--        'name' => 'posts.update',
--        'rule_name' => 'is_author',
--        'type' => 'permission',
--        'created_at' => 1683707079,
--        'updated_at' => 1683707079,
--    ],
+-   [
+-       'name' => 'posts.update',
+-       'rule_name' => 'is_author',
+-       'type' => 'permission',
+-       'created_at' => 1683707079,
+-       'updated_at' => 1683707079,
+-   ],
     [
         'name' => 'posts.delete',        
         'type' => 'permission',        
