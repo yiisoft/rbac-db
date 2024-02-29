@@ -195,7 +195,7 @@ The storages stay synced thanks to manager, but there can be situations where yo
 them is using combination with PHP file based storage and
 [editing it manually](https://github.com/yiisoft/rbac-php/?tab=readme-ov-file#file-structure).
 
-Let's say PHP file is used for items, while database - for assignments, and some items were deleted.
+Let's say PHP file is used for items, while database - for assignments, and some items were deleted:
 
 ```diff
 return [
@@ -268,9 +268,10 @@ Then related entries in other storage needs to be deleted as well. This can be d
 
 ```php
 use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
 use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
-final class M240229184400DeletePostUpdateItems implements TransactionalMigrationInterface
+final class M240229184400DeletePostUpdateItems implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
     private const TABLE_PREFIX = 'yii_rbac_';
     private const ASSIGNMENTS_TABLE = self::TABLE_PREFIX . 'assignment';
@@ -282,7 +283,11 @@ final class M240229184400DeletePostUpdateItems implements TransactionalMigration
             ->createCommand()
             ->delete(self::ASSIGNMENTS_TABLE, ['item_name' => ['posts.redactor', 'posts.update']])
             ->execute();
-    }    
+    }
+    
+    public function down(MigrationBuilder $b): void; 
+    {        
+    }   
 }
 ```
 
