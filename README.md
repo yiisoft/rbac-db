@@ -189,6 +189,108 @@ $manager->addPermission(new Permission('posts.create'));
 
 More examples can be found in [Yii RBAC](https://github.com/yiisoft/rbac) documentation.
 
+### Syncing storages manually
+
+The storages stay synced thanks to manager, but there can be situations where you need to sync them manually. One of
+them is using combination with PHP file based storage and
+[editing it manually](https://github.com/yiisoft/rbac-php/?tab=readme-ov-file#file-structure).
+
+Let's say PHP file is used for items, while database - for assignments, and some items were deleted:
+
+```diff
+return [
+    [
+        'name' => 'posts.admin',        
+        'type' => 'role',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+        'children' => [
+            'posts.redactor',
+            'posts.delete',
+            'posts.update.all',
+        ],
+    ],
+-   [
+-       'name' => 'posts.redactor',
+-       'type' => 'role',        
+-       'created_at' => 1683707079,
+-       'updated_at' => 1683707079,
+-       'children' => [
+-           'posts.viewer',
+-           'posts.create',
+-           'posts.update',
+-       ],
+-   ],
+    [
+        'name' => 'posts.viewer',
+        'type' => 'role',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+        'children' => [
+            'posts.view',
+        ],
+    ],
+    [
+        'name' => 'posts.view',
+        'type' => 'permission',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+    ],
+    [
+        'name' => 'posts.create',
+        'type' => 'permission',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+    ],
+-   [
+-       'name' => 'posts.update',
+-       'rule_name' => 'is_author',
+-       'type' => 'permission',
+-       'created_at' => 1683707079,
+-       'updated_at' => 1683707079,
+-   ],
+    [
+        'name' => 'posts.delete',        
+        'type' => 'permission',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+    ],
+    [
+        'name' => 'posts.update.all',
+        'type' => 'permission',        
+        'created_at' => 1683707079,
+        'updated_at' => 1683707079,
+    ],
+];
+```
+
+Then related entries in other storage needs to be deleted as well. This can be done within a migration:
+
+```php
+use Yiisoft\Db\Migration\MigrationBuilder;
+use Yiisoft\Db\Migration\RevertibleMigrationInterface;
+use Yiisoft\Db\Migration\TransactionalMigrationInterface;
+
+final class M240229184400DeletePostUpdateItems implements RevertibleMigrationInterface, TransactionalMigrationInterface
+{
+    private const TABLE_PREFIX = 'yii_rbac_';
+    private const ASSIGNMENTS_TABLE = self::TABLE_PREFIX . 'assignment';
+    
+    public function up(MigrationBuilder $b): void
+    {
+        $b
+            ->getDb()
+            ->createCommand()
+            ->delete(self::ASSIGNMENTS_TABLE, ['item_name' => ['posts.redactor', 'posts.update']])
+            ->execute();
+    }
+    
+    public function down(MigrationBuilder $b): void; 
+    {        
+    }   
+}
+```
+
 ## Testing
 
 ### Unit testing
