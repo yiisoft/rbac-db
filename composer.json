@@ -18,14 +18,13 @@
         "chat": "https://t.me/yii3en",
         "source": "https://github.com/yiisoft/rbac-db"
     },
-    "minimum-stability": "dev",
     "require": {
         "ext-pdo": "*",
         "php": "^8.1",
         "yiisoft/db": "^1.2",
         "yiisoft/db-migration": "^1.1",
         "yiisoft/friendly-exception": "^1.1",
-        "yiisoft/rbac": "dev-master"
+        "yiisoft/rbac": "^2.0"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",

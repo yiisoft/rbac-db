@@ -32,10 +32,16 @@ abstract class ManagerTest extends TestCase
     protected function createManager(
         ?ItemsStorageInterface $itemsStorage = null,
         ?AssignmentsStorageInterface $assignmentsStorage = null,
-        ?bool $enableDirectPermissions = false
+        ?bool $enableDirectPermissions = false,
+        ?bool $includeRolesInAccessChecks = false,
     ): ManagerInterface {
         return new TransactionalManagerDecorator(
-            $this->traitCreateManager($itemsStorage, $assignmentsStorage, $enableDirectPermissions),
+            $this->traitCreateManager(
+                $itemsStorage,
+                $assignmentsStorage,
+                $enableDirectPermissions,
+                $includeRolesInAccessChecks,
+            ),
             $this->getDatabase(),
         );
     }
