@@ -1,5 +1,9 @@
 # Yii RBAC Database Storage Change Log
 
+## 2.0.1 under development
+
+- no changes in this release.
+
 ## 2.0.0 March 07, 2024
 
 - Chg #23: Remove CLI dependencies (@arogachev)
