@@ -48,8 +48,6 @@ The package could be installed with [Composer](https://getcomposer.org):
 composer require yiisoft/rbac-db
 ```
 
-See [yiisoft/rbac](https://github.com/yiisoft/rbac) for RBAC package installation instructions.
-
 ## General usage
 
 ### Configuring database connection
