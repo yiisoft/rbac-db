@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://github.com/yiisoft.png" height="100px">
+        <img src="https://github.com/yiisoft.png" height="100px" alt="Yii">
     </a>
     <h1 align="center">Yii RBAC Database</h1>
     <br>
@@ -71,7 +71,7 @@ $connection = Connection(
 ```
 
 More comprehensive examples can be found at 
-[Yii Database docs](https://github.com/yiisoft/db/blob/master/docs/en/README.md#prerequisites).
+[Yii Database docs](https://github.com/yiisoft/db/blob/master/docs/guide/en/README.md#prerequisites).
 
 ### Working with migrations
 
@@ -107,7 +107,7 @@ When using [Yii Console](https://github.com/yiisoft/yii-console), add this to `c
 ```
 
 and database connection configuration from [previous section](#configuring-database-connection) to DI container 
-(`config/common/db.php)`:
+`(config/common/db.php)`:
 
 ```php
 <?php
