@@ -106,8 +106,7 @@ When using [Yii Console](https://github.com/yiisoft/yii-console), add this to `c
 ],
 ```
 
-and database connection configuration from [previous section](#configuring-database-connection) to DI container 
-`config/common/db.php`:
+and database connection configuration from [previous section](#configuring-database-connection) to DI container `config/common/db.php`:
 
 ```php
 use Yiisoft\Db\Connection\ConnectionInterface;
