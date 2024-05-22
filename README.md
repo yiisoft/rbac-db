@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://github.com/yiisoft.png" height="100px">
+        <img src="https://github.com/yiisoft.png" height="100px" alt="Yii">
     </a>
     <h1 align="center">Yii RBAC Database</h1>
     <br>
@@ -71,7 +71,7 @@ $connection = Connection(
 ```
 
 More comprehensive examples can be found at 
-[Yii Database docs](https://github.com/yiisoft/db/blob/master/docs/en/README.md#prerequisites).
+[Yii Database docs](https://github.com/yiisoft/db/blob/master/docs/guide/en/README.md#prerequisites).
 
 ### Working with migrations
 
