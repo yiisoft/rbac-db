@@ -48,7 +48,7 @@ final class M241008204900UpdateItemType implements TransactionalMigrationInterfa
                 SELECT name, type, description, rule_name, created_at, updated_at
                 FROM $oldTableName;"
             );
-            $b->dropTable($oldTableName);;
+            $b->dropTable($oldTableName);
             $b->execute('PRAGMA foreign_keys=on;');
         }
     }
