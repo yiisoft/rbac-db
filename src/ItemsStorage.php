@@ -421,13 +421,13 @@ final class ItemsStorage implements ItemsStorageInterface
     /**
      * Gets either all existing roles or permissions, depending on a specified type.
      *
-     * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
+     * @param int $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
      * @return array A list of roles / permissions.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? array<string, Permission> : array<string, Role>)
      */
-    private function getItemsByType(string $type): array
+    private function getItemsByType(int $type): array
     {
         /** @psalm-var RawPermission[] | RawRole[] $rawItems */
         $rawItems = (new Query($this->database))
@@ -441,14 +441,14 @@ final class ItemsStorage implements ItemsStorageInterface
     /**
      * Gets a single item by its type and name.
      *
-     * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
+     * @param int $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
      * @return Permission|Role|null Either role or permission, depending on an initial type specified. `null` is
      * returned when no item was found by given condition.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)|null
      */
-    private function getItemByTypeAndName(string $type, string $name): Permission|Role|null
+    private function getItemByTypeAndName(int $type, string $name): Permission|Role|null
     {
         /**
          * @psalm-var RawItem|null $row
@@ -473,7 +473,7 @@ final class ItemsStorage implements ItemsStorageInterface
     private function createItem(array $rawItem): Permission|Role
     {
         $item = $this
-            ->createItemByTypeAndName($rawItem['type'], $rawItem['name'])
+            ->createItemByTypeAndName((int) $rawItem['type'], $rawItem['name'])
             ->withCreatedAt((int) $rawItem['created_at'])
             ->withUpdatedAt((int) $rawItem['updated_at']);
 
@@ -491,13 +491,13 @@ final class ItemsStorage implements ItemsStorageInterface
     /**
      * A basic factory method for creating a single item with name only.
      *
-     * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
+     * @param int $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      *
      * @return Permission|Role Either role or permission, depending on an initial type specified.
      * @psalm-return ($type is Item::TYPE_PERMISSION ? Permission : Role)
      */
-    private function createItemByTypeAndName(string $type, string $name): Permission|Role
+    private function createItemByTypeAndName(int $type, string $name): Permission|Role
     {
         return $type === Item::TYPE_PERMISSION ? new Permission($name) : new Role($name);
     }
@@ -519,10 +519,10 @@ final class ItemsStorage implements ItemsStorageInterface
     /**
      * Removes all existing items of a specified type.
      *
-     * @param string $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
+     * @param int $type Either {@see Item::TYPE_ROLE} or {@see Item::TYPE_PERMISSION}.
      * @psalm-param Item::TYPE_* $type
      */
-    private function clearItemsByType(string $type): void
+    private function clearItemsByType(int $type): void
     {
         $itemsStorage = $this;
         $this->database->transaction(static function (ConnectionInterface $database) use ($itemsStorage, $type): void {
