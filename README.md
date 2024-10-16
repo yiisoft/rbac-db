@@ -19,13 +19,13 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 
 Detailed build statuses:
 
-| RDBMS | Status |
-|-------|--------|
-| SQLite | [![SQLite status](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite) |
-| MySQL | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mysql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amysql) |
-| PostgreSQL | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/pgsql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Apgsql) |
-| Microsoft SQL Server | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mssql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amssql) |
-| Oracle | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/oracle/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Aoracle)  |
+| RDBMS                | Status                                                                                                                                                            |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SQLite               | [![SQLite status](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite)             |
+| MySQL                | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mysql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amysql)                |
+| PostgreSQL           | [![PostgreSQL status](https://github.com/yiisoft/rbac-db/workflows/pgsql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Apgsql)           |
+| Microsoft SQL Server | [![Microsoft SQL Server status](https://github.com/yiisoft/rbac-db/workflows/mssql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amssql) |
+| Oracle               | [![Oracle status](https://github.com/yiisoft/rbac-db/workflows/oracle/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Aoracle)             |
 
 ## Requirements
 
