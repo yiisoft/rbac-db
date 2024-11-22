@@ -2,7 +2,7 @@
 
 ## 2.0.1 under development
 
-- no changes in this release.
+- Enh #85: Refactor `AssignmentStorage::filterUserItemNames()` method (@vjik)
 
 ## 2.0.0 March 07, 2024
 
