@@ -30,7 +30,7 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
             self::ITEMS_TABLE,
             [
                 'name' => 'string(126) NOT NULL PRIMARY KEY',
-                'type' => 'string(10) NOT NULL',
+                'type' => 'smallint NOT NULL',
                 'description' => 'string(191)',
                 'rule_name' => 'string(64)',
                 'created_at' => 'integer NOT NULL',
