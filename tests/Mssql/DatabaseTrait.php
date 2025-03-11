@@ -14,7 +14,7 @@ trait DatabaseTrait
 {
     protected function makeDatabase(): ConnectionInterface
     {
-        $pdoDriver = new Driver('sqlsrv:Server=127.0.0.1,1433;Database=yiitest', 'SA', 'YourStrong!Passw0rd');
+        $pdoDriver = new Driver('sqlsrv:Server=127.0.0.1,1433;Database=yiitest;TrustServerCertificate=true', 'SA', 'YourStrong!Passw0rd');
         $pdoDriver->charset('UTF8MB4');
 
         return new Connection($pdoDriver, new SchemaCache(new ArrayCache()));
