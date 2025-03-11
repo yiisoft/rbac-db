@@ -27,8 +27,8 @@ trait SchemaTrait
             expectedColumnNames: ['child'],
             expectedForeignTableName: self::$itemsTable,
             expectedForeignColumnNames: ['name'],
-            expectedOnUpdate: 'NOACTION',
-            expectedOnDelete: 'NOACTION',
+            expectedOnUpdate: 'NO ACTION',
+            expectedOnDelete: 'NO ACTION',
         );
 
         $this->assertCount(
