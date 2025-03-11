@@ -55,7 +55,7 @@
         "yiisoft/db-pgsql": "For using with PosgtgreSQL",
         "yiisoft/db-mssql": "For using with Microsoft SQL Server",
         "yiisoft/db-oracle": "For using with Oracle",
-        "yiisoft/yii-db-migration": "For automating schema migration"
+        "yiisoft/db-migration": "For automating schema migration"
     },
     "autoload": {
         "psr-4": {
