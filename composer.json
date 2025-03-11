@@ -45,7 +45,7 @@
         "roave/infection-static-analysis-plugin": "^1.25",
         "slope-it/clock-mock": "0.4.0",
         "spatie/phpunit-watcher": "^1.23",
-        "vimeo/psalm": "^4.30|^5.2",
+        "vimeo/psalm": "^5.26.1",
         "yiisoft/cache": "^3.0",
         "yiisoft/db-sqlite": "^1.0"
     },
