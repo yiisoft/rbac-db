@@ -167,6 +167,9 @@ final class ItemsStorage implements ItemsStorageInterface
         $this
             ->database
             ->transaction(static function (ConnectionInterface $database) use ($itemsStorage, $name, $item): void {
+                /**
+                 * @var array[] $itemsChildren We assume that arrays are returned here, not objects.
+                 */
                 $itemsChildren = (new Query($database))
                     ->from($itemsStorage->childrenTableName)
                     ->where(['parent' => $name])
@@ -198,7 +201,7 @@ final class ItemsStorage implements ItemsStorageInterface
                     );
                     $database
                         ->createCommand()
-                        ->batchInsert($itemsStorage->childrenTableName, ['parent', 'child'], $itemsChildren)
+                        ->insertBatch($itemsStorage->childrenTableName, $itemsChildren, ['parent', 'child'])
                         ->execute();
                 }
             });

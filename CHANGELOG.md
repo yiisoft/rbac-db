@@ -3,6 +3,7 @@
 ## 2.0.1 under development
 
 - Enh #85: Refactor `AssignmentStorage::filterUserItemNames()` method (@vjik)
+- Chg #88: Adapt to Yii DB 2 (@vjik)
 
 ## 2.0.0 March 07, 2024
 
