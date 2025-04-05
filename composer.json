@@ -34,7 +34,7 @@
         "yiisoft/db": "^1.2",
         "yiisoft/db-migration": "^1.1",
         "yiisoft/friendly-exception": "^1.1",
-        "yiisoft/rbac": "^2.0"
+        "yiisoft/rbac": "^2.1"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
