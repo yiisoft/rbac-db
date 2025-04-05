@@ -8,9 +8,12 @@ use Yiisoft\Rbac\AssignmentsStorageInterface;
 use Yiisoft\Rbac\Db\AssignmentsStorage;
 use Yiisoft\Rbac\Db\ItemsStorage;
 use Yiisoft\Rbac\ItemsStorageInterface;
+use Yiisoft\Rbac\Tests\Common\ManagerLogicTestTrait;
 
 abstract class ManagerWithDbItemsAndAssignmentsTest extends ManagerTest
 {
+    use ManagerLogicTestTrait;
+
     protected function createItemsStorage(): ItemsStorageInterface
     {
         return new ItemsStorage($this->getDatabase());
