@@ -10,24 +10,9 @@ use Yiisoft\Rbac\Tests\Common\ManagerLogicTestTrait;
 
 abstract class ManagerWithDbAssignmentsTest extends ManagerTest
 {
-    use ManagerLogicTestTrait {
-        setUp as protected traitSetUp;
-        tearDown as protected traitTearDown;
-    }
+    use ManagerLogicTestTrait;
 
     protected static array $migrationsSubfolders = ['assignments'];
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->traitSetUp();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $this->traitTearDown();
-    }
 
     protected function createAssignmentsStorage(): AssignmentsStorageInterface
     {

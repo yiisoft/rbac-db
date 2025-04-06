@@ -3,6 +3,7 @@
 ## 2.0.1 under development
 
 - Enh #85: Refactor `AssignmentStorage::filterUserItemNames()` method (@vjik)
+- Enh #91: Bump `yiisoft/rbac` version to `^2.1` (@vjik)
 
 ## 2.0.0 March 07, 2024
 
