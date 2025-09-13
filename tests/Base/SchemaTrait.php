@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Yiisoft\Rbac\Db\Tests\Base;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use Yiisoft\Db\Constraint\Constraint;
-use Yiisoft\Db\Constraint\ForeignKeyConstraint;
-use Yiisoft\Db\Constraint\IndexConstraint;
+use Yiisoft\Db\Constraint\ForeignKey;
+use Yiisoft\Db\Constraint\Index;
+
+use function is_array;
 
 trait SchemaTrait
 {
@@ -55,17 +56,18 @@ trait SchemaTrait
         $parent = $columns['parent'];
         $this->assertSame('string', $parent->getType());
         $this->assertSame(126, $parent->getSize());
-        $this->assertFalse($parent->isAllowNull());
+        $this->assertTrue($parent->isNotNull());
 
         $this->assertArrayHasKey('child', $columns);
         $child = $columns['child'];
         $this->assertSame('string', $child->getType());
         $this->assertSame(126, $child->getSize());
-        $this->assertFalse($child->isAllowNull());
+        $this->assertTrue($child->isNotNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$itemsChildrenTable);
-        $this->assertInstanceOf(Constraint::class, $primaryKey);
-        $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->getColumnNames());
+        $this->assertInstanceOf(Index::class, $primaryKey);
+        $this->assertTrue($primaryKey->isPrimaryKey);
+        $this->assertEqualsCanonicalizing(['parent', 'child'], $primaryKey->columnNames);
     }
 
     protected function assertForeignKey(
@@ -77,14 +79,14 @@ trait SchemaTrait
         null|string|array $expectedOnUpdate = 'NO ACTION',
         null|string|array $expectedOnDelete = 'NO ACTION',
     ): void {
-        /** @var ForeignKeyConstraint[] $foreignKeys */
+        /** @var ForeignKey[] $foreignKeys */
         $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
         $found = false;
         foreach ($foreignKeys as $foreignKey) {
             try {
-                $this->assertEqualsCanonicalizing($expectedColumnNames, $foreignKey->getColumnNames());
-                $this->assertSame($expectedForeignTableName, $foreignKey->getForeignTableName());
-                $this->assertEqualsCanonicalizing($expectedForeignColumnNames, $foreignKey->getForeignColumnNames());
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $foreignKey->columnNames);
+                $this->assertSame($expectedForeignTableName, $foreignKey->foreignTableName);
+                $this->assertEqualsCanonicalizing($expectedForeignColumnNames, $foreignKey->foreignColumnNames);
             } catch (ExpectationFailedException) {
                 continue;
             }
@@ -92,19 +94,19 @@ trait SchemaTrait
             $found = true;
 
             if (is_array($expectedOnUpdate)) {
-                $this->assertContains($foreignKey->getOnUpdate(), $expectedOnUpdate);
+                $this->assertContains($foreignKey->onUpdate, $expectedOnUpdate);
             } else {
-                $this->assertSame($expectedOnUpdate, $foreignKey->getOnUpdate());
+                $this->assertSame($expectedOnUpdate, $foreignKey->onUpdate);
             }
 
             if (is_array($expectedOnDelete)) {
-                $this->assertContains($foreignKey->getOnDelete(), $expectedOnDelete);
+                $this->assertContains($foreignKey->onDelete, $expectedOnDelete);
             } else {
-                $this->assertSame($expectedOnDelete, $foreignKey->getOnDelete());
+                $this->assertSame($expectedOnDelete, $foreignKey->onDelete);
             }
 
             if ($expectedName !== null) {
-                $this->assertSame($expectedName, $foreignKey->getName());
+                $this->assertSame($expectedName, $foreignKey->name);
             }
         }
 
@@ -120,23 +122,23 @@ trait SchemaTrait
         bool $expectedIsUnique = false,
         bool $expectedIsPrimary = false,
     ): void {
-        /** @var IndexConstraint[] $indexes */
+        /** @var Index[] $indexes */
         $indexes = $this->getDatabase()->getSchema()->getTableIndexes($table);
         $found = false;
         foreach ($indexes as $index) {
             try {
-                $this->assertEqualsCanonicalizing($expectedColumnNames, $index->getColumnNames());
+                $this->assertEqualsCanonicalizing($expectedColumnNames, $index->columnNames);
             } catch (ExpectationFailedException) {
                 continue;
             }
 
             $found = true;
 
-            $this->assertSame($expectedIsUnique, $index->isUnique());
-            $this->assertSame($expectedIsPrimary, $index->isPrimary());
+            $this->assertSame($expectedIsUnique, $index->isUnique);
+            $this->assertSame($expectedIsPrimary, $index->isPrimaryKey);
 
             if ($expectedName !== null) {
-                $this->assertSame($expectedName, $index->getName());
+                $this->assertSame($expectedName, $index->name);
             }
         }
 
@@ -166,39 +168,40 @@ trait SchemaTrait
         $name = $columns['name'];
         $this->assertSame('string', $name->getType());
         $this->assertSame(126, $name->getSize());
-        $this->assertFalse($name->isAllowNull());
+        $this->assertTrue($name->isNotNull());
 
         $this->assertArrayHasKey('type', $columns);
         $type = $columns['type'];
         $this->assertSame('string', $type->getType());
         $this->assertSame(10, $type->getSize());
-        $this->assertFalse($type->isAllowNull());
+        $this->assertTrue($type->isNotNull());
 
         $this->assertArrayHasKey('description', $columns);
         $description = $columns['description'];
         $this->assertSame('string', $description->getType());
         $this->assertSame(191, $description->getSize());
-        $this->assertTrue($description->isAllowNull());
+        $this->assertFalse($description->isNotNull());
 
         $this->assertArrayHasKey('rule_name', $columns);
         $ruleName = $columns['rule_name'];
         $this->assertSame('string', $ruleName->getType());
         $this->assertSame(64, $ruleName->getSize());
-        $this->assertTrue($ruleName->isAllowNull());
+        $this->assertFalse($ruleName->isNotNull());
 
         $this->assertArrayHasKey('created_at', $columns);
         $createdAt = $columns['created_at'];
         $this->assertSame('integer', $createdAt->getType());
-        $this->assertFalse($createdAt->isAllowNull());
+        $this->assertTrue($createdAt->isNotNull());
 
         $this->assertArrayHasKey('updated_at', $columns);
         $updatedAt = $columns['updated_at'];
         $this->assertSame('integer', $updatedAt->getType());
-        $this->assertFalse($updatedAt->isAllowNull());
+        $this->assertTrue($updatedAt->isNotNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$itemsTable);
-        $this->assertInstanceOf(Constraint::class, $primaryKey);
-        $this->assertSame(['name'], $primaryKey->getColumnNames());
+        $this->assertInstanceOf(Index::class, $primaryKey);
+        $this->assertTrue($primaryKey->isPrimaryKey);
+        $this->assertSame(['name'], $primaryKey->columnNames);
 
         $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::$itemsTable));
 
@@ -244,8 +247,9 @@ trait SchemaTrait
         $this->assertFalse($createdAt->isAllowNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$assignmentsTable);
-        $this->assertInstanceOf(Constraint::class, $primaryKey);
-        $this->assertEqualsCanonicalizing(['item_name', 'user_id'], $primaryKey->getColumnNames());
+        $this->assertInstanceOf(Index::class, $primaryKey);
+        $this->assertTrue($primaryKey->isPrimaryKey);
+        $this->assertEqualsCanonicalizing(['item_name', 'user_id'], $primaryKey->columnNames);
 
         $this->assertCount(0, $databaseSchema->getTableForeignKeys(self::$assignmentsTable));
 
