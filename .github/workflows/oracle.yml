@@ -27,7 +27,7 @@ jobs:
     name: PHP ${{ matrix.php }}-${{ matrix.os }}
 
     env:
-      extensions: pdo, pdo_oci, oci8, uopz
+      extensions: pdo, pdo_oci, oci8
       key: cache-v1
 
     runs-on: ${{ matrix.os }}

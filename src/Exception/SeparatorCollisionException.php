@@ -8,6 +8,9 @@ use RuntimeException;
 use Throwable;
 use Yiisoft\FriendlyException\FriendlyExceptionInterface;
 
+/**
+ * @final
+ */
 class SeparatorCollisionException extends RuntimeException implements FriendlyExceptionInterface
 {
     public function __construct(int $code = 0, ?Throwable $previous = null)

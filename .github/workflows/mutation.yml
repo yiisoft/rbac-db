@@ -25,10 +25,10 @@ jobs:
     uses: yiisoft/actions/.github/workflows/roave-infection.yml@master
     with:
       min-covered-msi: 100
-      extensions: pdo, pdo_sqlite, uopz
+      extensions: pdo, pdo_sqlite
       os: >-
         ['ubuntu-latest']
       php: >-
-        ['8.2']
+        ['8.4']
     secrets:
       STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

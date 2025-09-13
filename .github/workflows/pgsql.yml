@@ -27,7 +27,7 @@ jobs:
     name: PHP ${{ matrix.php }}-pgsql-${{ matrix.pgsql }}
 
     env:
-      extensions: pdo, pdo_pgsql, uopz
+      extensions: pdo, pdo_pgsql
 
     runs-on: ${{ matrix.os }}
 
