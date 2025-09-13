@@ -47,7 +47,6 @@
         "vimeo/psalm": "^5.26.1 || ^6.10",
         "yiisoft/cache": "^3.0",
         "yiisoft/db-sqlite": "dev-master"
-        "yiisoft/db-sqlite": "^1.2"
     },
     "suggest": {
         "yiisoft/db-sqlite": "For using with SQLite",
