@@ -32,7 +32,7 @@
         "php": "8.1 - 8.4",
         "ext-pdo": "*",
         "yiisoft/db": "^2.0",
-        "yiisoft/db-migration": "dev-master",
+        "yiisoft/db-migration": "^2.0",
         "yiisoft/friendly-exception": "^1.1",
         "yiisoft/rbac": "^2.1"
     },
