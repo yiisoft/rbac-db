@@ -76,6 +76,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
     public function getByItemNames(array $itemNames): array
     {
         if (empty($itemNames)) {
+            /** @infection-ignore-all  */
             return [];
         }
 
@@ -123,6 +124,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
     public function userHasItem(string $userId, array $itemNames): bool
     {
         if (empty($itemNames)) {
+            /** @infection-ignore-all  */
             return false;
         }
 

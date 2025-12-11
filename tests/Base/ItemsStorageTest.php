@@ -154,12 +154,12 @@ abstract class ItemsStorageTest extends TestCase
         $this
             ->getDatabase()
             ->createCommand()
-            ->batchInsert(self::$itemsTable, ['name', 'type', 'created_at', 'updated_at'], $fixtures['items'])
+            ->insertBatch(self::$itemsTable, $fixtures['items'], ['name', 'type', 'created_at', 'updated_at'])
             ->execute();
         $this
             ->getDatabase()
             ->createCommand()
-            ->batchInsert(self::$itemsChildrenTable, ['parent', 'child'], $fixtures['itemsChildren'])
+            ->insertBatch(self::$itemsChildrenTable, $fixtures['itemsChildren'], ['parent', 'child'])
             ->execute();
     }
 

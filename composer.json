@@ -31,8 +31,8 @@
     "require": {
         "php": "8.1 - 8.4",
         "ext-pdo": "*",
-        "yiisoft/db": "^1.2",
-        "yiisoft/db-migration": "^1.1",
+        "yiisoft/db": "^2.0",
+        "yiisoft/db-migration": "^2.0",
         "yiisoft/friendly-exception": "^1.1",
         "yiisoft/rbac": "^2.1"
     },
@@ -46,7 +46,7 @@
         "spatie/phpunit-watcher": "^1.24",
         "vimeo/psalm": "^5.26.1 || ^6.10",
         "yiisoft/cache": "^3.0",
-        "yiisoft/db-sqlite": "^1.2"
+        "yiisoft/db-sqlite": "^2.0"
     },
     "suggest": {
         "yiisoft/db-sqlite": "For using with SQLite",
@@ -54,7 +54,7 @@
         "yiisoft/db-pgsql": "For using with PosgtgreSQL",
         "yiisoft/db-mssql": "For using with Microsoft SQL Server",
         "yiisoft/db-oracle": "For using with Oracle",
-        "yiisoft/yii-db-migration": "For automating schema migration"
+        "yiisoft/db-migration": "For automating schema migration"
     },
     "autoload": {
         "psr-4": {
