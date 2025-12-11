@@ -233,18 +233,18 @@ trait SchemaTrait
         $itemName = $columns['item_name'];
         $this->assertSame('string', $itemName->getType());
         $this->assertSame(126, $itemName->getSize());
-        $this->assertFalse($itemName->isAllowNull());
+        $this->assertTrue($itemName->isNotNull());
 
         $this->assertArrayHasKey('user_id', $columns);
         $userId = $columns['user_id'];
         $this->assertSame('string', $userId->getType());
         $this->assertSame(126, $userId->getSize());
-        $this->assertFalse($userId->isAllowNull());
+        $this->assertTrue($userId->isNotNull());
 
         $this->assertArrayHasKey('created_at', $columns);
         $createdAt = $columns['created_at'];
         $this->assertSame('integer', $createdAt->getType());
-        $this->assertFalse($createdAt->isAllowNull());
+        $this->assertTrue($createdAt->isNotNull());
 
         $primaryKey = $databaseSchema->getTablePrimaryKey(self::$assignmentsTable);
         $this->assertInstanceOf(Index::class, $primaryKey);

@@ -33,10 +33,10 @@ abstract class AssignmentsStorageTest extends TestCase
     {
         $this->getDatabase()
             ->createCommand()
-            ->batchInsert(
+            ->insertBatch(
                 self::$itemsTable,
-                ['name', 'type', 'created_at', 'updated_at'],
                 $this->getFixtures()['items'],
+                ['name', 'type', 'created_at', 'updated_at'],
             )
             ->execute();
     }
@@ -45,10 +45,10 @@ abstract class AssignmentsStorageTest extends TestCase
     {
         $this->getDatabase()
             ->createCommand()
-            ->batchInsert(
+            ->insertBatch(
                 self::$assignmentsTable,
-                ['item_name', 'user_id', 'created_at'],
                 $this->getFixtures()['assignments'],
+                ['item_name', 'user_id', 'created_at'],
             )
             ->execute();
     }
