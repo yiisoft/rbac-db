@@ -1,11 +1,11 @@
 # Yii RBAC Database Storage Change Log
 
-## 2.0.1 under development
+## 2.1.0 December 19, 2025
 
-- Enh #85: Refactor `AssignmentStorage::filterUserItemNames()` method (@vjik)
 - Chg #88: Adapt to Yii DB 2 (@vjik)
-- Enh #91: Bump `yiisoft/rbac` version to `^2.1` (@vjik)
 - Chg #92, #96: Change PHP constraint in `composer.json` to `8.1 - 8.5` (@vjik)
+- Enh #85: Refactor `AssignmentStorage::filterUserItemNames()` method (@vjik)
+- Enh #91: Bump `yiisoft/rbac` version to `^2.1` (@vjik)
 - Enh #92: Mark internal class `ItemTreeTraversalFactory` as final (@vjik)
 
 ## 2.0.0 March 07, 2024
