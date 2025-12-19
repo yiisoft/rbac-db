@@ -28,7 +28,7 @@ Detailed build statuses:
 
 ## Requirements
 
-- PHP 8.1 or higher.
+- PHP 8.1 - 8.5.
 - `PDO` PHP extension.
 - One of the following drivers:
   - [SQLite](https://github.com/yiisoft/db-sqlite) (minimal required version is 3.8.3)
