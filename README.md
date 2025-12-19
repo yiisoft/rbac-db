@@ -10,7 +10,7 @@
 [![Total Downloads](https://poser.pugx.org/yiisoft/rbac-db/downloads)](https://packagist.org/packages/yiisoft/rbac-db)
 [![codecov](https://codecov.io/gh/yiisoft/rbac-db/graph/badge.svg?token=YU8LVBNCQ8)](https://codecov.io/gh/yiisoft/rbac-db)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyiisoft%2Frbac-db%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yiisoft/rbac-db/master)
-[![static analysis](https://github.com/yiisoft/rbac-db/workflows/static%20analysis/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3A%22static+analysis%22)
+[![Static analysis](https://github.com/yiisoft/rbac-db/actions/workflows/static.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/static.yml?query=branch%3Amaster)
 [![type-coverage](https://shepherd.dev/github/yiisoft/rbac-db/coverage.svg)](https://shepherd.dev/github/yiisoft/rbac-db)
 
 The package provides [Yii Database](https://github.com/yiisoft/db) storage for 
@@ -18,13 +18,13 @@ The package provides [Yii Database](https://github.com/yiisoft/db) storage for
 
 Detailed build statuses:
 
-| RDBMS                | Status                                                                                                                                                            |
-|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| SQLite               | [![SQLite status](https://github.com/yiisoft/rbac-db/workflows/sqlite/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Asqlite)             |
-| MySQL                | [![MYSQL status](https://github.com/yiisoft/rbac-db/workflows/mysql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amysql)                |
-| PostgreSQL           | [![PostgreSQL status](https://github.com/yiisoft/rbac-db/workflows/pgsql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Apgsql)           |
-| Microsoft SQL Server | [![Microsoft SQL Server status](https://github.com/yiisoft/rbac-db/workflows/mssql/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Amssql) |
-| Oracle               | [![Oracle status](https://github.com/yiisoft/rbac-db/workflows/oracle/badge.svg)](https://github.com/yiisoft/rbac-db/actions?query=workflow%3Aoracle)             |
+| RDBMS                | Status                                                                                                                                                                                                         |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| SQLite               | [![SQLite status](https://github.com/yiisoft/rbac-db/actions/workflows/sqlite.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/sqlite.yml?query=branch%3Amaster)             |
+| MySQL                | [![MYSQL status](https://github.com/yiisoft/rbac-db/actions/workflows/mysql.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/mysql.yml?query=branch%3Amaster)                |
+| PostgreSQL           | [![PostgreSQL status](https://github.com/yiisoft/rbac-db/actions/workflows/pgsql.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/pgsql.yml?query=branch%3Amaster)           |
+| Microsoft SQL Server | [![Microsoft SQL Server status](https://github.com/yiisoft/rbac-db/actions/workflows/mssql.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/mssql.yml?query=branch%3Amaster) |
+| Oracle               | [![Oracle status](https://github.com/yiisoft/rbac-db/actions/workflows/oracle.yml/badge.svg?branch=master)](https://github.com/yiisoft/rbac-db/actions/workflows/oracle.yml?query=branch%3Amaster)             |
 
 ## Requirements
 
