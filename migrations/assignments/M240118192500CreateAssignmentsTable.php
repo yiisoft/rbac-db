@@ -18,13 +18,13 @@ final class M240118192500CreateAssignmentsTable implements RevertibleMigrationIn
 
     public function down(MigrationBuilder $b): void
     {
-        $b->dropTable(self::ASSIGNMENTS_TABLE);
+        $b->dropTable('{{%' . self::ASSIGNMENTS_TABLE . '}}');
     }
 
     private function createAssignmentsTable(MigrationBuilder $b): void
     {
         $b->createTable(
-            self::ASSIGNMENTS_TABLE,
+            '{{%' . self::ASSIGNMENTS_TABLE . '}}',
             [
                 'item_name' => 'string(126) NOT NULL',
                 'user_id' => 'string(126) NOT NULL',

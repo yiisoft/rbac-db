@@ -276,13 +276,11 @@ final class M240229184400DeletePostUpdateItems implements RevertibleMigrationInt
         $b
             ->getDb()
             ->createCommand()
-            ->delete(self::ASSIGNMENTS_TABLE, ['item_name' => ['posts.redactor', 'posts.update']])
+            ->delete('{{%' . self::ASSIGNMENTS_TABLE . '}}', ['item_name' => ['posts.redactor', 'posts.update']])
             ->execute();
     }
     
-    public function down(MigrationBuilder $b): void; 
-    {        
-    }   
+    public function down(MigrationBuilder $b): void {}   
 }
 ```
 

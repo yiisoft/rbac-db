@@ -20,14 +20,14 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
 
     public function down(MigrationBuilder $b): void
     {
-        $b->dropTable(self::ITEMS_CHILDREN_TABLE);
-        $b->dropTable(self::ITEMS_TABLE);
+        $b->dropTable('{{%' . self::ITEMS_CHILDREN_TABLE . '}}');
+        $b->dropTable('{{%' . self::ITEMS_TABLE . '}}');
     }
 
     private function createItemsTable(MigrationBuilder $b): void
     {
         $b->createTable(
-            self::ITEMS_TABLE,
+            '{{%' . self::ITEMS_TABLE . '}}',
             [
                 'name' => 'string(126) NOT NULL PRIMARY KEY',
                 'type' => 'string(10) NOT NULL',
@@ -37,13 +37,13 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
                 'updated_at' => 'integer NOT NULL',
             ],
         );
-        $b->createIndex(self::ITEMS_TABLE, 'idx-' . self::ITEMS_TABLE . '-type', 'type');
+        $b->createIndex('{{%' . self::ITEMS_TABLE . '}}', 'idx-' . self::ITEMS_TABLE . '-type', 'type');
     }
 
     private function createItemsChildrenTable(MigrationBuilder $b): void
     {
         $b->createTable(
-            self::ITEMS_CHILDREN_TABLE,
+            '{{%' . self::ITEMS_CHILDREN_TABLE . '}}',
             [
                 'parent' => 'string(126) NOT NULL',
                 'child' => 'string(126) NOT NULL',
