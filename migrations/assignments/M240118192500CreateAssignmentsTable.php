@@ -8,8 +8,7 @@ use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 final class M240118192500CreateAssignmentsTable implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
-    private const TABLE_PREFIX = 'yii_rbac_';
-    private const ASSIGNMENTS_TABLE = self::TABLE_PREFIX . 'assignment';
+    private const ASSIGNMENTS_TABLE = '{{%yii_rbac_assignment}}';
 
     public function up(MigrationBuilder $b): void
     {
@@ -18,13 +17,13 @@ final class M240118192500CreateAssignmentsTable implements RevertibleMigrationIn
 
     public function down(MigrationBuilder $b): void
     {
-        $b->dropTable('{{%' . self::ASSIGNMENTS_TABLE . '}}');
+        $b->dropTable(self::ASSIGNMENTS_TABLE);
     }
 
     private function createAssignmentsTable(MigrationBuilder $b): void
     {
         $b->createTable(
-            '{{%' . self::ASSIGNMENTS_TABLE . '}}',
+            self::ASSIGNMENTS_TABLE,
             [
                 'item_name' => 'string(126) NOT NULL',
                 'user_id' => 'string(126) NOT NULL',
