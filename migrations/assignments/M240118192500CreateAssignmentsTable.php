@@ -8,8 +8,7 @@ use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 final class M240118192500CreateAssignmentsTable implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
-    private const TABLE_PREFIX = 'yii_rbac_';
-    private const ASSIGNMENTS_TABLE = self::TABLE_PREFIX . 'assignment';
+    private const ASSIGNMENTS_TABLE = '{{%yii_rbac_assignment}}';
 
     public function up(MigrationBuilder $b): void
     {
