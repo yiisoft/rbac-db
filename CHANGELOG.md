@@ -2,7 +2,7 @@
 
 ## 2.1.1 under development
 
-- no changes in this release.
+- Bug #99: Respect DB table prefix in migrations (@vjik)
 
 ## 2.1.0 December 19, 2025
 

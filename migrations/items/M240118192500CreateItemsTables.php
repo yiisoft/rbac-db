@@ -8,9 +8,8 @@ use Yiisoft\Db\Migration\TransactionalMigrationInterface;
 
 final class M240118192500CreateItemsTables implements RevertibleMigrationInterface, TransactionalMigrationInterface
 {
-    private const TABLE_PREFIX = 'yii_rbac_';
-    private const ITEMS_TABLE = self::TABLE_PREFIX . 'item';
-    private const ITEMS_CHILDREN_TABLE = self::TABLE_PREFIX . 'item_child';
+    private const ITEMS_TABLE = '{{%yii_rbac_item}}';
+    private const ITEMS_CHILDREN_TABLE = '{{%yii_rbac_item_child}}';
 
     public function up(MigrationBuilder $b): void
     {
@@ -37,7 +36,11 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
                 'updated_at' => 'integer NOT NULL',
             ],
         );
-        $b->createIndex(self::ITEMS_TABLE, 'idx-' . self::ITEMS_TABLE . '-type', 'type');
+        $b->createIndex(
+            table: self::ITEMS_TABLE,
+            name: 'idx-' . $b->getDb()->getQuoter()->getRawTableName(self::ITEMS_TABLE) . '-type',
+            columns: 'type',
+        );
     }
 
     private function createItemsChildrenTable(MigrationBuilder $b): void
@@ -48,8 +51,8 @@ final class M240118192500CreateItemsTables implements RevertibleMigrationInterfa
                 'parent' => 'string(126) NOT NULL',
                 'child' => 'string(126) NOT NULL',
                 'PRIMARY KEY ([[parent]], [[child]])',
-                'FOREIGN KEY ([[parent]]) REFERENCES {{%' . self::ITEMS_TABLE . '}} ([[name]])',
-                'FOREIGN KEY ([[child]]) REFERENCES {{%' . self::ITEMS_TABLE . '}} ([[name]])',
+                'FOREIGN KEY ([[parent]]) REFERENCES ' . self::ITEMS_TABLE . ' ([[name]])',
+                'FOREIGN KEY ([[child]]) REFERENCES ' . self::ITEMS_TABLE . ' ([[name]])',
             ],
         );
     }
