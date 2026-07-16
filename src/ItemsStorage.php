@@ -74,8 +74,8 @@ final class ItemsStorage implements ItemsStorageInterface
      */
     public function __construct(
         private readonly ConnectionInterface $database,
-        private readonly string $tableName = 'yii_rbac_item',
-        private readonly string $childrenTableName = 'yii_rbac_item_child',
+        private readonly string $tableName = '{{%yii_rbac_item}}',
+        private readonly string $childrenTableName = '{{%yii_rbac_item_child}}',
         string $namesSeparator = ',',
     ) {
         $this->assertNamesSeparator($namesSeparator);

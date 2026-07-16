@@ -30,7 +30,7 @@ final class AssignmentsStorage implements AssignmentsStorageInterface
      */
     public function __construct(
         private readonly ConnectionInterface $database,
-        private readonly string $tableName = 'yii_rbac_assignment',
+        private readonly string $tableName = '{{%yii_rbac_assignment}}',
     ) {
     }
 
