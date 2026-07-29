@@ -9,6 +9,4 @@ namespace Yiisoft\Rbac\Db\ItemTreeTraversal;
  *
  * @internal
  */
-final class PostgresCteItemTreeTraversal extends CteItemTreeTraversal
-{
-}
+final class PostgresCteItemTreeTraversal extends CteItemTreeTraversal {}

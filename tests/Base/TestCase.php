@@ -18,6 +18,10 @@ use Yiisoft\Db\Migration\Runner\UpdateRunner;
 use Yiisoft\Db\Migration\Service\MigrationService;
 use Yiisoft\Injector\Injector;
 
+use function dirname;
+
+use const DIRECTORY_SEPARATOR;
+
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected static string $itemsTable = 'yii_rbac_item';
@@ -28,6 +32,28 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected static ?ConnectionInterface $database = null;
     private ?DownCommand $migrateDownCommand = null;
     private ?UpdateCommand $migrateUpdateCommand = null;
+
+    public static function setUpBeforeClass(): void
+    {
+        (new static(static::class))->runMigrations();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        (new static(static::class))->rollbackMigrations();
+    }
+
+    protected function setUp(): void
+    {
+        $this->populateDatabase();
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->getDatabase()->getDriverName() === 'sqlsrv') {
+            $this->getDatabase()->close();
+        }
+    }
 
     protected function getDatabase(): ConnectionInterface
     {
@@ -84,28 +110,6 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         ]));
 
         return $this->migrateDownCommand;
-    }
-
-    public static function setUpBeforeClass(): void
-    {
-        (new static(static::class))->runMigrations();
-    }
-
-    public static function tearDownAfterClass(): void
-    {
-        (new static(static::class))->rollbackMigrations();
-    }
-
-    protected function setUp(): void
-    {
-        $this->populateDatabase();
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->getDatabase()->getDriverName() === 'sqlsrv') {
-            $this->getDatabase()->close();
-        }
     }
 
     protected function runMigrations(): void

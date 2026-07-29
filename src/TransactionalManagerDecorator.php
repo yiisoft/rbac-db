@@ -16,8 +16,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
     public function __construct(
         private readonly ManagerInterface $manager,
         private readonly ConnectionInterface $database,
-    ) {
-    }
+    ) {}
 
     public function userHasPermission(
         int|string|Stringable|null $userId,
@@ -136,7 +135,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
     public function updateRole(string $name, Role $role): ManagerInterface
     {
         $manager = $this->manager;
-        $this->database->transaction(static fn () => $manager->updateRole($name, $role));
+        $this->database->transaction(static fn() => $manager->updateRole($name, $role));
 
         return $this;
     }
@@ -163,7 +162,7 @@ final class TransactionalManagerDecorator implements ManagerInterface
     public function updatePermission(string $name, Permission $permission): ManagerInterface
     {
         $manager = $this->manager;
-        $this->database->transaction(static fn () => $manager->updatePermission($name, $permission));
+        $this->database->transaction(static fn() => $manager->updatePermission($name, $permission));
 
         return $this;
     }

@@ -27,11 +27,6 @@ trait SchemaTrait
         // Skip
     }
 
-    protected function populateDatabase(): void
-    {
-        // Skip
-    }
-
     public function testSchema(): void
     {
         $this->checkNoTables();
@@ -40,6 +35,11 @@ trait SchemaTrait
 
         $this->rollbackMigrations();
         $this->checkNoTables();
+    }
+
+    protected function populateDatabase(): void
+    {
+        // Skip
     }
 
     protected function checkItemsChildrenTable(): void
@@ -76,8 +76,8 @@ trait SchemaTrait
         string $expectedForeignTableName,
         array $expectedForeignColumnNames,
         ?string $expectedName = null,
-        null|string|array $expectedOnUpdate = 'NO ACTION',
-        null|string|array $expectedOnDelete = 'NO ACTION',
+        string|array|null $expectedOnUpdate = 'NO ACTION',
+        string|array|null $expectedOnDelete = 'NO ACTION',
     ): void {
         /** @var ForeignKey[] $foreignKeys */
         $foreignKeys = $this->getDatabase()->getSchema()->getTableForeignKeys($table);
@@ -210,7 +210,7 @@ trait SchemaTrait
             table: self::$itemsTable,
             expectedColumnNames: ['name'],
             expectedIsUnique: true,
-            expectedIsPrimary: true
+            expectedIsPrimary: true,
         );
         $this->assertIndex(
             table: self::$itemsTable,
