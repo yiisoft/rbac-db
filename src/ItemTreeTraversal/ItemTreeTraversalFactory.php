@@ -75,7 +75,7 @@ final class ItemTreeTraversalFactory
         ConnectionInterface $database,
         string $tableName,
         string $childrenTableName,
-        string $namesSeparator
+        string $namesSeparator,
     ): MysqlCteItemTreeTraversal|MysqlItemTreeTraversal {
         /** @psalm-var array{version: string} $row */
         $row = $database->createCommand('SELECT VERSION() AS version')->queryOne();

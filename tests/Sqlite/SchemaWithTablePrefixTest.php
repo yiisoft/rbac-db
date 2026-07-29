@@ -25,6 +25,8 @@ use Yiisoft\Injector\Injector;
 
 use function dirname;
 
+use const DIRECTORY_SEPARATOR;
+
 final class SchemaWithTablePrefixTest extends TestCase
 {
     private const TABLE_PREFIX = 'test_';

@@ -38,6 +38,7 @@
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
+        "friendsofphp/php-cs-fixer": "^3.95",
         "maglnet/composer-require-checker": "^4.7.1",
         "phpunit/phpunit": "^10.5.45",
         "psr/clock": "^1.0",
@@ -46,6 +47,7 @@
         "spatie/phpunit-watcher": "^1.24",
         "vimeo/psalm": "^5.26.1 || ^6.10",
         "yiisoft/cache": "^3.0",
+        "yiisoft/code-style": "^1.1",
         "yiisoft/db-sqlite": "^2.0"
     },
     "suggest": {
@@ -76,6 +78,8 @@
     },
     "scripts": {
         "test": "phpunit --testdox --no-interaction",
-        "test-watch": "phpunit-watcher watch"
+        "test-watch": "phpunit-watcher watch",
+        "rector": "rector",
+        "cs-fix": "php-cs-fixer fix"
     }
 }
