@@ -12,21 +12,6 @@ use Yiisoft\Rbac\Tests\Support\FakeAssignmentsStorage;
 
 abstract class ManagerTransactionErrorTest extends ManagerTest
 {
-    protected function createItemsStorage(): ItemsStorageInterface
-    {
-        return new ItemsStorage($this->getDatabase());
-    }
-
-    protected function createAssignmentsStorage(): AssignmentsStorageInterface
-    {
-        return new class () extends FakeAssignmentsStorage {
-            public function renameItem(string $oldName, string $newName): void
-            {
-                throw new RuntimeException('Failed to rename item.');
-            }
-        };
-    }
-
     public function testUpdateRoleTransactionError(): void
     {
         $manager = $this->createFilledManager();
@@ -51,5 +36,20 @@ abstract class ManagerTransactionErrorTest extends ManagerTest
             $this->assertNotNull($manager->getPermission('updatePost'));
             $this->assertNull($manager->getPermission('newUpdatePost'));
         }
+    }
+
+    protected function createItemsStorage(): ItemsStorageInterface
+    {
+        return new ItemsStorage($this->getDatabase());
+    }
+
+    protected function createAssignmentsStorage(): AssignmentsStorageInterface
+    {
+        return new class extends FakeAssignmentsStorage {
+            public function renameItem(string $oldName, string $newName): void
+            {
+                throw new RuntimeException('Failed to rename item.');
+            }
+        };
     }
 }

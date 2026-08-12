@@ -16,6 +16,9 @@ use Yiisoft\Rbac\ItemsStorageInterface;
 use Yiisoft\Rbac\Permission;
 use Yiisoft\Rbac\Role;
 
+use function is_array;
+use function strlen;
+
 /**
  * **Warning:** Do not use directly! Use with `Manager` from {@link https://github.com/yiisoft/rbac} package.
  *
@@ -401,7 +404,7 @@ final class ItemsStorage implements ItemsStorageInterface
             ->createCommand()
             ->insert(
                 $this->childrenTableName,
-                ['parent' => $parentName, 'child' => $childName]
+                ['parent' => $parentName, 'child' => $childName],
             )
             ->execute();
     }
@@ -562,7 +565,7 @@ final class ItemsStorage implements ItemsStorageInterface
                 ->createCommand()
                 ->delete(
                     $itemsStorage->childrenTableName,
-                    ['or', ['parent' => $parentsSubQuery], ['child' => $childrenSubQuery]]
+                    ['or', ['parent' => $parentsSubQuery], ['child' => $childrenSubQuery]],
                 )
                 ->execute();
             $database

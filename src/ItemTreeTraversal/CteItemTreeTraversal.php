@@ -12,6 +12,8 @@ use Yiisoft\Db\Query\QueryInterface;
 use Yiisoft\Rbac\Db\ItemsStorage;
 use Yiisoft\Rbac\Item;
 
+use function is_string;
+
 /**
  * A RBAC item tree traversal strategy based on CTE (common table expression). Uses `WITH` expression to form a
  * recursive query. The base queries are unified as much as possible to work for all RDBMS supported by Yii Database
@@ -41,8 +43,7 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
         protected string $tableName,
         protected string $childrenTableName,
         protected string $namesSeparator,
-    ) {
-    }
+    ) {}
 
     public function getParentRows(string $name): array
     {
@@ -137,8 +138,8 @@ abstract class CteItemTreeTraversal implements ItemTreeTraversalInterface
      */
     protected function getTrimConcatChildrenExpression(): string
     {
-        return "TRIM('$this->namesSeparator' FROM CONCAT(children, '$this->namesSeparator', " .
-            'item_child_recursive.child))';
+        return "TRIM('$this->namesSeparator' FROM CONCAT(children, '$this->namesSeparator', "
+            . 'item_child_recursive.child))';
     }
 
     private function getRowsCommand(

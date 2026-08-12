@@ -20,16 +20,6 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
         $this->getDatabase()->setLogger(new NullLogger());
     }
 
-    protected function createItemsStorage(): ItemsStorageInterface
-    {
-        return new ItemsStorage($this->getDatabase());
-    }
-
-    protected function createAssignmentsStorage(): AssignmentsStorageInterface
-    {
-        return new AssignmentsStorage($this->getDatabase());
-    }
-
     public function testUpdateRoleTransactionSuccess(): void
     {
         $manager = $this->createFilledManager();
@@ -52,6 +42,16 @@ abstract class ManagerTransactionSuccessTest extends ManagerTest
 
         $manager->updatePermission('updatePost', $permission);
         $this->assertTransaction($logger);
+    }
+
+    protected function createItemsStorage(): ItemsStorageInterface
+    {
+        return new ItemsStorage($this->getDatabase());
+    }
+
+    protected function createAssignmentsStorage(): AssignmentsStorageInterface
+    {
+        return new AssignmentsStorage($this->getDatabase());
     }
 
     private function assertTransaction(LoggerInterface $logger): void
