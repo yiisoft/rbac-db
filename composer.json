@@ -37,6 +37,7 @@
         "yiisoft/rbac": "^2.1"
     },
     "require-dev": {
+        "ext-pdo": "*",
         "ext-pdo_sqlite": "*",
         "friendsofphp/php-cs-fixer": "^3.95",
         "phpunit/phpunit": "^10.5.45",
