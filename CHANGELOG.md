@@ -2,7 +2,8 @@
 
 ## 2.1.1 under development
 
-- Bug #99, #101: Respect DB table prefix in migrations (@vjik)
+- Bug #99: Respect DB table prefix in migrations (@vjik)
+- Chg #101: Respect DB table prefix in default table names (@vjik)
 
 ## 2.1.0 December 19, 2025
 
