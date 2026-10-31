@@ -57,9 +57,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function getDatabase(): ConnectionInterface
     {
-        if (self::$database === null) {
-            self::$database = $this->makeDatabase();
-        }
+        self::$database ??= $this->makeDatabase();
 
         return self::$database;
     }
