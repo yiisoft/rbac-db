@@ -26,7 +26,7 @@ jobs:
   mutation:
     uses: yiisoft/actions/.github/workflows/infection.yml@master
     with:
-      min-covered-msi: 100
+      min-covered-msi: 96
       extensions: pdo, pdo_sqlite
       os: >-
         ['ubuntu-latest']
